@@ -3,12 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerador de Pedido de Compra Personalizado</title>
+    <title>Gerador de Pedido de Compra - Farmácia do Trabalhador</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; background-color: #f4f7f6; display: flex; }
         .sidebar { width: 300px; background-color: #ffffff; padding: 20px; box-shadow: 2px 0 5px rgba(0,0,0,0.1); overflow-y: auto; }
         .content { flex-grow: 1; padding: 20px; }
         .header { text-align: center; margin-bottom: 20px; color: #004c99; }
+        
+        /* Estilo da Logo */
+        .header img {
+            max-width: 100%; /* Garante que a imagem não saia do container */
+            height: auto;
+            margin-bottom: 10px;
+        }
         
         /* Estilo do Documento de Pedido de Compra */
         .purchase-order { background-color: white; border: 1px solid #ccc; padding: 30px; margin-bottom: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.05); }
@@ -90,9 +97,9 @@
     <div class="content">
         <div class="header">
             <img 
-                src="URL_DA_SUA_IMAGEM_AQUI" 
-                alt="Logo da Farmácia do Trabalhador" 
-                style="width: 180px; height: auto; margin-bottom: 10px;"
+                src="https://dbrito10.github.io/Farm-cia-do-Trabalhador/Logo.jpg" 
+                alt="Logo Farmácia do Trabalhador e Aposentado" 
+                style="max-width: 250px; border: 1px solid #ddd; padding: 5px;" 
             >
             <h1>PEDIDO DE COMPRA / PURCHASE ORDER</h1>
             <p id="companyDetails">**FARMÁCIA DO TRABALHADOR E APOSENTADO DE PINHEIROS LTDA** | CNPJ: **32.927.077/0001-06** | Endereço: [Seu Endereço Completo Aqui] | Telefone: [Seu Telefone Aqui]</p>
