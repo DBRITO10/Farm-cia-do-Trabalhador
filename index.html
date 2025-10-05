@@ -5,19 +5,74 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerador de Pedido de Compra - Farmácia do Trabalhador</title>
     <style>
+        /* Estilos Base */
         body { font-family: Arial, sans-serif; margin: 0; background-color: #f4f7f6; display: flex; }
-        .sidebar { width: 300px; background-color: #ffffff; padding: 20px; box-shadow: 2px 0 5px rgba(0,0,0,0.1); overflow-y: auto; }
+        .sidebar { width: 350px; background-color: #ffffff; padding: 20px; box-shadow: 2px 0 5px rgba(0,0,0,0.1); overflow-y: auto; }
         .content { flex-grow: 1; padding: 20px; }
         .header { text-align: center; margin-bottom: 20px; color: #004c99; }
         
         /* Estilo da Logo */
         .header img {
-            max-width: 100%; /* Garante que a imagem não saia do container */
+            max-width: 100%; 
             height: auto;
             margin-bottom: 10px;
+            border: 1px solid #ddd; 
+            padding: 5px;
         }
         
-        /* Estilo do Documento de Pedido de Compra */
+        /* --- ESTILOS DE TABS --- */
+        .tabs { display: flex; border-bottom: 2px solid #ddd; margin-bottom: 15px; }
+        .tab-button {
+            flex-grow: 1;
+            padding: 10px 5px;
+            border: none;
+            background-color: #f0f0f0;
+            cursor: pointer;
+            font-weight: bold;
+            color: #555;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+        .tab-button:hover { background-color: #e0e0e0; }
+        .tab-button.active {
+            background-color: #004c99;
+            color: white;
+            border-bottom: 3px solid #003366;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Estilos do Formulário */
+        label { display: block; margin-top: 10px; font-weight: bold; color: #333; }
+        input[type="text"], input[type="date"], input[type="number"], textarea, select { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .item-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px; align-items: center; }
+        .item-row input, .item-row button { height: 38px; }
+        
+        /* Estilos de Botões */
+        button { background-color: #004c99; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px; transition: background-color 0.3s; }
+        button:hover { background-color: #003366; }
+        .delete-btn { background-color: #dc3545; }
+        .delete-btn:hover { background-color: #c82333; }
+        .action-buttons button { margin-right: 10px; background-color: #28a745; }
+        .action-buttons button:hover { background-color: #1e7e34; }
+        
+        /* Estilos de Listagem (Catálogo/Histórico) */
+        .list-item { 
+            padding: 8px; 
+            border: 1px solid #eee; 
+            margin-bottom: 5px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            background-color: #f9f9f9; 
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .list-item:hover { background-color: #e9e9e9; }
+        .list-item button { margin-top: 0; padding: 5px 8px; font-size: 12px; }
+
+        /* Estilo do Documento de Pedido de Compra (Visualização) */
         .purchase-order { background-color: white; border: 1px solid #ccc; padding: 30px; margin-bottom: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.05); }
         .po-header { display: flex; justify-content: space-between; border-bottom: 2px solid #004c99; padding-bottom: 10px; margin-bottom: 20px; }
         .po-title { font-size: 24px; font-weight: bold; color: #004c99; }
@@ -27,25 +82,6 @@
         .po-table th { background-color: #f2f2f2; color: #333; }
         .po-totals { margin-top: 20px; text-align: right; }
         .po-totals div { font-size: 16px; font-weight: bold; margin-top: 5px; }
-
-        /* Estilo dos Inputs */
-        label { display: block; margin-top: 10px; font-weight: bold; color: #333; }
-        input[type="text"], input[type="date"], input[type="number"], textarea { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        .item-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px; align-items: center; }
-        .item-row input, .item-row button { height: 38px; }
-        button { background-color: #004c99; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px; transition: background-color 0.3s; }
-        button:hover { background-color: #003366; }
-        .delete-btn { background-color: #dc3545; }
-        .delete-btn:hover { background-color: #c82333; }
-
-        /* Botões de Ação */
-        .action-buttons button { margin-right: 10px; background-color: #28a745; }
-        .action-buttons button:hover { background-color: #1e7e34; }
-        
-        /* Seção de Histórico (ERP Simples) */
-        .history-list { margin-top: 20px; padding: 10px; border-top: 1px solid #ddd; }
-        .history-item { padding: 10px; border: 1px solid #eee; margin-bottom: 5px; border-radius: 4px; cursor: pointer; background-color: #f9f9f9; }
-        .history-item:hover { background-color: #e9e9e9; }
 
         @media print {
             body { display: block; background-color: white; }
@@ -57,41 +93,104 @@
 </head>
 <body>
     <div class="sidebar">
-        <h2 class="header">Dados do Pedido</h2>
+        <h2 class="header">Sistema de Gestão</h2>
         
-        <label for="poNumber">Número do Pedido (PO):</label>
-        <input type="text" id="poNumber" value="PO-001">
-        
-        <label for="poDate">Data do Pedido:</label>
-        <input type="date" id="poDate" value="<?php echo date('Y-m-d'); ?>">
-        
-        <label for="supplierName">Fornecedor:</label>
-        <input type="text" id="supplierName" value="Nome do Fornecedor Ltda.">
-        
-        <label for="supplierContact">Contato do Fornecedor:</label>
-        <input type="text" id="supplierContact" value="email@fornecedor.com">
-        
-        <label for="deliveryDate">Previsão de Entrega:</label>
-        <input type="date" id="deliveryDate">
-
-        <label for="items">Itens do Pedido:</label>
-        <div id="itemsContainer">
-            </div>
-        <button onclick="addItem()">Adicionar Item</button>
-        
-        <label for="notes">Observações:</label>
-        <textarea id="notes" rows="3">Por favor, envie a Nota Fiscal junto com a mercadoria.</textarea>
-
-        <hr style="margin: 20px 0;">
-        
-        <div class="action-buttons">
-            <button onclick="savePurchaseOrder()">Salvar e Gerar PDF</button>
-            <button onclick="printPurchaseOrder()">Imprimir (PDF)</button>
+        <div class="tabs">
+            <button class="tab-button active" onclick="openTab(event, 'tab-pedido')">Pedido de Compra</button>
+            <button class="tab-button" onclick="openTab(event, 'tab-fornecedores')">Fornecedores</button>
+            <button class="tab-button" onclick="openTab(event, 'tab-produtos')">Produtos</button>
         </div>
 
-        <h3 style="margin-top: 30px;">Histórico de Pedidos (ERP Simples)</h3>
-        <div class="history-list" id="historyList">
+        <div id="tab-pedido" class="tab-content active">
+            
+            <label for="poNumber">Número do Pedido (PO):</label>
+            <input type="text" id="poNumber" value="PO-001">
+            
+            <label for="poDate">Data do Pedido:</label>
+            <input type="date" id="poDate" value="<?php echo date('Y-m-d'); ?>">
+            
+            <label for="supplierSelect">Selecionar Fornecedor:</label>
+            <select id="supplierSelect" onchange="loadSupplierData()">
+                <option value="">-- Selecione ou Digite o Fornecedor --</option>
+            </select>
+            
+            <label for="supplierName">Nome do Fornecedor:</label>
+            <input type="text" id="supplierName" value="Nome do Fornecedor Ltda." oninput="updateOrder()">
+            
+            <label for="supplierContact">Contato/Email:</label>
+            <input type="text" id="supplierContact" value="email@fornecedor.com" oninput="updateOrder()">
+            
+            <label for="deliveryDate">Previsão de Entrega:</label>
+            <input type="date" id="deliveryDate" oninput="updateOrder()">
+
+            <label for="items">Itens do Pedido:</label>
+            <div id="itemsContainer">
             </div>
+            
+            <select id="productSelect">
+                <option value="">-- Adicionar Produto Cadastrado --</option>
+            </select>
+            <button onclick="addProductFromSelect()">Adicionar Produto Selecionado</button>
+            <button onclick="addItem()">Adicionar Item Manualmente</button>
+            
+            <label for="notes">Observações:</label>
+            <textarea id="notes" rows="3" oninput="updateOrder()">Por favor, envie a Nota Fiscal junto com a mercadoria.</textarea>
+
+            <hr style="margin: 20px 0;">
+            
+            <div class="action-buttons">
+                <button onclick="savePurchaseOrder()">Salvar e Gerar PDF</button>
+                <button onclick="printPurchaseOrder()">Imprimir (PDF)</button>
+            </div>
+
+            <h3 style="margin-top: 30px;">Histórico de Pedidos (Simples)</h3>
+            <div class="history-list" id="historyList">
+            </div>
+        </div>
+
+        <div id="tab-fornecedores" class="tab-content">
+            <h3>Cadastrar Novo Fornecedor</h3>
+            <label for="f_name">Nome/Razão Social:</label>
+            <input type="text" id="f_name" placeholder="Ex: Distribuidora Alpha Ltda." required>
+            
+            <label for="f_cnpj">CNPJ:</label>
+            <input type="text" id="f_cnpj" placeholder="00.000.000/0000-00">
+            
+            <label for="f_contact">Contato/Email:</label>
+            <input type="text" id="f_contact" placeholder="contato@fornecedor.com">
+            
+            <label for="f_phone">Telefone:</label>
+            <input type="text" id="f_phone" placeholder="(XX) XXXX-XXXX">
+            
+            <label for="f_address">Endereço (Rua, Bairro, Cidade):</label>
+            <input type="text" id="f_address" placeholder="Rua A, Bairro B, Cidade C">
+            
+            <button onclick="saveSupplier()">Salvar Fornecedor</button>
+
+            <h3 style="margin-top: 30px;">Lista de Fornecedores Cadastrados</h3>
+            <div id="supplierList">
+                <p>Nenhum fornecedor cadastrado.</p>
+            </div>
+        </div>
+
+        <div id="tab-produtos" class="tab-content">
+            <h3>Cadastrar Novo Produto</h3>
+            <label for="p_sku">SKU/Código:</label>
+            <input type="text" id="p_sku" placeholder="Ex: MED-ASP-500" required>
+            
+            <label for="p_desc">Descrição do Produto:</label>
+            <input type="text" id="p_desc" placeholder="Ex: Aspirina 500mg - 10 comp." required>
+            
+            <label for="p_price">Preço Padrão (R$):</label>
+            <input type="number" id="p_price" step="0.01" min="0" value="0.00" required>
+            
+            <button onclick="saveProduct()">Salvar Produto</button>
+
+            <h3 style="margin-top: 30px;">Catálogo de Produtos</h3>
+            <div id="productList">
+                <p>Nenhum produto cadastrado.</p>
+            </div>
+        </div>
     </div>
 
     <div class="content">
@@ -158,13 +257,246 @@
     </div>
 
     <script>
-        // Variável global para armazenar os itens
+        // Variável global para armazenar os itens do pedido em rascunho
         let items = [];
 
-        // Adiciona a data de hoje por padrão
-        document.getElementById('poDate').value = new Date().toISOString().slice(0, 10);
+        // --- FUNÇÕES DE NAVEGAÇÃO (TABS) ---
+        function openTab(evt, tabName) {
+            let i, tabcontent, tablinks;
 
-        // Função para adicionar uma linha de item ao formulário
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+
+            tablinks = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        // --- FUNÇÕES DE CADASTRO DE FORNECEDOR ---
+        
+        // Salva ou atualiza um fornecedor no Local Storage
+        function saveSupplier() {
+            const name = document.getElementById('f_name').value.trim();
+            const cnpj = document.getElementById('f_cnpj').value.trim();
+            const contact = document.getElementById('f_contact').value.trim();
+            const phone = document.getElementById('f_phone').value.trim();
+            const address = document.getElementById('f_address').value.trim();
+
+            if (!name) {
+                alert("O Nome/Razão Social é obrigatório.");
+                return;
+            }
+
+            let suppliers = JSON.parse(localStorage.getItem('suppliers')) || {};
+            // Usa o Nome como chave única
+            suppliers[name] = { name, cnpj, contact, phone, address };
+
+            localStorage.setItem('suppliers', JSON.stringify(suppliers));
+            alert(`Fornecedor "${name}" salvo com sucesso!`);
+            
+            // Limpa o formulário e recarrega as listas
+            document.getElementById('f_name').value = '';
+            document.getElementById('f_cnpj').value = '';
+            document.getElementById('f_contact').value = '';
+            document.getElementById('f_phone').value = '';
+            document.getElementById('f_address').value = '';
+            loadSuppliersList();
+            loadSupplierSelect();
+        }
+
+        // Carrega a lista de fornecedores na TAB de cadastro
+        function loadSuppliersList() {
+            const list = document.getElementById('supplierList');
+            list.innerHTML = '';
+            const suppliers = JSON.parse(localStorage.getItem('suppliers')) || {};
+            
+            if (Object.keys(suppliers).length === 0) {
+                list.innerHTML = '<p>Nenhum fornecedor cadastrado.</p>';
+                return;
+            }
+
+            Object.keys(suppliers).forEach(key => {
+                const supplier = suppliers[key];
+                const item = document.createElement('div');
+                item.classList.add('list-item');
+                item.innerHTML = `
+                    <div>
+                        **${supplier.name}** <br> 
+                        CNPJ: ${supplier.cnpj || 'N/A'} | Tel: ${supplier.phone || 'N/A'}
+                    </div>
+                    <button class="delete-btn" onclick="deleteSupplier('${key}', event)">Excluir</button>
+                `;
+                list.appendChild(item);
+            });
+        }
+        
+        // Preenche o SELECT de fornecedores na TAB de Pedido
+        function loadSupplierSelect() {
+            const select = document.getElementById('supplierSelect');
+            select.innerHTML = '<option value="">-- Selecione ou Digite o Fornecedor --</option>';
+            const suppliers = JSON.parse(localStorage.getItem('suppliers')) || {};
+            
+            Object.keys(suppliers).forEach(key => {
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = key;
+                select.appendChild(option);
+            });
+        }
+        
+        // Carrega dados do fornecedor selecionado no formulário de Pedido
+        function loadSupplierData() {
+            const selectedName = document.getElementById('supplierSelect').value;
+            if (!selectedName) return;
+
+            const suppliers = JSON.parse(localStorage.getItem('suppliers'));
+            const supplier = suppliers[selectedName];
+
+            if (supplier) {
+                document.getElementById('supplierName').value = supplier.name;
+                document.getElementById('supplierContact').value = supplier.contact;
+                updateOrder();
+            }
+        }
+        
+        // Exclui um fornecedor
+        function deleteSupplier(name, event) {
+            event.stopPropagation();
+            if (confirm(`Tem certeza que deseja excluir o fornecedor "${name}"?`)) {
+                let suppliers = JSON.parse(localStorage.getItem('suppliers')) || {};
+                delete suppliers[name];
+                localStorage.setItem('suppliers', JSON.stringify(suppliers));
+                loadSuppliersList();
+                loadSupplierSelect();
+                alert(`Fornecedor "${name}" excluído.`);
+            }
+        }
+
+
+        // --- FUNÇÕES DE CADASTRO DE PRODUTO ---
+        
+        // Salva ou atualiza um produto no Local Storage
+        function saveProduct() {
+            const sku = document.getElementById('p_sku').value.trim();
+            const desc = document.getElementById('p_desc').value.trim();
+            const price = parseFloat(document.getElementById('p_price').value) || 0;
+
+            if (!sku || !desc) {
+                alert("O SKU/Código e a Descrição são obrigatórios.");
+                return;
+            }
+            
+            let products = JSON.parse(localStorage.getItem('products')) || {};
+            // Usa o SKU como chave única
+            products[sku] = { sku, desc, price: price.toFixed(2) }; 
+
+            localStorage.setItem('products', JSON.stringify(products));
+            alert(`Produto "${sku}" - "${desc}" salvo com sucesso!`);
+            
+            // Limpa o formulário e recarrega as listas
+            document.getElementById('p_sku').value = '';
+            document.getElementById('p_desc').value = '';
+            document.getElementById('p_price').value = '0.00';
+            loadProductsList();
+            loadProductSelect();
+        }
+
+        // Carrega a lista de produtos na TAB de cadastro
+        function loadProductsList() {
+            const list = document.getElementById('productList');
+            list.innerHTML = '';
+            const products = JSON.parse(localStorage.getItem('products')) || {};
+            
+            if (Object.keys(products).length === 0) {
+                list.innerHTML = '<p>Nenhum produto cadastrado.</p>';
+                return;
+            }
+
+            Object.keys(products).forEach(key => {
+                const product = products[key];
+                const item = document.createElement('div');
+                item.classList.add('list-item');
+                item.innerHTML = `
+                    <div>
+                        **${product.sku}** - ${product.desc} <br>
+                        Preço Padrão: R$ ${product.price.replace('.', ',')}
+                    </div>
+                    <button class="delete-btn" onclick="deleteProduct('${key}', event)">Excluir</button>
+                `;
+                list.appendChild(item);
+            });
+        }
+        
+        // Preenche o SELECT de produtos na TAB de Pedido
+        function loadProductSelect() {
+            const select = document.getElementById('productSelect');
+            select.innerHTML = '<option value="">-- Adicionar Produto Cadastrado --</option>';
+            const products = JSON.parse(localStorage.getItem('products')) || {};
+            
+            Object.keys(products).forEach(key => {
+                const product = products[key];
+                const option = document.createElement('option');
+                option.value = product.sku;
+                option.textContent = `(${product.sku}) ${product.desc} - R$ ${product.price.replace('.', ',')}`;
+                select.appendChild(option);
+            });
+        }
+        
+        // Adiciona um produto selecionado ao Pedido
+        function addProductFromSelect() {
+            const selectedSku = document.getElementById('productSelect').value;
+            if (!selectedSku) {
+                alert("Por favor, selecione um produto do catálogo.");
+                return;
+            }
+            
+            const products = JSON.parse(localStorage.getItem('products'));
+            const product = products[selectedSku];
+            
+            if (product) {
+                const container = document.getElementById('itemsContainer');
+                const newIndex = items.length;
+                
+                const itemRow = document.createElement('div');
+                itemRow.classList.add('item-row');
+                itemRow.innerHTML = `
+                    <input type="text" id="desc-${newIndex}" value="${product.desc}" placeholder="Descrição do Item">
+                    <input type="text" id="sku-${newIndex}" value="${product.sku}" placeholder="SKU/Cód.">
+                    <input type="number" id="qty-${newIndex}" value="1" min="1" oninput="updateOrder()">
+                    <input type="number" id="price-${newIndex}" value="${product.price}" min="0" step="0.01" oninput="updateOrder()">
+                    <button class="delete-btn" onclick="removeItem(${newIndex})">X</button>
+                `;
+                container.appendChild(itemRow);
+                
+                items.push({ index: newIndex }); 
+                updateOrder();
+                document.getElementById('productSelect').value = ""; // Limpa a seleção
+            }
+        }
+
+        // Exclui um produto
+        function deleteProduct(sku, event) {
+            event.stopPropagation();
+            if (confirm(`Tem certeza que deseja excluir o produto com SKU "${sku}"?`)) {
+                let products = JSON.parse(localStorage.getItem('products')) || {};
+                delete products[sku];
+                localStorage.setItem('products', JSON.stringify(products));
+                loadProductsList();
+                loadProductSelect();
+                alert(`Produto com SKU "${sku}" excluído.`);
+            }
+        }
+
+
+        // --- FUNÇÕES DE PEDIDO DE COMPRA (MANTIDAS) ---
+
+        // Função para adicionar uma linha de item manual ao formulário
         function addItem() {
             const container = document.getElementById('itemsContainer');
             const newIndex = items.length;
@@ -173,7 +505,7 @@
             itemRow.classList.add('item-row');
             itemRow.innerHTML = `
                 <input type="text" id="desc-${newIndex}" placeholder="Descrição do Item">
-                <input type="number" id="sku-${newIndex}" placeholder="SKU/Cód.">
+                <input type="text" id="sku-${newIndex}" placeholder="SKU/Cód.">
                 <input type="number" id="qty-${newIndex}" value="1" min="1" oninput="updateOrder()">
                 <input type="number" id="price-${newIndex}" value="0.00" min="0" step="0.01" oninput="updateOrder()">
                 <button class="delete-btn" onclick="removeItem(${newIndex})">X</button>
@@ -245,7 +577,6 @@
             document.getElementById('outSubtotal').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
             document.getElementById('outTotal').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
 
-            // Salva os dados atuais no objeto global para uso futuro (salvar/carregar)
             saveCurrentDataToLocal();
         }
 
@@ -255,9 +586,8 @@
             return `${day}/${month}/${year}`;
         }
         
-        // --- FUNÇÕES DE ARMAZENAMENTO LOCAL (SIMULANDO O ERP) ---
+        // --- FUNÇÕES DE HISTÓRICO DE PEDIDOS (MANTIDAS) ---
         
-        // Salva o pedido atual no Local Storage
         function savePurchaseOrder() {
             const poNumber = document.getElementById('poNumber').value;
             if (!poNumber) {
@@ -268,7 +598,6 @@
             const currentOrder = getCurrentOrderData();
             const savedOrders = JSON.parse(localStorage.getItem('savedOrders')) || {};
             
-            // Verifica se o PO Number já existe
             if (savedOrders[poNumber] && !confirm(`O Pedido N° ${poNumber} já existe. Deseja sobrescrevê-lo?`)) {
                 return;
             }
@@ -277,10 +606,9 @@
             localStorage.setItem('savedOrders', JSON.stringify(savedOrders));
             alert(`Pedido N° ${poNumber} salvo com sucesso!`);
             loadHistory();
-            printPurchaseOrder(); // Gera o PDF após salvar (opcional)
+            printPurchaseOrder();
         }
 
-        // Carrega um pedido salvo no Local Storage
         function loadPurchaseOrder(poNumber) {
             const savedOrders = JSON.parse(localStorage.getItem('savedOrders')) || {};
             const order = savedOrders[poNumber];
@@ -290,11 +618,9 @@
                 return;
             }
             
-            // Limpa itens antigos
             document.getElementById('itemsContainer').innerHTML = '';
             items = [];
 
-            // 1. Carrega os dados principais
             document.getElementById('poNumber').value = order.poNumber;
             document.getElementById('poDate').value = order.poDate;
             document.getElementById('supplierName').value = order.supplierName;
@@ -302,36 +628,33 @@
             document.getElementById('deliveryDate').value = order.deliveryDate;
             document.getElementById('notes').value = order.notes;
 
-            // 2. Carrega os itens e preenche o formulário
             order.items.forEach(itemData => {
                 const newIndex = items.length;
-                addItem(); // Adiciona a estrutura HTML
+                addItem(); 
 
-                // Preenche os valores nos novos inputs
                 document.getElementById(`desc-${newIndex}`).value = itemData.desc;
                 document.getElementById(`sku-${newIndex}`).value = itemData.sku;
                 document.getElementById(`qty-${newIndex}`).value = itemData.qty;
                 document.getElementById(`price-${newIndex}`).value = itemData.price;
             });
 
-            // 3. Atualiza a visualização final
+            document.getElementById('supplierSelect').value = order.supplierName; // Tenta selecionar no dropdown
             updateOrder();
             alert(`Pedido N° ${poNumber} carregado com sucesso!`);
         }
 
-        // Carrega a lista de pedidos salvos no Local Storage
         function loadHistory() {
             const historyList = document.getElementById('historyList');
             historyList.innerHTML = '';
             const savedOrders = JSON.parse(localStorage.getItem('savedOrders')) || {};
 
-            Object.keys(savedOrders).reverse().forEach(poNumber => { // Inverte para mostrar o mais novo primeiro
+            Object.keys(savedOrders).reverse().forEach(poNumber => { 
                 const item = savedOrders[poNumber];
                 const historyItem = document.createElement('div');
-                historyItem.classList.add('history-item');
+                historyItem.classList.add('list-item');
                 historyItem.innerHTML = `
-                    **${poNumber}** - ${item.supplierName} 
-                    <button style="float: right; margin-left: 10px;" class="delete-btn" onclick="deleteOrder('${poNumber}', event)">Excluir</button>
+                    <div>**${poNumber}** - ${item.supplierName}</div>
+                    <button class="delete-btn" onclick="deleteOrder('${poNumber}', event)">Excluir</button>
                 `;
                 historyItem.onclick = () => loadPurchaseOrder(poNumber);
                 historyList.appendChild(historyItem);
@@ -341,9 +664,8 @@
             }
         }
 
-        // Exclui um pedido
         function deleteOrder(poNumber, event) {
-            event.stopPropagation(); // Impede que o clique carregue o pedido
+            event.stopPropagation(); 
             if (confirm(`Tem certeza que deseja excluir o Pedido N° ${poNumber}?`)) {
                 const savedOrders = JSON.parse(localStorage.getItem('savedOrders')) || {};
                 delete savedOrders[poNumber];
@@ -353,7 +675,6 @@
             }
         }
 
-        // Função para coletar todos os dados atuais do formulário
         function getCurrentOrderData() {
             const orderItems = [];
             items.forEach(item => {
@@ -380,25 +701,30 @@
             };
         }
 
-        // Salva os dados atuais (não o histórico) para preenchimento rápido
         function saveCurrentDataToLocal() {
              localStorage.setItem('currentOrderDraft', JSON.stringify(getCurrentOrderData()));
         }
 
         // --- FUNÇÕES DE EXPORTAÇÃO ---
-        
-        // Imprime o documento (para gerar PDF no navegador)
         function printPurchaseOrder() {
             window.print();
         }
 
         // Inicialização
         function init() {
-            // Adiciona a primeira linha de item ao carregar
+            document.getElementById('poDate').value = new Date().toISOString().slice(0, 10);
+            
+            // Carrega dados iniciais do "mini-ERP"
+            loadSuppliersList();
+            loadSupplierSelect();
+            loadProductsList();
+            loadProductSelect();
+            
+            // Inicia o Pedido de Compra
             addItem(); 
-            // Carrega o histórico de pedidos
             loadHistory();
-            // Adiciona um listener de evento para qualquer mudança nos inputs do sidebar (exceto os de item)
+            
+            // Set listener for updates
             const sidebarInputs = document.querySelectorAll('.sidebar input, .sidebar textarea');
             sidebarInputs.forEach(input => {
                 input.addEventListener('input', updateOrder);
@@ -410,6 +736,9 @@
             document.getElementById('poNumber').value = `PO-${(lastPoNumber + 1).toString().padStart(3, '0')}`;
             
             updateOrder();
+            
+            // Abre a aba de Pedido por padrão
+            document.querySelector('.tab-button').click();
         }
 
         window.onload = init;
