@@ -36,6 +36,7 @@
             font-size: 12px; 
             font-weight: bold;
             margin-top: 0;
+            cursor: pointer;
         }
         .btn-view { background-color: #007bff; }
         .btn-view:hover { background-color: #0056b3; }
@@ -77,10 +78,9 @@
         /* ESTILOS DO PEDIDO DE COMPRA PARA VISUALIZAÇÃO/PRINT */
         .purchase-order { padding: 30px; }
         .purchase-order img { 
-            max-width: 250px; 
+            max-width: 200px; /* Redução para 200px */
             display: block; 
             margin: 0 auto 10px auto; 
-            /* Estilo para garantir qualidade na impressão */
             border: none !important;
             padding: 0 !important;
         }
@@ -212,20 +212,20 @@
                 `;
             });
             
-            // Renderiza o HTML do Pedido
+            // Renderiza o HTML do Pedido (ATUALIZADO)
             poDisplayArea.innerHTML = `
                 <div style="text-align: center; margin-bottom: 20px;">
                     <img 
                         src="https://dbrito10.github.io/Farm-cia-do-Trabalhador/Logo.jpg" 
                         alt="Logo Farmácia do Trabalhador e Aposentado" 
-                        style="max-width: 250px;" 
+                        style="max-width: 200px;" 
                     >
-                    <h1 style="color: #004c99; font-size: 22px;">PEDIDO DE COMPRA / PURCHASE ORDER</h1>
-                    <p style="font-size: 11px;">
-                        **FARMÁCIA DO TRABALHADOR E APOSENTADO DE PINHEIROS LTDA** | CNPJ: **32.927.077/0001-06** | 
-                        Endereço: PRAC BAIANA 75-B ANEXO B, Centro, Pinheiros/ES, CEP 29980-000 | 
-                        Telefone: (27) 99981-8349
-                    </p>
+                    <h1 style="color: #004c99; font-size: 22px; margin: 5px 0 10px 0;">PEDIDO DE COMPRA</h1>
+                    <div style="font-size: 11px; line-height: 1.5;">
+                        <p style="margin: 0; font-weight: bold;">FARMÁCIA DO TRABALHADOR E APOSENTADO DE PINHEIROS LTDA | CNPJ: 32.927.077/0001-06</p>
+                        <p style="margin: 0;">Endereço: PRAC BAIANA 75-B ANEXO B, Centro, Pinheiros/ES, CEP 29980-000</p>
+                        <p style="margin: 0;">Telefone: (27) 99981-8349</p>
+                    </div>
                     <hr style="border: 1px solid #004c99; margin-top: 10px;">
                 </div>
 
