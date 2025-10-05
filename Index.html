@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Pedido de Compra Personalizado</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; background-color: #f4f7f6; display: flex; }
+        .sidebar { width: 300px; background-color: #ffffff; padding: 20px; box-shadow: 2px 0 5px rgba(0,0,0,0.1); overflow-y: auto; }
+        .content { flex-grow: 1; padding: 20px; }
+        .header { text-align: center; margin-bottom: 20px; color: #004c99; }
+        
+        /* Estilo do Documento de Pedido de Compra */
+        .purchase-order { background-color: white; border: 1px solid #ccc; padding: 30px; margin-bottom: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.05); }
+        .po-header { display: flex; justify-content: space-between; border-bottom: 2px solid #004c99; padding-bottom: 10px; margin-bottom: 20px; }
+        .po-title { font-size: 24px; font-weight: bold; color: #004c99; }
+        .po-info div { margin-bottom: 5px; font-size: 14px; }
+        .po-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .po-table th, .po-table td { border: 1px solid #ddd; padding: 10px; text-align: left; font-size: 14px; }
+        .po-table th { background-color: #f2f2f2; color: #333; }
+        .po-totals { margin-top: 20px; text-align: right; }
+        .po-totals div { font-size: 16px; font-weight: bold; margin-top: 5px; }
+
+        /* Estilo dos Inputs */
+        label { display: block; margin-top: 10px; font-weight: bold; color: #333; }
+        input[type="text"], input[type="date"], input[type="number"], textarea { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .item-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px; align-items: center; }
+        .item-row input, .item-row button { height: 38px; }
+        button { background-color: #004c99; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px; transition: background-color 0.3s; }
+        button:hover { background-color: #003366; }
+        .delete-btn { background-color: #dc3545; }
+        .delete-btn:hover { background-color: #c82333; }
+
+        /* Botões de Ação */
+        .action-buttons button { margin-right: 10px; background-color: #28a745; }
+        .action-buttons button:hover { background-color: #1e7e34; }
+        
+        /* Seção de Histórico (ERP Simples) */
+        .history-list { margin-top: 20px; padding: 10px; border-top: 1px solid #ddd; }
+        .history-item { padding: 10px; border: 1px solid #eee; margin-bottom: 5px; border-radius: 4px; cursor: pointer; background-color: #f9f9f9; }
+        .history-item:hover { background-color: #e9e9e9; }
+
+        @media print {
+            body { display: block; background-color: white; }
+            .sidebar, .action-buttons { display: none; }
+            .content { padding: 0; }
+            .purchase-order { border: none; box-shadow: none; margin-bottom: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2 class="header">Dados do Pedido</h2>
+        
+        <label for="poNumber">Número do Pedido (PO):</label>
+        <input type="text" id="poNumber" value="PO-001">
+        
+        <label for="poDate">Data do Pedido:</label>
+        <input type="date" id="poDate" value="<?php echo date('Y-m-d'); ?>">
+        
+        <label for="supplierName">Fornecedor:</label>
+        <input type="text" id="supplierName" value="Nome do Fornecedor Ltda.">
+        
+        <label for="supplierContact">Contato do Fornecedor:</label>
+        <input type="text" id="supplierContact" value="email@fornecedor.com">
+        
+        <label for="deliveryDate">Previsão de Entrega:</label>
+        <input type="date" id="deliveryDate">
+
+        <label for="items">Itens do Pedido:</label>
+        <div id="itemsContainer">
+            </div>
+        <button onclick="addItem()">Adicionar Item</button>
+        
+        <label for="notes">Observações:</label>
+        <textarea id="notes" rows="3">Por favor, envie a Nota Fiscal junto com a mercadoria.</textarea>
+
+        <hr style="margin: 20px 0;">
+        
+        <div class="action-buttons">
+            <button onclick="savePurchaseOrder()">Salvar e Gerar PDF</button>
+            <button onclick="printPurchaseOrder()">Imprimir (PDF)</button>
+        </div>
+
+        <h3 style="margin-top: 30px;">Histórico de Pedidos (ERP Simples)</h3>
+        <div class="history-list" id="historyList">
+            </div>
+    </div>
+
+    <div class="content">
+        <div class="header">
+            <p>Seu Logo Aqui (Substitua esta linha)</p>
+            <h1>PEDIDO DE COMPRA / PURCHASE ORDER</h1>
+            <p id="companyDetails">Sua Empresa Comércio Ltda. | CNPJ: XX.XXX.XXX/0001-XX | Endereço: Rua Principal, 100 - Cidade/UF</p>
+        </div>
+
+        <div class="purchase-order" id="purchaseOrderOutput">
+            <div class="po-header">
+                <div class="po-title">Pedido N°: <span id="outPoNumber">PO-001</span></div>
+                <div class="po-date">Data: <span id="outPoDate">2025-10-05</span></div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                <div class="po-info">
+                    <p style="font-weight: bold; color: #004c99;">DADOS DO FORNECEDOR</p>
+                    <div>**Fornecedor:** <span id="outSupplierName">Nome do Fornecedor Ltda.</span></div>
+                    <div>**Contato:** <span id="outSupplierContact">email@fornecedor.com</span></div>
+                </div>
+                <div class="po-info" style="text-align: right;">
+                    <p style="font-weight: bold; color: #004c99;">DETALHES DA ENTREGA</p>
+                    <div>**Previsão:** <span id="outDeliveryDate"></span></div>
+                    <div>**Local:** Endereço Principal de Entrega</div>
+                </div>
+            </div>
+
+            <table class="po-table">
+                <thead>
+                    <tr>
+                        <th style="width: 40%;">Item / Descrição</th>
+                        <th>Qtd.</th>
+                        <th>Preço Unit. (R$)</th>
+                        <th>Total (R$)</th>
+                    </tr>
+                </thead>
+                <tbody id="poTableBody">
+                    </tbody>
+            </table>
+
+            <div class="po-totals">
+                <div>Subtotal: <span id="outSubtotal">R$ 0,00</span></div>
+                <div>Impostos (0%): R$ 0,00</div>
+                <div style="font-size: 18px; color: #dc3545; border-top: 1px solid #ccc; padding-top: 5px;">**TOTAL GERAL:** <span id="outTotal">R$ 0,00</span></div>
+            </div>
+
+            <div style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 15px; font-size: 14px;">
+                <p style="font-weight: bold; color: #004c99;">OBSERVAÇÕES:</p>
+                <p id="outNotes">Por favor, envie a Nota Fiscal junto com a mercadoria.</p>
+            </div>
+            
+        </div>
+        <p style="text-align: center; font-size: 12px; color: #999;">Documento gerado pelo seu Gerador de Pedidos Personalizado.</p>
+
+    </div>
+
+    <script>
+        // Variável global para armazenar os itens
+        let items = [];
+
+        // Adiciona a data de hoje por padrão
+        document.getElementById('poDate').value = new Date().toISOString().slice(0, 10);
+
+        // Função para adicionar uma linha de item ao formulário
+        function addItem() {
+            const container = document.getElementById('itemsContainer');
+            const newIndex = items.length;
+            
+            const itemRow = document.createElement('div');
+            itemRow.classList.add('item-row');
+            itemRow.innerHTML = `
+                <input type="text" id="desc-${newIndex}" placeholder="Descrição do Item">
+                <input type="number" id="sku-${newIndex}" placeholder="SKU/Cód.">
+                <input type="number" id="qty-${newIndex}" value="1" min="1" oninput="updateOrder()">
+                <input type="number" id="price-${newIndex}" value="0.00" min="0" step="0.01" oninput="updateOrder()">
+                <button class="delete-btn" onclick="removeItem(${newIndex})">X</button>
+            `;
+            container.appendChild(itemRow);
+            
+            // Adiciona um objeto temporário para manter o índice
+            items.push({ index: newIndex }); 
+            updateOrder();
+        }
+
+        // Função para remover um item do formulário e da visualização
+        function removeItem(index) {
+            const element = document.getElementById(`desc-${index}`).parentNode;
+            element.remove();
+            
+            // Remove o item da lista local
+            items = items.filter(item => item.index !== index);
+
+            // Reorganiza a exibição
+            updateOrder();
+        }
+
+        // Função principal para atualizar o documento de Pedido de Compra
+        function updateOrder() {
+            // 1. Coleta os dados principais
+            const poNumber = document.getElementById('poNumber').value;
+            const poDate = document.getElementById('poDate').value;
+            const supplierName = document.getElementById('supplierName').value;
+            const supplierContact = document.getElementById('supplierContact').value;
+            const deliveryDate = document.getElementById('deliveryDate').value;
+            const notes = document.getElementById('notes').value;
+
+            // 2. Atualiza os dados principais na visualização
+            document.getElementById('outPoNumber').textContent = poNumber || 'N/A';
+            document.getElementById('outPoDate').textContent = poDate ? formatDate(poDate) : 'N/A';
+            document.getElementById('outSupplierName').textContent = supplierName || 'N/A';
+            document.getElementById('outSupplierContact').textContent = supplierContact || 'N/A';
+            document.getElementById('outDeliveryDate').textContent = deliveryDate ? formatDate(deliveryDate) : 'N/A';
+            document.getElementById('outNotes').textContent = notes || 'Nenhuma observação.';
+            
+            // 3. Atualiza a tabela de itens
+            let total = 0;
+            const poTableBody = document.getElementById('poTableBody');
+            poTableBody.innerHTML = ''; // Limpa a tabela
+
+            items.forEach(item => {
+                const index = item.index;
+                const desc = document.getElementById(`desc-${index}`)?.value || '';
+                const sku = document.getElementById(`sku-${index}`)?.value || '';
+                const qty = parseFloat(document.getElementById(`qty-${index}`)?.value) || 0;
+                const price = parseFloat(document.getElementById(`price-${index}`)?.value) || 0;
+                
+                if (!desc) return; // Não mostra itens sem descrição
+                
+                const itemTotal = qty * price;
+                total += itemTotal;
+                
+                const newRow = poTableBody.insertRow();
+                newRow.innerHTML = `
+                    <td>**${desc}** ${sku ? '(' + sku + ')' : ''}</td>
+                    <td>${qty.toLocaleString('pt-BR')}</td>
+                    <td>R$ ${price.toFixed(2).replace('.', ',')}</td>
+                    <td>R$ ${itemTotal.toFixed(2).replace('.', ',')}</td>
+                `;
+            });
+            
+            // 4. Atualiza os totais
+            document.getElementById('outSubtotal').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+            document.getElementById('outTotal').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+
+            // Salva os dados atuais no objeto global para uso futuro (salvar/carregar)
+            saveCurrentDataToLocal();
+        }
+
+        // Função auxiliar para formatar datas
+        function formatDate(dateString) {
+            const [year, month, day] = dateString.split('-');
+            return `${day}/${month}/${year}`;
+        }
+        
+        // --- FUNÇÕES DE ARMAZENAMENTO LOCAL (SIMULANDO O ERP) ---
+        
+        // Salva o pedido atual no Local Storage
+        function savePurchaseOrder() {
+            const poNumber = document.getElementById('poNumber').value;
+            if (!poNumber) {
+                alert("O número do pedido (PO) é obrigatório para salvar!");
+                return;
+            }
+
+            const currentOrder = getCurrentOrderData();
+            const savedOrders = JSON.parse(localStorage.getItem('savedOrders')) || {};
+            
+            // Verifica se o PO Number já existe
+            if (savedOrders[poNumber] && !confirm(`O Pedido N° ${poNumber} já existe. Deseja sobrescrevê-lo?`)) {
+                return;
+            }
+            
+            savedOrders[poNumber] = currentOrder;
+            localStorage.setItem('savedOrders', JSON.stringify(savedOrders));
+            alert(`Pedido N° ${poNumber} salvo com sucesso!`);
+            loadHistory();
+            printPurchaseOrder(); // Gera o PDF após salvar (opcional)
+        }
+
+        // Carrega um pedido salvo no Local Storage
+        function loadPurchaseOrder(poNumber) {
+            const savedOrders = JSON.parse(localStorage.getItem('savedOrders')) || {};
+            const order = savedOrders[poNumber];
+            
+            if (!order) {
+                alert("Pedido não encontrado!");
+                return;
+            }
+            
+            // Limpa itens antigos
+            document.getElementById('itemsContainer').innerHTML = '';
+            items = [];
+
+            // 1. Carrega os dados principais
+            document.getElementById('poNumber').value = order.poNumber;
+            document.getElementById('poDate').value = order.poDate;
+            document.getElementById('supplierName').value = order.supplierName;
+            document.getElementById('supplierContact').value = order.supplierContact;
+            document.getElementById('deliveryDate').value = order.deliveryDate;
+            document.getElementById('notes').value = order.notes;
+
+            // 2. Carrega os itens e preenche o formulário
+            order.items.forEach(itemData => {
+                const newIndex = items.length;
+                addItem(); // Adiciona a estrutura HTML
+
+                // Preenche os valores nos novos inputs
+                document.getElementById(`desc-${newIndex}`).value = itemData.desc;
+                document.getElementById(`sku-${newIndex}`).value = itemData.sku;
+                document.getElementById(`qty-${newIndex}`).value = itemData.qty;
+                document.getElementById(`price-${newIndex}`).value = itemData.price;
+            });
+
+            // 3. Atualiza a visualização final
+            updateOrder();
+            alert(`Pedido N° ${poNumber} carregado com sucesso!`);
+        }
+
+        // Carrega a lista de pedidos salvos no Local Storage
+        function loadHistory() {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = '';
+            const savedOrders = JSON.parse(localStorage.getItem('savedOrders')) || {};
+
+            Object.keys(savedOrders).reverse().forEach(poNumber => { // Inverte para mostrar o mais novo primeiro
+                const item = savedOrders[poNumber];
+                const historyItem = document.createElement('div');
+                historyItem.classList.add('history-item');
+                historyItem.innerHTML = `
+                    **${poNumber}** - ${item.supplierName} 
+                    <button style="float: right; margin-left: 10px;" class="delete-btn" onclick="deleteOrder('${poNumber}', event)">Excluir</button>
+                `;
+                historyItem.onclick = () => loadPurchaseOrder(poNumber);
+                historyList.appendChild(historyItem);
+            });
+            if (Object.keys(savedOrders).length === 0) {
+                historyList.textContent = 'Nenhum pedido salvo.';
+            }
+        }
+
+        // Exclui um pedido
+        function deleteOrder(poNumber, event) {
+            event.stopPropagation(); // Impede que o clique carregue o pedido
+            if (confirm(`Tem certeza que deseja excluir o Pedido N° ${poNumber}?`)) {
+                const savedOrders = JSON.parse(localStorage.getItem('savedOrders')) || {};
+                delete savedOrders[poNumber];
+                localStorage.setItem('savedOrders', JSON.stringify(savedOrders));
+                loadHistory();
+                alert(`Pedido N° ${poNumber} excluído.`);
+            }
+        }
+
+        // Função para coletar todos os dados atuais do formulário
+        function getCurrentOrderData() {
+            const orderItems = [];
+            items.forEach(item => {
+                const index = item.index;
+                const desc = document.getElementById(`desc-${index}`)?.value || '';
+                if (desc) {
+                    orderItems.push({
+                        desc: desc,
+                        sku: document.getElementById(`sku-${index}`)?.value || '',
+                        qty: document.getElementById(`qty-${index}`)?.value || '',
+                        price: document.getElementById(`price-${index}`)?.value || ''
+                    });
+                }
+            });
+
+            return {
+                poNumber: document.getElementById('poNumber').value,
+                poDate: document.getElementById('poDate').value,
+                supplierName: document.getElementById('supplierName').value,
+                supplierContact: document.getElementById('supplierContact').value,
+                deliveryDate: document.getElementById('deliveryDate').value,
+                notes: document.getElementById('notes').value,
+                items: orderItems
+            };
+        }
+
+        // Salva os dados atuais (não o histórico) para preenchimento rápido
+        function saveCurrentDataToLocal() {
+             localStorage.setItem('currentOrderDraft', JSON.stringify(getCurrentOrderData()));
+        }
+
+        // --- FUNÇÕES DE EXPORTAÇÃO ---
+        
+        // Imprime o documento (para gerar PDF no navegador)
+        function printPurchaseOrder() {
+            window.print();
+        }
+
+        // Inicialização
+        function init() {
+            // Adiciona a primeira linha de item ao carregar
+            addItem(); 
+            // Carrega o histórico de pedidos
+            loadHistory();
+            // Adiciona um listener de evento para qualquer mudança nos inputs do sidebar (exceto os de item)
+            const sidebarInputs = document.querySelectorAll('.sidebar input, .sidebar textarea');
+            sidebarInputs.forEach(input => {
+                input.addEventListener('input', updateOrder);
+            });
+            
+            // Garante que o número do PO seja sequencial (simples)
+            const savedOrders = JSON.parse(localStorage.getItem('savedOrders')) || {};
+            const lastPoNumber = Object.keys(savedOrders).length;
+            document.getElementById('poNumber').value = `PO-${(lastPoNumber + 1).toString().padStart(3, '0')}`;
+            
+            updateOrder();
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
