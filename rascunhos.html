@@ -5,8 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pedidos Memorizados (Rascunhos)</title>
     <style>
+        /* Estilos Base */
         body { font-family: Arial, sans-serif; margin: 0; background-color: #f4f7f6; padding: 20px; }
         .container { max-width: 900px; margin: 0 auto; background-color: #ffffff; padding: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 8px; }
+        
+        /* Barra Superior (User/Logout) */
+        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; margin-bottom: 10px; border-bottom: 1px solid #ddd; }
+        .user-info { font-weight: bold; color: #004c99; font-size: 14px; }
+        .logout-btn { background-color: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s; }
+        .logout-btn:hover { background-color: #c82333; }
+        
         .header { text-align: center; margin-bottom: 30px; color: #004c99; }
         .header h1 { font-size: 28px; }
         
@@ -16,144 +24,359 @@
         .nav-bar a:hover, .nav-bar a.active { background-color: #003366; }
 
         /* Lista de Rascunhos */
-        .history-list { margin-top: 20px; }
+        .drafts-list { display: flex; flex-direction: column; gap: 10px; }
         .list-item { 
-            padding: 15px; 
-            border: 1px solid #ffc107; /* Borda amarela para diferenciar */
-            margin-bottom: 10px; 
-            border-radius: 4px; 
-            background-color: #fffbe9; /* Fundo amarelo claro */
-            font-size: 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 15px; background-color: #fff3e0; border-left: 5px solid #ff9800; 
+            border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
-        .list-item-actions button { 
-            margin-left: 10px; 
-            padding: 8px 12px; 
-            font-size: 12px; 
-            font-weight: bold;
-            margin-top: 0;
-            cursor: pointer;
-            color: white;
-            border: none;
-            border-radius: 4px;
-        }
-        .btn-edit { background-color: #ffc107; color: #333 !important; }
-        .btn-edit:hover { background-color: #e0a800; }
-        .btn-save { background-color: #28a745; }
-        .btn-save:hover { background-color: #1e7e34; }
+        .list-item-details { flex-grow: 1; color: #333; }
+        .list-item-actions { display: flex; gap: 8px; }
+        .btn-edit, .btn-finalize, .delete-btn { background-color: #ff9800; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s; }
+        .btn-finalize { background-color: #28a745; }
+        .btn-edit:hover { background-color: #f57c00; }
+        .btn-finalize:hover { background-color: #218838; }
         .delete-btn { background-color: #dc3545; }
         .delete-btn:hover { background-color: #c82333; }
+
+        /* Modal Customizado (Substitui alert/confirm) */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1000; 
+            left: 0; 
+            top: 0; 
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.4); 
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .modal-title { color: #004c99; margin-top: 0; }
+        .modal-message { margin: 15px 0 25px 0; color: #333; }
+        .modal-actions { display: flex; justify-content: center; gap: 10px; }
+        .modal-btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .modal-btn-primary { background-color: #004c99; color: white; }
+        .modal-btn-primary:hover { background-color: #003366; }
+        .modal-btn-secondary { background-color: #6c757d; color: white; }
+        .modal-btn-secondary:hover { background-color: #5a6268; }
+        .modal-btn-danger { background-color: #dc3545; color: white; }
+        .modal-btn-danger:hover { background-color: #c82333; }
     </style>
 </head>
 <body>
-    <div class="nav-bar">
-        <a href="index.html">Criar Pedido</a>
-        <a href="fornecedores.html">Cadastrar Fornecedor</a>
-        <a href="produtos.html">Cadastrar Produto</a>
-        <a href="historico.html">Histórico (Salvos)</a>
-        <a href="rascunhos.html" class="active">Memorizados (Rascunhos)</a>
-    </div>
-
+    
     <div class="container">
-        <div class="header">
-            <h1>PEDIDOS MEMORIZADOS (RASCUNHOS)</h1>
+        <!-- Barra Superior com Info do Usuário e Logout -->
+        <div class="top-bar">
+            <div id="userInfo" class="user-info">Aguardando autenticação...</div>
+            <button id="logoutBtn" class="logout-btn" style="display:none;">SAIR</button>
         </div>
 
-        <div class="history-list" id="draftsList">
-            <p>Carregando...</p>
+        <div class="header">
+            <img src="Logo.jpg-441b687c-a62a-4e45-a35a-97f12550a156" alt="Logo" style="max-width: 150px; margin-bottom: 10px;">
+            <h1>Pedidos Memorizados (Rascunhos)</h1>
+        </div>
+        
+        <!-- Navegação -->
+        <div class="nav-bar">
+            <a href="index.html">Novo Pedido</a>
+            <a href="historico.html">Histórico</a>
+            <a href="rascunhos.html" class="active">Rascunhos</a>
+            <a href="produtos.html">Produtos</a>
+            <a href="fornecedores.html">Fornecedores</a>
+        </div>
+
+        <div id="draftsList" class="drafts-list">
+            <p>Carregando rascunhos...</p>
+        </div>
+    </div>
+    
+    <!-- Custom Modal Structure (Para alerts/confirms) -->
+    <div id="customModal" class="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle" class="modal-title"></h2>
+            <p id="modalMessage" class="modal-message"></p>
+            <div id="modalActions" class="modal-actions">
+                <!-- Buttons dynamically added -->
+            </div>
         </div>
     </div>
 
-    <script>
-        function formatDate(dateString) {
-            if (!dateString) return 'N/A';
-            const [year, month, day] = dateString.split('-');
-            return `${day}/${month}/${year}`;
+    <!-- Script principal com Firebase e Lógica -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signOut, onAuthStateChanged, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, collection, query, limit, getDocs, updateDoc, deleteDoc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Variáveis globais fornecidas pelo ambiente
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let app, db, auth, userId = null;
+
+        // --- Variáveis e Funções Comuns de UI (Modal) ---
+        let customModal, modalTitle, modalMessage, modalActions;
+        let memorizedDrafts = {}; // Cache dos rascunhos
+
+        function setupModal() {
+            customModal = document.getElementById('customModal');
+            modalTitle = document.getElementById('modalTitle');
+            modalMessage = document.getElementById('modalMessage');
+            modalActions = document.getElementById('modalActions');
+        }
+
+        function showCustomAlert(title, message) {
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            modalActions.innerHTML = '<button id="modalCloseBtn" class="modal-btn modal-btn-primary">OK</button>';
+            document.getElementById('modalCloseBtn').onclick = () => customModal.style.display = 'none';
+            customModal.style.display = 'flex';
+        }
+
+        function showCustomConfirm(title, message, onConfirm, onCancel = () => {}) {
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            modalActions.innerHTML = `
+                <button id="modalCancelBtn" class="modal-btn modal-btn-secondary">Cancelar</button>
+                <button id="modalConfirmBtn" class="modal-btn modal-btn-danger">Confirmar</button>
+            `;
+            document.getElementById('modalCancelBtn').onclick = () => { customModal.style.display = 'none'; onCancel(); };
+            document.getElementById('modalConfirmBtn').onclick = () => {
+                customModal.style.display = 'none';
+                onConfirm();
+            };
+            customModal.style.display = 'flex';
         }
         
-        function loadDrafts() {
-            const draftsList = document.getElementById('draftsList');
-            draftsList.innerHTML = '';
-            
-            // Chave para pedidos memorizados/rascunhos
-            const memorizedOrders = JSON.parse(localStorage.getItem('memorizedOrders')) || {};
+        // Função para atualizar a UI de Autenticação
+        function updateUserUI(userName) {
+            document.getElementById('userInfo').textContent = `Bem-vindo(a), ${userName}`;
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (userId && !auth.currentUser.isAnonymous) {
+                logoutBtn.style.display = 'block';
+            } else {
+                logoutBtn.style.display = 'none';
+            }
+        }
 
-            if (Object.keys(memorizedOrders).length === 0) {
-                draftsList.innerHTML = '<p>Nenhum pedido memorizado ainda. <a href="index.html">Crie um novo rascunho.</a></p>';
+        // --- Configuração e Autenticação do Firebase ---
+
+        async function setupFirebase() {
+            if (!firebaseConfig) {
+                console.error("Firebase config is missing. Redirecting to login.");
+                window.location.href = 'login.html'; 
                 return;
             }
 
-            // Invertendo a ordem para mostrar os mais recentes primeiro
-            Object.keys(memorizedOrders).reverse().forEach(poNumber => { 
-                const item = memorizedOrders[poNumber];
-                const listItem = document.createElement('div');
-                listItem.classList.add('list-item');
-                listItem.innerHTML = `
-                    <div>
-                        **Rascunho N° ${item.poNumber}** - ${item.supplierName} 
-                        <span style="font-size: 12px; color: #666;">(Data: ${formatDate(item.poDate)})</span>
-                    </div>
-                    <div class="list-item-actions">
-                        <button class="btn-edit" onclick="editDraft('${item.poNumber}', event)">Editar Rascunho</button>
-                        <button class="btn-save" onclick="saveAsFinalOrder('${item.poNumber}', event)">Salvar Definitivo</button>
-                        <button class="delete-btn" onclick="deleteDraft('${item.poNumber}', event)">Excluir</button>
-                    </div>
-                `;
-                draftsList.appendChild(listItem);
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            // setLogLevel('Debug'); 
+
+            if (initialAuthToken) {
+                try {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } catch (error) {
+                    console.error("Erro no token, tentando anônimo:", error);
+                    await signInAnonymously(auth);
+                }
+            } else {
+                await signInAnonymously(auth);
+            }
+            
+            onAuthStateChanged(auth, async (user) => {
+                if (user && !user.isAnonymous) {
+                    userId = user.uid;
+                    let userName = user.email ? user.email.split('@')[0] : 'Usuário';
+                    
+                    const userDocRef = doc(db, `/artifacts/${appId}/users/${userId}/config/profile`);
+                    try {
+                        const userDoc = await getDoc(userDocRef);
+                        if (userDoc.exists() && userDoc.data().displayName) {
+                            userName = userDoc.data().displayName;
+                        }
+                    } catch(e) {
+                        console.warn("Could not fetch user profile.", e);
+                    }
+                    
+                    updateUserUI(userName);
+                    loadData(); // Chama a função de carregamento de dados específica da página
+                } else if (user && user.isAnonymous) {
+                    window.location.href = 'login.html';
+                } else {
+                    if (window.location.pathname.indexOf('login.html') === -1) {
+                        window.location.href = 'login.html';
+                    }
+                }
+            });
+
+            document.getElementById('logoutBtn').addEventListener('click', async () => {
+                try {
+                    await signOut(auth);
+                    window.location.href = 'login.html';
+                } catch (error) {
+                    showCustomAlert('Erro de Logout', 'Não foi possível sair: ' + error.message);
+                }
+            });
+        }
+
+        // Helper para obter a referência da Coleção do Usuário
+        function getUserCollectionRef(collectionName) {
+            if (!db || !userId) {
+                console.error("Firestore não inicializado ou userId não disponível.");
+                return null;
+            }
+            return collection(db, `/artifacts/${appId}/users/${userId}/${collectionName}`);
+        }
+        
+        // --- Lógica dos Rascunhos ---
+
+        function loadDrafts() {
+            const listElement = document.getElementById('draftsList');
+            const collectionRef = getUserCollectionRef('drafts');
+            if (!collectionRef) return;
+            
+            const q = query(collectionRef); // Query para a coleção de rascunhos
+
+            onSnapshot(q, (snapshot) => {
+                listElement.innerHTML = '';
+                let drafts = [];
+                memorizedDrafts = {}; // Limpa o cache
+                
+                snapshot.forEach(doc => {
+                    const draft = doc.data();
+                    drafts.push(draft);
+                    memorizedDrafts[draft.poNumber] = draft;
+                });
+                
+                // Ordenar localmente pelo poNumber (assumindo PO-XXX)
+                drafts.sort((a, b) => {
+                    const numA = parseInt(a.poNumber.split('-')[1]);
+                    const numB = parseInt(b.poNumber.split('-')[1]);
+                    return numB - numA; // Mais novo primeiro
+                });
+
+                if (drafts.length === 0) {
+                    listElement.innerHTML = '<p>Nenhum rascunho memorizado encontrado.</p>';
+                    return;
+                }
+
+                drafts.forEach(draft => {
+                    const item = document.createElement('div');
+                    item.classList.add('list-item');
+
+                    const formattedDate = new Date(draft.poDate + 'T00:00:00').toLocaleDateString('pt-BR');
+                    const totalFormatted = parseFloat(draft.total).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+                    item.innerHTML = `
+                        <div class="list-item-details">
+                            <strong>N° Rascunho: ${draft.poNumber}</strong> | Data: ${formattedDate} <br> 
+                            Fornecedor: ${draft.supplierName || 'N/A'} | Total estimado: <span style="color: #ff9800; font-weight: bold;">${totalFormatted}</span>
+                        </div>
+                        <div class="list-item-actions">
+                            <button class="btn-edit" onclick="editDraft('${draft.poNumber}', event)">Editar</button>
+                            <button class="btn-finalize" onclick="finalizeDraft('${draft.poNumber}', event)">Finalizar</button>
+                            <button class="delete-btn" onclick="deleteDraft('${draft.poNumber}', event)">Excluir</button>
+                        </div>
+                    `;
+                    listElement.appendChild(item);
+                });
+            }, (error) => {
+                console.error("Erro ao carregar rascunhos:", error);
+                listElement.innerHTML = '<p style="color: red;">Erro ao carregar dados dos rascunhos.</p>';
             });
         }
         
         function editDraft(poNumber, event) {
-            if (event) event.stopPropagation();
-            // Redireciona para o index, passando o PO e indicando que é um RASCUNHO
+            event.stopPropagation();
             window.location.href = `index.html?edit_draft=${poNumber}`;
         }
 
-        function saveAsFinalOrder(poNumber, event) {
-            if (event) event.stopPropagation();
-            if (confirm(`Tem certeza que deseja salvar o Rascunho N° ${poNumber} como Pedido Definitivo?`)) {
-                let memorizedOrders = JSON.parse(localStorage.getItem('memorizedOrders')) || {};
-                let savedOrders = JSON.parse(localStorage.getItem('savedOrders')) || {};
-                
-                const draft = memorizedOrders[poNumber];
-                
-                if (!draft) {
-                    alert('Erro: Rascunho não encontrado.');
-                    loadDrafts();
-                    return;
+        function deleteDraft(poNumber, event) {
+            event.stopPropagation();
+            showCustomConfirm(
+                'Confirmação de Exclusão',
+                `Tem certeza que deseja EXCLUIR o Rascunho N° ${poNumber}?`,
+                async () => {
+                    const docRef = doc(getUserCollectionRef('drafts'), poNumber);
+                    try {
+                        await deleteDoc(docRef);
+                        showCustomAlert('Excluído!', `Rascunho N° ${poNumber} excluído com sucesso.`);
+                    } catch (error) {
+                        console.error("Erro ao excluir rascunho:", error);
+                        showCustomAlert('Erro', 'Não foi possível excluir o rascunho: ' + error.message);
+                    }
+                }
+            );
+        }
+
+        async function finalizeDraft(poNumber, event) {
+            event.stopPropagation();
+            const draft = memorizedDrafts[poNumber];
+            if (!draft) {
+                showCustomAlert('Erro', 'Rascunho não encontrado.');
+                return;
+            }
+
+            const historyRef = doc(getUserCollectionRef('orders'), poNumber);
+            const draftRef = doc(getUserCollectionRef('drafts'), poNumber);
+            
+            try {
+                // 1. Verificar se o PO já existe no histórico
+                const historySnap = await getDoc(historyRef);
+
+                if (historySnap.exists()) {
+                    let confirmed = false;
+                    await new Promise(resolve => {
+                        showCustomConfirm(
+                            'Atenção',
+                            `O Pedido N° ${poNumber} já existe no Histórico. Deseja sobrescrevê-lo?`, 
+                            () => { confirmed = true; resolve(); },
+                            () => { confirmed = false; resolve(); }
+                        );
+                    });
+                    if (!confirmed) return;
                 }
 
-                if (savedOrders[poNumber] && !confirm(`O Pedido N° ${poNumber} já existe no Histórico. Deseja sobrescrevê-lo?`)) {
-                    return;
-                }
-
-                // Salva no histórico
-                savedOrders[poNumber] = draft;
-                localStorage.setItem('savedOrders', JSON.stringify(savedOrders));
+                // 2. Salvar no Histórico (o rascunho)
+                await setDoc(historyRef, draft);
                 
-                // Remove dos rascunhos
-                delete memorizedOrders[poNumber];
-                localStorage.setItem('memorizedOrders', JSON.stringify(memorizedOrders));
+                // 3. Remover dos rascunhos
+                await deleteDoc(draftRef);
                 
-                alert(`Rascunho N° ${poNumber} salvo com sucesso no Histórico!`);
+                showCustomAlert('Finalizado', `Rascunho N° ${poNumber} salvo com sucesso no Histórico!`);
                 window.location.href = 'historico.html'; // Redireciona para ver o pedido salvo
+                
+            } catch (error) {
+                console.error("Erro ao finalizar rascunho:", error);
+                showCustomAlert('Erro', 'Não foi possível finalizar o rascunho: ' + error.message);
             }
         }
         
-        function deleteDraft(poNumber, event) {
-            event.stopPropagation();
-            if (confirm(`Tem certeza que deseja excluir o Rascunho N° ${poNumber}?`)) {
-                let memorizedOrders = JSON.parse(localStorage.getItem('memorizedOrders')) || {};
-                delete memorizedOrders[poNumber];
-                localStorage.setItem('memorizedOrders', JSON.stringify(memorizedOrders));
-                loadDrafts();
-                alert(`Rascunho N° ${poNumber} excluído.`);
-            }
-        }
+        // Função de carregamento que é chamada após a autenticação
+        window.loadData = loadDrafts;
 
-        window.onload = loadDrafts;
+        window.onload = () => {
+            setupModal();
+            setupFirebase();
+        };
+        
+        // Exporta funções para uso global (onclick no HTML)
+        window.editDraft = editDraft;
+        window.deleteDraft = deleteDraft;
+        window.finalizeDraft = finalizeDraft;
     </script>
 </body>
 </html>
