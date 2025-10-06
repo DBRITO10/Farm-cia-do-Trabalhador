@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acesso ao Sistema</title>
+    <style>
+        /* Estilos Profissionais */
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            margin: 0;
+            background-color: #f0f4f8; /* Fundo suave */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .auth-container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+        .header h1 {
+            color: #004c99;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        .header p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        input[type="email"], input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        input[type="email"]:focus, input[type="password"]:focus {
+            border-color: #004c99;
+            outline: none;
+        }
+        .btn-auth {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        .btn-login {
+            background-color: #004c99;
+            color: white;
+        }
+        .btn-login:hover {
+            background-color: #003366;
+        }
+        .toggle-mode {
+            background: none;
+            border: none;
+            color: #004c99;
+            margin-top: 20px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .error-message {
+            color: #dc3545;
+            margin-top: 15px;
+            font-size: 14px;
+            text-align: left;
+        }
+        /* Loading Spinner */
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 5px;
+            display: none;
+        }
+        .btn-login.loading .spinner { display: inline-block; }
+        .btn-login.loading span { opacity: 0; }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, onAuthStateChanged, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Variáveis globais fornecidas pelo ambiente
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let auth, db;
+        let isLoginMode = true; // Estado da UI
+
+        if (firebaseConfig) {
+            const app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+
+            // Tenta logar automaticamente (importante para o ambiente Canvas)
+            if (initialAuthToken) {
+                signInWithCustomToken(auth, initialAuthToken).catch(e => {
+                    console.error("Erro no token de auth inicial, tentando anônimo.", e);
+                    signInAnonymously(auth);
+                });
+            } else {
+                signInAnonymously(auth);
+            }
+
+            // Ouve o estado de autenticação para redirecionamento
+            onAuthStateChanged(auth, (user) => {
+                if (user && !user.isAnonymous) {
+                    // Se o usuário estiver logado com conta (não anônimo), redireciona
+                    console.log("Usuário autenticado, redirecionando para index.html");
+                    window.location.href = 'index.html';
+                }
+            });
+        } else {
+            document.getElementById('error-msg').textContent = "Erro: Configuração do Firebase não encontrada.";
+        }
+
+        function toggleMode() {
+            isLoginMode = !isLoginMode;
+            document.getElementById('formTitle').textContent = isLoginMode ? 'Entrar no Sistema' : 'Criar Conta';
+            document.getElementById('submitBtn').textContent = isLoginMode ? 'Entrar' : 'Registrar';
+            document.getElementById('toggleBtn').textContent = isLoginMode ? 'Precisa de uma conta? Registrar' : 'Já tem uma conta? Entrar';
+            
+            // Adiciona/remove campo de Nome
+            const nameGroup = document.getElementById('nameGroup');
+            if (isLoginMode) {
+                nameGroup.style.display = 'none';
+            } else {
+                nameGroup.style.display = 'block';
+            }
+        }
+
+        async function handleSubmit(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const name = document.getElementById('name').value;
+            const errorMsg = document.getElementById('error-msg');
+            const submitBtn = document.getElementById('submitBtn');
+
+            errorMsg.textContent = '';
+            submitBtn.classList.add('loading');
+            
+            if (isLoginMode) {
+                // Lógica de Login
+                try {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    // O redirecionamento acontece no onAuthStateChanged
+                } catch (error) {
+                    errorMsg.textContent = 'Erro ao fazer login: ' + formatFirebaseError(error.code);
+                    submitBtn.classList.remove('loading');
+                }
+            } else {
+                // Lógica de Registro
+                try {
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    const user = userCredential.user;
+
+                    // 1. Atualiza o displayName no objeto User do Firebase Auth
+                    await updateProfile(user, { displayName: name });
+                    
+                    // 2. Salva o displayName em um documento de perfil no Firestore
+                    const userDocRef = doc(db, `/artifacts/${appId}/users/${user.uid}/config/profile`);
+                    await setDoc(userDocRef, { displayName: name, email: email, createdAt: new Date() });
+                    
+                    // O redirecionamento acontece no onAuthStateChanged
+                } catch (error) {
+                    errorMsg.textContent = 'Erro ao registrar: ' + formatFirebaseError(error.code);
+                    submitBtn.classList.remove('loading');
+                }
+            }
+        }
+
+        function formatFirebaseError(code) {
+            switch(code) {
+                case 'auth/user-not-found': return 'Usuário não encontrado.';
+                case 'auth/wrong-password': return 'Senha incorreta.';
+                case 'auth/email-already-in-use': return 'Este e-mail já está em uso.';
+                case 'auth/weak-password': return 'A senha deve ter pelo menos 6 caracteres.';
+                case 'auth/invalid-email': return 'E-mail inválido.';
+                default: return 'Ocorreu um erro desconhecido.';
+            }
+        }
+
+        window.onload = () => {
+            if (firebaseConfig) {
+                document.getElementById('authForm').addEventListener('submit', handleSubmit);
+                document.getElementById('toggleBtn').addEventListener('click', toggleMode);
+                toggleMode(); // Inicializa no modo Login
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="header">
+            <img src="Logo.jpg-441b687c-a62a-4e45-a35a-97f12550a156" alt="Logo" style="max-width: 100px; margin-bottom: 20px;">
+            <h1 id="formTitle">Entrar no Sistema</h1>
+            <p>Gerador de Pedido de Compra</p>
+        </div>
+        
+        <form id="authForm">
+            <div id="nameGroup" class="form-group" style="display: none;">
+                <label for="name">Seu Nome/Usuário</label>
+                <input type="text" id="name" required placeholder="Ex: João Silva">
+            </div>
+            <div class="form-group">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" required placeholder="seu.email@exemplo.com">
+            </div>
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <input type="password" id="password" required placeholder="******">
+            </div>
+            
+            <button type="submit" id="submitBtn" class="btn-auth btn-login">
+                <span class="spinner"></span>
+                <span>Entrar</span>
+            </button>
+            
+            <p id="error-msg" class="error-message"></p>
+        </form>
+        
+        <button id="toggleBtn" class="toggle-mode">Precisa de uma conta? Registrar</button>
+    </div>
+</body>
+</html>
