@@ -37,6 +37,7 @@
             cursor: pointer;
             color: white;
             border: none;
+            border-radius: 4px;
         }
         .btn-edit { background-color: #ffc107; color: #333 !important; }
         .btn-edit:hover { background-color: #e0a800; }
@@ -76,7 +77,7 @@
             const draftsList = document.getElementById('draftsList');
             draftsList.innerHTML = '';
             
-            // Agora os rascunhos são salvos em 'memorizedOrders'
+            // Chave para pedidos memorizados/rascunhos
             const memorizedOrders = JSON.parse(localStorage.getItem('memorizedOrders')) || {};
 
             if (Object.keys(memorizedOrders).length === 0) {
@@ -84,32 +85,32 @@
                 return;
             }
 
+            // Invertendo a ordem para mostrar os mais recentes primeiro
             Object.keys(memorizedOrders).reverse().forEach(poNumber => { 
                 const item = memorizedOrders[poNumber];
                 const listItem = document.createElement('div');
                 listItem.classList.add('list-item');
                 listItem.innerHTML = `
                     <div>
-                        **Rascunho N° ${poNumber}** - ${item.supplierName} 
+                        **Rascunho N° ${item.poNumber}** - ${item.supplierName} 
                         <span style="font-size: 12px; color: #666;">(Data: ${formatDate(item.poDate)})</span>
                     </div>
                     <div class="list-item-actions">
-                        <button class="btn-edit" onclick="editDraft('${poNumber}', event)">Editar Rascunho</button>
-                        <button class="btn-save" onclick="saveAsFinalOrder('${poNumber}', event)">Salvar Definitivo</button>
-                        <button class="delete-btn" onclick="deleteDraft('${poNumber}', event)">Excluir</button>
+                        <button class="btn-edit" onclick="editDraft('${item.poNumber}', event)">Editar Rascunho</button>
+                        <button class="btn-save" onclick="saveAsFinalOrder('${item.poNumber}', event)">Salvar Definitivo</button>
+                        <button class="delete-btn" onclick="deleteDraft('${item.poNumber}', event)">Excluir</button>
                     </div>
                 `;
                 draftsList.appendChild(listItem);
             });
         }
         
-        // Redireciona para o index para continuar a edição
         function editDraft(poNumber, event) {
             if (event) event.stopPropagation();
+            // Redireciona para o index, passando o PO e indicando que é um RASCUNHO
             window.location.href = `index.html?edit_draft=${poNumber}`;
         }
 
-        // Move o pedido de Rascunho para a lista de Pedidos Salvos
         function saveAsFinalOrder(poNumber, event) {
             if (event) event.stopPropagation();
             if (confirm(`Tem certeza que deseja salvar o Rascunho N° ${poNumber} como Pedido Definitivo?`)) {
@@ -118,6 +119,12 @@
                 
                 const draft = memorizedOrders[poNumber];
                 
+                if (!draft) {
+                    alert('Erro: Rascunho não encontrado.');
+                    loadDrafts();
+                    return;
+                }
+
                 if (savedOrders[poNumber] && !confirm(`O Pedido N° ${poNumber} já existe no Histórico. Deseja sobrescrevê-lo?`)) {
                     return;
                 }
@@ -131,7 +138,7 @@
                 localStorage.setItem('memorizedOrders', JSON.stringify(memorizedOrders));
                 
                 alert(`Rascunho N° ${poNumber} salvo com sucesso no Histórico!`);
-                loadDrafts(); 
+                window.location.href = 'historico.html'; // Redireciona para ver o pedido salvo
             }
         }
         
