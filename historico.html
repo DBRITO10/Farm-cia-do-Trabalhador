@@ -37,9 +37,13 @@
             font-weight: bold;
             margin-top: 0;
             cursor: pointer;
+            color: white;
+            border: none;
         }
         .btn-view { background-color: #007bff; }
         .btn-view:hover { background-color: #0056b3; }
+        .btn-edit { background-color: #ffc107; color: #333 !important; }
+        .btn-edit:hover { background-color: #e0a800; }
         .delete-btn { background-color: #dc3545; }
         .delete-btn:hover { background-color: #c82333; }
         
@@ -78,7 +82,7 @@
         /* ESTILOS DO PEDIDO DE COMPRA PARA VISUALIZAÇÃO/PRINT */
         .purchase-order { padding: 30px; }
         .purchase-order img { 
-            max-width: 200px; /* Redução para 200px */
+            max-width: 200px; 
             display: block; 
             margin: 0 auto 10px auto; 
             border: none !important;
@@ -124,7 +128,7 @@
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal()">&times;</span>
             <div style="text-align: right; margin-bottom: 10px;" class="print-actions">
-                <button onclick="printOrderModal()" class="btn-save">Imprimir / Gerar PDF</button>
+                <button onclick="printOrderModal()" class="btn-view">Imprimir / Gerar PDF</button>
             </div>
             <div id="poDisplayArea" class="purchase-order">
                 </div>
@@ -149,7 +153,6 @@
                 return;
             }
 
-            // Exibe do mais novo para o mais antigo
             Object.keys(savedOrders).reverse().forEach(poNumber => { 
                 const item = savedOrders[poNumber];
                 const historyItem = document.createElement('div');
@@ -160,12 +163,18 @@
                         <span style="font-size: 12px; color: #666;">(Data: ${formatDate(item.poDate)})</span>
                     </div>
                     <div class="list-item-actions">
+                        <button class="btn-edit" onclick="editOrder('${poNumber}', event)">Editar</button>
                         <button class="btn-view" onclick="viewPurchaseOrder('${poNumber}', event)">Visualizar / PDF</button>
                         <button class="delete-btn" onclick="deleteOrder('${poNumber}', event)">Excluir</button>
                     </div>
                 `;
                 historyList.appendChild(historyItem);
             });
+        }
+        
+        function editOrder(poNumber, event) {
+            if (event) event.stopPropagation();
+            window.location.href = `index.html?edit_po=${poNumber}`;
         }
 
         function deleteOrder(poNumber, event) {
@@ -179,8 +188,7 @@
             }
         }
         
-        // --- FUNÇÕES DO MODAL/VISUALIZAÇÃO ---
-
+        // ... (viewPurchaseOrder, closeModal, printOrderModal permanecem os mesmos) ...
         function viewPurchaseOrder(poNumber, event) {
             event.stopPropagation();
             const savedOrders = JSON.parse(localStorage.getItem('savedOrders')) || {};
