@@ -49,7 +49,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            cursor: pointer;
         }
         .list-item:hover { background-color: #e9e9e9; }
         .list-item-details { flex-grow: 1; }
@@ -64,7 +63,8 @@
         <a href="index.html">Criar Pedido</a>
         <a href="fornecedores.html">Cadastrar Fornecedor</a>
         <a href="produtos.html" class="active">Cadastrar Produto</a>
-        <a href="historico.html">Histórico de Pedidos</a>
+        <a href="historico.html">Histórico (Salvos)</a>
+        <a href="rascunhos.html">Memorizados (Rascunhos)</a>
     </div>
 
     <div class="container">
@@ -119,6 +119,7 @@
 
             alert(`Produto com SKU "${sku}" salvo/atualizado com sucesso!`);
             document.getElementById('productForm').reset();
+            document.getElementById('sku').disabled = false;
             document.getElementById('submitButton').textContent = 'Cadastrar Produto';
             loadProductsList();
         }
@@ -133,12 +134,11 @@
                 document.getElementById('desc').value = product.desc;
                 document.getElementById('price').value = product.price;
                 
-                // Muda o texto para indicar que é uma atualização
                 document.getElementById('submitButton').textContent = 'Atualizar Produto';
-                // Desabilita o campo SKU para edição (geralmente SKU não muda)
+                // Bloqueia a edição do SKU/código
                 document.getElementById('sku').disabled = true; 
 
-                window.scrollTo(0, 0); // Volta para o topo para edição
+                window.scrollTo(0, 0); 
             }
         }
         
