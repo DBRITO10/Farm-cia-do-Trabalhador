@@ -27,7 +27,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            cursor: pointer;
         }
         .list-item:hover { background-color: #e9e9e9; }
         .list-item-actions button { 
@@ -39,6 +38,7 @@
             cursor: pointer;
             color: white;
             border: none;
+            border-radius: 4px;
         }
         .btn-view { background-color: #007bff; }
         .btn-view:hover { background-color: #0056b3; }
@@ -111,7 +111,8 @@
         <a href="index.html">Criar Pedido</a>
         <a href="fornecedores.html">Cadastrar Fornecedor</a>
         <a href="produtos.html">Cadastrar Produto</a>
-        <a href="historico.html" class="active">Histórico de Pedidos</a>
+        <a href="historico.html" class="active">Histórico (Salvos)</a>
+        <a href="rascunhos.html">Memorizados (Rascunhos)</a>
     </div>
 
     <div class="container">
@@ -159,13 +160,13 @@
                 historyItem.classList.add('list-item');
                 historyItem.innerHTML = `
                     <div>
-                        **${poNumber}** - ${item.supplierName} 
+                        **${item.poNumber}** - ${item.supplierName} 
                         <span style="font-size: 12px; color: #666;">(Data: ${formatDate(item.poDate)})</span>
                     </div>
                     <div class="list-item-actions">
-                        <button class="btn-edit" onclick="editOrder('${poNumber}', event)">Editar</button>
-                        <button class="btn-view" onclick="viewPurchaseOrder('${poNumber}', event)">Visualizar / PDF</button>
-                        <button class="delete-btn" onclick="deleteOrder('${poNumber}', event)">Excluir</button>
+                        <button class="btn-edit" onclick="editOrder('${item.poNumber}', event)">Editar</button>
+                        <button class="btn-view" onclick="viewPurchaseOrder('${item.poNumber}', event)">Visualizar / PDF</button>
+                        <button class="delete-btn" onclick="deleteOrder('${item.poNumber}', event)">Excluir</button>
                     </div>
                 `;
                 historyList.appendChild(historyItem);
@@ -174,6 +175,7 @@
         
         function editOrder(poNumber, event) {
             if (event) event.stopPropagation();
+            // Redireciona para o index, indicando que é um pedido SALVO
             window.location.href = `index.html?edit_po=${poNumber}`;
         }
 
@@ -188,7 +190,6 @@
             }
         }
         
-        // ... (viewPurchaseOrder, closeModal, printOrderModal permanecem os mesmos) ...
         function viewPurchaseOrder(poNumber, event) {
             event.stopPropagation();
             const savedOrders = JSON.parse(localStorage.getItem('savedOrders')) || {};
@@ -220,7 +221,7 @@
                 `;
             });
             
-            // Renderiza o HTML do Pedido (ATUALIZADO)
+            // Renderiza o HTML do Pedido
             poDisplayArea.innerHTML = `
                 <div style="text-align: center; margin-bottom: 20px;">
                     <img 
