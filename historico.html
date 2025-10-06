@@ -5,8 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Histórico de Pedidos</title>
     <style>
+        /* Estilos Base */
         body { font-family: Arial, sans-serif; margin: 0; background-color: #f4f7f6; padding: 20px; }
         .container { max-width: 900px; margin: 0 auto; background-color: #ffffff; padding: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 8px; }
+        
+        /* Barra Superior (User/Logout) */
+        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; margin-bottom: 10px; border-bottom: 1px solid #ddd; }
+        .user-info { font-weight: bold; color: #004c99; font-size: 14px; }
+        .logout-btn { background-color: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s; }
+        .logout-btn:hover { background-color: #c82333; }
+        
         .header { text-align: center; margin-bottom: 30px; color: #004c99; }
         .header h1 { font-size: 28px; }
         
@@ -16,39 +24,25 @@
         .nav-bar a:hover, .nav-bar a.active { background-color: #003366; }
 
         /* Lista de Histórico */
-        .history-list { margin-top: 20px; }
+        .history-list { display: flex; flex-direction: column; gap: 10px; }
         .list-item { 
-            padding: 15px; 
-            border: 1px solid #ddd; 
-            margin-bottom: 10px; 
-            border-radius: 4px; 
-            background-color: #f9f9f9; 
-            font-size: 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 15px; background-color: #e6f0ff; border-left: 5px solid #004c99; 
+            border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); cursor: pointer;
+            transition: background-color 0.2s;
         }
-        .list-item:hover { background-color: #e9e9e9; }
-        .list-item-actions button { 
-            margin-left: 10px; 
-            padding: 8px 12px; 
-            font-size: 12px; 
-            font-weight: bold;
-            margin-top: 0;
-            cursor: pointer;
-            color: white;
-            border: none;
-            border-radius: 4px;
-        }
-        .btn-view { background-color: #007bff; }
-        .btn-view:hover { background-color: #0056b3; }
-        .btn-edit { background-color: #ffc107; color: #333 !important; }
+        .list-item:hover { background-color: #d1e0ff; }
+        .list-item-details { flex-grow: 1; color: #333; }
+        .list-item-actions { display: flex; gap: 8px; }
+        .btn-view, .btn-edit, .delete-btn { background-color: #004c99; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s; }
+        .btn-edit { background-color: #ffc107; color: #333; }
+        .btn-view:hover { background-color: #003366; }
         .btn-edit:hover { background-color: #e0a800; }
         .delete-btn { background-color: #dc3545; }
         .delete-btn:hover { background-color: #c82333; }
-        
-        /* Estilos de visualização (Modal/Print) */
-        .modal { 
+
+        /* Modal Customizado (Substitui alert/confirm) */
+        .modal {
             display: none; 
             position: fixed; 
             z-index: 1000; 
@@ -58,216 +52,345 @@
             height: 100%; 
             overflow: auto; 
             background-color: rgba(0,0,0,0.4); 
+            justify-content: center;
+            align-items: center;
         }
         .modal-content {
             background-color: #fefefe;
-            margin: 5% auto; 
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%; 
+            padding: 30px;
+            border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
         }
-        .close-btn { 
-            color: #aaa; 
-            float: right; 
-            font-size: 28px; 
-            font-weight: bold; 
-        }
-        .close-btn:hover, .close-btn:focus { 
-            color: #000; 
-            text-decoration: none; 
-            cursor: pointer; 
-        }
-        
-        /* ESTILOS DO PEDIDO DE COMPRA PARA VISUALIZAÇÃO/PRINT */
-        .purchase-order { padding: 30px; }
-        .purchase-order img { 
-            max-width: 200px; 
-            display: block; 
-            margin: 0 auto 10px auto; 
-            border: none !important;
-            padding: 0 !important;
-        }
-        .po-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 12px; }
-        .po-table th, .po-table td { border: 1px solid #333; padding: 8px; text-align: left; }
-        .po-table th { background-color: #f2f2f2; color: #333; font-weight: bold;}
+        .modal-title { color: #004c99; margin-top: 0; }
+        .modal-message { margin: 15px 0 25px 0; color: #333; }
+        .modal-actions { display: flex; justify-content: center; gap: 10px; }
+        .modal-btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .modal-btn-primary { background-color: #004c99; color: white; }
+        .modal-btn-primary:hover { background-color: #003366; }
+        .modal-btn-secondary { background-color: #6c757d; color: white; }
+        .modal-btn-secondary:hover { background-color: #5a6268; }
+        .modal-btn-danger { background-color: #dc3545; color: white; }
+        .modal-btn-danger:hover { background-color: #c82333; }
 
+        /* Modal de Visualização do PO */
+        #poModal { background-color: rgba(0,0,0,0.8); }
+        .po-content {
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            max-width: 95%; 
+            width: 1000px; /* Maior largura para layout horizontal */
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        .po-close { position: absolute; top: 10px; right: 20px; font-size: 30px; font-weight: bold; cursor: pointer; color: #333; }
+        .po-close:hover { color: #dc3545; }
+        .po-table th, .po-table td { border: 1px solid #ccc; padding: 8px; font-size: 13px; }
+        .po-table th { background-color: #f0f0f0; }
+
+        /* Estilos de Impressão (PDF) - OBRIGATÓRIO HORIZONTAL */
         @media print {
-            .nav-bar, .container, .modal-content .close-btn, .modal-content .print-actions { 
-                display: none; 
+            @page {
+                size: landscape; /* Força a orientação horizontal */
+                margin: 1cm;
             }
-            .modal, .modal-content { 
-                position: static; 
-                display: block !important; 
-                margin: 0; 
-                padding: 0; 
-                width: 100%; 
-            }
+
+            body { background-color: white !important; padding: 0 !important; margin: 0 !important; }
+            .container, .po-content { max-width: 100% !important; width: 100% !important; margin: 0 !important; padding: 0 !important; box-shadow: none !important; }
+            .top-bar, .nav-bar, .history-list, #poModal .po-close, #poModal .print-btn { display: none !important; }
+            #poDisplay { display: block !important; } /* Garante que o conteúdo do modal apareça na impressão */
+            .po-content { width: 100%; height: 100vh; overflow: hidden; }
         }
     </style>
 </head>
 <body>
-    <div class="nav-bar">
-        <a href="index.html">Criar Pedido</a>
-        <a href="fornecedores.html">Cadastrar Fornecedor</a>
-        <a href="produtos.html">Cadastrar Produto</a>
-        <a href="historico.html" class="active">Histórico (Salvos)</a>
-        <a href="rascunhos.html">Memorizados (Rascunhos)</a>
-    </div>
-
+    
     <div class="container">
+        <!-- Barra Superior com Info do Usuário e Logout -->
+        <div class="top-bar">
+            <div id="userInfo" class="user-info">Aguardando autenticação...</div>
+            <button id="logoutBtn" class="logout-btn" style="display:none;">SAIR</button>
+        </div>
+
         <div class="header">
-            <h1>HISTÓRICO DE PEDIDOS SALVOS</h1>
+            <img src="Logo.jpg-441b687c-a62a-4e45-a35a-97f12550a156" alt="Logo" style="max-width: 150px; margin-bottom: 10px;">
+            <h1>Histórico de Pedidos Finalizados</h1>
+        </div>
+        
+        <!-- Navegação -->
+        <div class="nav-bar">
+            <a href="index.html">Novo Pedido</a>
+            <a href="historico.html" class="active">Histórico</a>
+            <a href="rascunhos.html">Rascunhos</a>
+            <a href="produtos.html">Produtos</a>
+            <a href="fornecedores.html">Fornecedores</a>
         </div>
 
-        <div class="history-list" id="historyList">
-            <p>Carregando...</p>
+        <div id="historyList" class="history-list">
+            <p>Carregando histórico...</p>
         </div>
     </div>
-
+    
+    <!-- Modal de Visualização do Pedido (PO) -->
     <div id="poModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
-            <div style="text-align: right; margin-bottom: 10px;" class="print-actions">
-                <button onclick="printOrderModal()" class="btn-view">Imprimir / Gerar PDF</button>
+        <div class="po-content">
+            <span class="po-close" onclick="closeModal()">&times;</span>
+            <div id="poDisplay">
+                <!-- Conteúdo do PO é gerado aqui -->
             </div>
-            <div id="poDisplayArea" class="purchase-order">
-                </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn-primary print-btn" onclick="printPo()">Imprimir Pedido</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Custom Modal Structure (Para alerts/confirms) -->
+    <div id="customModal" class="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle" class="modal-title"></h2>
+            <p id="modalMessage" class="modal-message"></p>
+            <div id="modalActions" class="modal-actions">
+                <!-- Buttons dynamically added -->
+            </div>
         </div>
     </div>
 
-    <script>
-        function formatDate(dateString) {
-            if (!dateString) return 'N/A';
-            const [year, month, day] = dateString.split('-');
-            return `${day}/${month}/${year}`;
+    <!-- Script principal com Firebase e Lógica -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signOut, onAuthStateChanged, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, query, limit, getDocs, updateDoc, deleteDoc, onSnapshot, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Variáveis globais fornecidas pelo ambiente
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let app, db, auth, userId = null;
+
+        // --- Variáveis e Funções Comuns de UI (Modal) ---
+        let customModal, modalTitle, modalMessage, modalActions;
+
+        function setupModal() {
+            customModal = document.getElementById('customModal');
+            modalTitle = document.getElementById('modalTitle');
+            modalMessage = document.getElementById('modalMessage');
+            modalActions = document.getElementById('modalActions');
         }
 
-        // --- FUNÇÕES DE HISTÓRICO ---
-        function loadHistory() {
-            const historyList = document.getElementById('historyList');
-            historyList.innerHTML = '';
-            const savedOrders = JSON.parse(localStorage.getItem('savedOrders')) || {};
+        function showCustomAlert(title, message) {
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            modalActions.innerHTML = '<button id="modalCloseBtn" class="modal-btn modal-btn-primary">OK</button>';
+            document.getElementById('modalCloseBtn').onclick = () => customModal.style.display = 'none';
+            customModal.style.display = 'flex';
+        }
 
-            if (Object.keys(savedOrders).length === 0) {
-                historyList.innerHTML = '<p>Nenhum pedido salvo ainda. <a href="index.html">Crie um novo pedido.</a></p>';
+        function showCustomConfirm(title, message, onConfirm) {
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            modalActions.innerHTML = `
+                <button id="modalCancelBtn" class="modal-btn modal-btn-secondary">Cancelar</button>
+                <button id="modalConfirmBtn" class="modal-btn modal-btn-danger">Confirmar</button>
+            `;
+            document.getElementById('modalCancelBtn').onclick = () => customModal.style.display = 'none';
+            document.getElementById('modalConfirmBtn').onclick = () => {
+                customModal.style.display = 'none';
+                onConfirm();
+            };
+            customModal.style.display = 'flex';
+        }
+        
+        // Função para atualizar a UI de Autenticação
+        function updateUserUI(userName) {
+            document.getElementById('userInfo').textContent = `Bem-vindo(a), ${userName}`;
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (userId && !auth.currentUser.isAnonymous) {
+                logoutBtn.style.display = 'block';
+            } else {
+                logoutBtn.style.display = 'none';
+            }
+        }
+
+        // --- Configuração e Autenticação do Firebase ---
+
+        async function setupFirebase() {
+            if (!firebaseConfig) {
+                console.error("Firebase config is missing. Redirecting to login.");
+                window.location.href = 'login.html'; 
                 return;
             }
 
-            Object.keys(savedOrders).reverse().forEach(poNumber => { 
-                const item = savedOrders[poNumber];
-                const historyItem = document.createElement('div');
-                historyItem.classList.add('list-item');
-                historyItem.innerHTML = `
-                    <div>
-                        **${item.poNumber}** - ${item.supplierName} 
-                        <span style="font-size: 12px; color: #666;">(Data: ${formatDate(item.poDate)})</span>
-                    </div>
-                    <div class="list-item-actions">
-                        <button class="btn-edit" onclick="editOrder('${item.poNumber}', event)">Editar</button>
-                        <button class="btn-view" onclick="viewPurchaseOrder('${item.poNumber}', event)">Visualizar / PDF</button>
-                        <button class="delete-btn" onclick="deleteOrder('${item.poNumber}', event)">Excluir</button>
-                    </div>
-                `;
-                historyList.appendChild(historyItem);
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            // setLogLevel('Debug'); 
+
+            if (initialAuthToken) {
+                try {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } catch (error) {
+                    console.error("Erro no token, tentando anônimo:", error);
+                    await signInAnonymously(auth);
+                }
+            } else {
+                await signInAnonymously(auth);
+            }
+            
+            onAuthStateChanged(auth, async (user) => {
+                if (user && !user.isAnonymous) {
+                    userId = user.uid;
+                    let userName = user.email ? user.email.split('@')[0] : 'Usuário';
+                    
+                    const userDocRef = doc(db, `/artifacts/${appId}/users/${userId}/config/profile`);
+                    try {
+                        const userDoc = await getDoc(userDocRef);
+                        if (userDoc.exists() && userDoc.data().displayName) {
+                            userName = userDoc.data().displayName;
+                        }
+                    } catch(e) {
+                        console.warn("Could not fetch user profile.", e);
+                    }
+                    
+                    updateUserUI(userName);
+                    loadData(); // Chama a função de carregamento de dados específica da página
+                } else if (user && user.isAnonymous) {
+                    window.location.href = 'login.html';
+                } else {
+                    if (window.location.pathname.indexOf('login.html') === -1) {
+                        window.location.href = 'login.html';
+                    }
+                }
+            });
+
+            document.getElementById('logoutBtn').addEventListener('click', async () => {
+                try {
+                    await signOut(auth);
+                    window.location.href = 'login.html';
+                } catch (error) {
+                    showCustomAlert('Erro de Logout', 'Não foi possível sair: ' + error.message);
+                }
+            });
+        }
+
+        // Helper para obter a referência da Coleção do Usuário
+        function getUserCollectionRef(collectionName) {
+            if (!db || !userId) {
+                console.error("Firestore não inicializado ou userId não disponível.");
+                return null;
+            }
+            return collection(db, `/artifacts/${appId}/users/${userId}/${collectionName}`);
+        }
+        
+        // --- Lógica do Histórico ---
+
+        function loadHistory() {
+            const listElement = document.getElementById('historyList');
+            const collectionRef = getUserCollectionRef('orders');
+            if (!collectionRef) return;
+            
+            // Query para ordenar por data (se for um campo que exista) ou por PO
+            // Como orderBy pode exigir índices, vamos evitar e ordenar localmente
+            const q = query(collectionRef); // Sem orderBy por segurança
+
+            onSnapshot(q, (snapshot) => {
+                listElement.innerHTML = '';
+                let orders = [];
+                snapshot.forEach(doc => {
+                    orders.push(doc.data());
+                });
+
+                // Ordenar localmente pelo poNumber (assumindo PO-XXX)
+                orders.sort((a, b) => {
+                    const numA = parseInt(a.poNumber.split('-')[1]);
+                    const numB = parseInt(b.poNumber.split('-')[1]);
+                    return numB - numA; // Mais novo primeiro
+                });
+
+                if (orders.length === 0) {
+                    listElement.innerHTML = '<p>Nenhum pedido finalizado encontrado.</p>';
+                    return;
+                }
+
+                orders.forEach(order => {
+                    const item = document.createElement('div');
+                    item.classList.add('list-item');
+                    item.onclick = () => viewPo(order); // Adiciona visualização ao clique na linha
+
+                    const formattedDate = new Date(order.poDate + 'T00:00:00').toLocaleDateString('pt-BR');
+                    const totalFormatted = parseFloat(order.total).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+                    item.innerHTML = `
+                        <div class="list-item-details">
+                            <strong>N° PO: ${order.poNumber}</strong> | Data: ${formattedDate} <br> 
+                            Fornecedor: ${order.supplierName} | Total: <span style="color: #004c99; font-weight: bold;">${totalFormatted}</span>
+                        </div>
+                        <div class="list-item-actions">
+                            <button class="btn-edit" onclick="editPo('${order.poNumber}', event)">Editar</button>
+                            <button class="delete-btn" onclick="deletePo('${order.poNumber}', event)">Excluir</button>
+                        </div>
+                    `;
+                    listElement.appendChild(item);
+                });
+            }, (error) => {
+                console.error("Erro ao carregar histórico:", error);
+                listElement.innerHTML = '<p style="color: red;">Erro ao carregar dados do histórico.</p>';
             });
         }
         
-        function editOrder(poNumber, event) {
-            if (event) event.stopPropagation();
-            // Redireciona para o index, indicando que é um pedido SALVO
-            window.location.href = `index.html?edit_po=${poNumber}`;
-        }
+        // Função para gerar o HTML de visualização/impressão (com coluna ITEM sequencial)
+        function generatePoHtml(order) {
+            const dateFormatted = new Date(order.poDate + 'T00:00:00').toLocaleDateString('pt-BR');
+            const total = parseFloat(order.total);
 
-        function deleteOrder(poNumber, event) {
-            event.stopPropagation(); 
-            if (confirm(`Tem certeza que deseja excluir o Pedido N° ${poNumber}? Esta ação é irreversível.`)) {
-                const savedOrders = JSON.parse(localStorage.getItem('savedOrders')) || {};
-                delete savedOrders[poNumber];
-                localStorage.setItem('savedOrders', JSON.stringify(savedOrders));
-                loadHistory();
-                alert(`Pedido N° ${poNumber} excluído.`);
-            }
-        }
-        
-        function viewPurchaseOrder(poNumber, event) {
-            event.stopPropagation();
-            const savedOrders = JSON.parse(localStorage.getItem('savedOrders')) || {};
-            const order = savedOrders[poNumber];
-
-            if (!order) {
-                alert("Pedido não encontrado!");
-                return;
-            }
-
-            const poDisplayArea = document.getElementById('poDisplayArea');
-            let tableRows = '';
-            let total = 0;
-
-            order.items.forEach(item => {
-                const qty = parseFloat(item.qty) || 0;
-                const price = parseFloat(item.price) || 0;
-                const itemTotal = qty * price;
-                total += itemTotal;
-
-                tableRows += `
+            let tableRows = order.items.map((item, index) => {
+                const itemNumber = index + 1; // Coluna ITEM sequencial
+                const itemTotal = (parseFloat(item.qty) * parseFloat(item.price)).toFixed(2).replace('.', ',');
+                
+                return `
                     <tr>
-                        <td style="border: 1px solid #ddd; padding: 8px;">**${item.desc}**</td>
-                        <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.sku || 'N/A'}</td>
-                        <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${qty.toLocaleString('pt-BR')}</td>
-                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">R$ ${price.toFixed(2).replace('.', ',')}</td>
-                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">R$ ${itemTotal.toFixed(2).replace('.', ',')}</td>
+                        <td style="width: 5%; text-align: center;">${itemNumber}</td>
+                        <td style="width: 10%; text-align: center;">${item.sku}</td>
+                        <td style="width: 45%;">${item.desc}</td>
+                        <td style="width: 10%; text-align: center;">${item.qty}</td>
+                        <td style="width: 15%; text-align: right;">R$ ${item.price.replace('.', ',')}</td>
+                        <td style="width: 15%; text-align: right;">R$ ${itemTotal}</td>
                     </tr>
                 `;
-            });
-            
-            // Renderiza o HTML do Pedido
-            poDisplayArea.innerHTML = `
+            }).join('');
+
+            return `
                 <div style="text-align: center; margin-bottom: 20px;">
-                    <img 
-                        src="https://dbrito10.github.io/Farm-cia-do-Trabalhador/Logo.jpg" 
-                        alt="Logo Farmácia do Trabalhador e Aposentado" 
-                        style="max-width: 200px;" 
-                    >
-                    <h1 style="color: #004c99; font-size: 22px; margin: 5px 0 10px 0;">PEDIDO DE COMPRA</h1>
-                    <div style="font-size: 11px; line-height: 1.5;">
-                        <p style="margin: 0; font-weight: bold;">FARMÁCIA DO TRABALHADOR E APOSENTADO DE PINHEIROS LTDA | CNPJ: 32.927.077/0001-06</p>
-                        <p style="margin: 0;">Endereço: PRAC BAIANA 75-B ANEXO B, Centro, Pinheiros/ES, CEP 29980-000</p>
-                        <p style="margin: 0;">Telefone: (27) 99981-8349</p>
-                    </div>
-                    <hr style="border: 1px solid #004c99; margin-top: 10px;">
+                    <img src="Logo.jpg-441b687c-a62a-4e45-a35a-97f12550a156" alt="Logo" style="max-width: 120px; margin-bottom: 10px;">
+                    <h2 style="color: #004c99; margin: 0;">PEDIDO DE COMPRA N° ${order.poNumber}</h2>
+                    <p style="font-size: 14px; color: #666; margin: 5px 0 0 0;">FARMÁCIA DO TRABALHADOR E APOSENTADO</p>
                 </div>
 
-                <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 13px;">
-                    <div style="font-weight: bold;">
-                        Pedido N°: <span id="outPoNumber">${order.poNumber}</span>
-                    </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 13px;">
                     <div>
-                        Data: <span id="outPoDate">${formatDate(order.poDate)}</span>
-                    </div>
-                </div>
-
-                <div style="display: flex; justify-content: space-between; border: 1px solid #ddd; padding: 10px; margin-bottom: 20px; font-size: 12px;">
-                    <div>
-                        <p style="font-weight: bold; color: #004c99; margin: 0 0 5px 0;">DADOS DO FORNECEDOR</p>
-                        <div>**Fornecedor:** <span>${order.supplierName}</span></div>
-                        <div>**Contato:** <span>${order.supplierContact}</span></div>
+                        <p style="font-weight: bold; color: #004c99; margin: 0 0 5px 0;">INFORMAÇÕES DO FORNECEDOR:</p>
+                        <p style="margin: 0;"><strong>Nome:</strong> ${order.supplierName}</p>
+                        <p style="margin: 0;"><strong>CNPJ:</strong> ${order.supplierCNPJ}</p>
                     </div>
                     <div style="text-align: right;">
-                        <p style="font-weight: bold; color: #004c99; margin: 0 0 5px 0;">DETALHES DA ENTREGA</p>
-                        <div>**Previsão:** <span>${formatDate(order.deliveryDate)}</span></div>
-                        <div>**Local:** PRAC BAIANA 75-B ANEXO B</div>
+                        <p style="font-weight: bold; color: #004c99; margin: 0 0 5px 0;">INFORMAÇÕES DO PEDIDO:</p>
+                        <p style="margin: 0;"><strong>Data:</strong> ${dateFormatted}</p>
+                        <p style="margin: 0;"><strong>Usuário:</strong> ${order.userId}</p>
                     </div>
                 </div>
-                
-                <table class="po-table">
+
+                <table class="po-table" style="width: 100%; border-collapse: collapse;">
                     <thead>
-                        <tr>
-                            <th style="width: 45%;">Item / Descrição</th>
-                            <th style="text-align: center; width: 10%;">SKU</th>
-                            <th style="text-align: center; width: 10%;">Qtd.</th>
-                            <th style="text-align: right; width: 15%;">Preço Unit. (R$)</th>
-                            <th style="text-align: right; width: 20%;">Total (R$)</th>
+                        <tr style="background-color: #004c99; color: white;">
+                            <th style="width: 5%;">ITEM</th>
+                            <th style="width: 10%;">SKU</th>
+                            <th style="width: 45%;">DESCRIÇÃO</th>
+                            <th style="width: 10%;">QTD.</th>
+                            <th style="width: 15%;">PREÇO UNIT.</th>
+                            <th style="width: 15%;">TOTAL</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -276,9 +399,8 @@
                 </table>
 
                 <div style="margin-top: 20px; text-align: right; font-size: 13px;">
-                    <div>Subtotal: <span style="font-weight: bold;">R$ ${total.toFixed(2).replace('.', ',')}</span></div>
                     <div style="margin-top: 5px; font-size: 16px; border-top: 1px solid #ccc; padding-top: 5px;">
-                        **TOTAL GERAL:** <span style="color: #dc3545;">R$ ${total.toFixed(2).replace('.', ',')}</span>
+                        <strong>TOTAL GERAL:</strong> <span style="color: #dc3545; font-size: 1.2em;">R$ ${total.toFixed(2).replace('.', ',')}</span>
                     </div>
                 </div>
 
@@ -292,19 +414,59 @@
                     <p>Assinatura / Carimbo - FARMÁCIA DO TRABALHADOR E APOSENTADO</p>
                 </div>
             `;
+        }
 
-            document.getElementById('poModal').style.display = "block";
+        function viewPo(order) {
+            document.getElementById('poDisplay').innerHTML = generatePoHtml(order);
+            document.getElementById('poModal').style.display = "flex";
         }
         
-        function closeModal() {
-            document.getElementById('poModal').style.display = "none";
-        }
-        
-        function printOrderModal() {
+        function printPo() {
+            // O CSS @media print fará o trabalho de formatar em paisagem
             window.print();
         }
 
-        window.onload = loadHistory;
+        function closeModal() {
+            document.getElementById('poModal').style.display = "none";
+        }
+
+        function editPo(poNumber, event) {
+            event.stopPropagation(); // Evita que o evento de clique da linha seja disparado
+            window.location.href = `index.html?edit_po=${poNumber}`;
+        }
+
+        function deletePo(poNumber, event) {
+            event.stopPropagation();
+            showCustomConfirm(
+                'Confirmação de Exclusão',
+                `Tem certeza que deseja EXCLUIR o Pedido N° ${poNumber} do Histórico? Esta ação não pode ser desfeita.`,
+                async () => {
+                    const docRef = doc(getUserCollectionRef('orders'), poNumber);
+                    try {
+                        await deleteDoc(docRef);
+                        showCustomAlert('Excluído!', `Pedido N° ${poNumber} excluído com sucesso do Histórico.`);
+                    } catch (error) {
+                        console.error("Erro ao excluir PO:", error);
+                        showCustomAlert('Erro', 'Não foi possível excluir o pedido: ' + error.message);
+                    }
+                }
+            );
+        }
+
+        // Função de carregamento que é chamada após a autenticação
+        window.loadData = loadHistory;
+
+        window.onload = () => {
+            setupModal();
+            setupFirebase();
+        };
+        
+        // Exporta funções para uso global (onclick no HTML)
+        window.viewPo = viewPo;
+        window.closeModal = closeModal;
+        window.editPo = editPo;
+        window.deletePo = deletePo;
+        window.printPo = printPo;
     </script>
 </body>
 </html>
