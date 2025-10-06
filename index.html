@@ -8,6 +8,13 @@
         /* Estilos Base */
         body { font-family: Arial, sans-serif; margin: 0; background-color: #f4f7f6; padding: 20px; }
         .container { max-width: 900px; margin: 0 auto; background-color: #ffffff; padding: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 8px; }
+        
+        /* Barra Superior (User/Logout) */
+        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; margin-bottom: 10px; border-bottom: 1px solid #ddd; }
+        .user-info { font-weight: bold; color: #004c99; font-size: 14px; }
+        .logout-btn { background-color: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s; }
+        .logout-btn:hover { background-color: #c82333; }
+
         .header { text-align: center; margin-bottom: 30px; color: #004c99; }
         .header h1 { font-size: 28px; }
         
@@ -15,539 +22,690 @@
         .nav-bar { display: flex; justify-content: space-around; background-color: #004c99; margin-bottom: 20px; border-radius: 4px; }
         .nav-bar a { color: white; padding: 12px 20px; text-decoration: none; font-weight: bold; transition: background-color 0.3s; border-radius: 4px; }
         .nav-bar a:hover, .nav-bar a.active { background-color: #003366; }
-        
-        /* Estilo do Formulário */
-        .form-group { margin-bottom: 15px; }
+
+        /* Formulário e Listagem */
         label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; }
-        input[type="text"], input[type="date"], input[type="number"], textarea, select { 
-            width: 100%; 
-            padding: 10px; 
-            border: 1px solid #ccc; 
-            border-radius: 4px; 
-            box-sizing: border-box; 
-            font-size: 14px;
+        input[type="text"], input[type="date"], input[type="number"], select, textarea { 
+            width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; 
         }
-        select { height: 40px; }
+        .form-row { display: flex; gap: 20px; margin-bottom: 15px; }
+        .form-row > div { flex: 1; }
 
-        /* Itens do Pedido */
-        .item-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px; align-items: center; }
-        .item-row input, .item-row button { height: 40px; }
+        /* Tabela de Itens */
+        .items-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .items-table th, .items-table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        .items-table th { background-color: #004c99; color: white; text-transform: uppercase; font-size: 12px; }
+        .items-table td input { border: none; padding: 5px; margin: 0; }
+        .items-table .actions { text-align: center; }
+        .btn-add, .btn-remove { background-color: #28a745; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s; }
+        .btn-remove { background-color: #dc3545; }
+        .btn-add:hover { background-color: #218838; }
+        .btn-remove:hover { background-color: #c82333; }
+        .total-row td { font-weight: bold; background-color: #e9ecef; }
+        .total-row .total-amount { color: #004c99; font-size: 1.1em; }
+
+        /* Botões de Ação */
+        .action-buttons { margin-top: 30px; text-align: center; display: flex; justify-content: center; gap: 15px; }
+        .btn-primary { background-color: #004c99; color: white; border: none; padding: 12px 25px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: background-color 0.3s, transform 0.1s; box-shadow: 0 4px 6px rgba(0, 76, 153, 0.2); }
+        .btn-primary:hover { background-color: #003366; transform: translateY(-1px); }
+        .btn-secondary { background-color: #6c757d; color: white; border: none; padding: 12px 25px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: background-color 0.3s; }
+        .btn-secondary:hover { background-color: #5a6268; }
         
-        /* Botões */
-        .action-buttons { margin-top: 25px; text-align: center; }
-        .action-buttons button { 
-            padding: 12px 20px; 
-            border: none; 
-            border-radius: 4px; 
-            cursor: pointer; 
-            margin: 0 10px;
-            font-weight: bold;
-            transition: background-color 0.3s;
+        /* Modal Customizado (Substitui alert/confirm) */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1000; 
+            left: 0; 
+            top: 0; 
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.4); 
+            justify-content: center;
+            align-items: center;
         }
-        .btn-draft { background-color: #ffc107; color: #333; }
-        .btn-draft:hover { background-color: #e0a800; }
-        .btn-save { background-color: #28a745; color: white; }
-        .btn-save:hover { background-color: #1e7e34; }
-        .btn-print { background-color: #007bff; color: white; }
-        .btn-print:hover { background-color: #0056b3; }
-        .delete-btn { background-color: #dc3545; color: white; padding: 8px 12px; margin-top: 0; }
-        .delete-btn:hover { background-color: #c82333; }
+        .modal-content {
+            background-color: #fefefe;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .modal-title { color: #004c99; margin-top: 0; }
+        .modal-message { margin: 15px 0 25px 0; color: #333; }
+        .modal-actions { display: flex; justify-content: center; gap: 10px; }
+        .modal-btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .modal-btn-primary { background-color: #004c99; color: white; }
+        .modal-btn-primary:hover { background-color: #003366; }
+        .modal-btn-secondary { background-color: #6c757d; color: white; }
+        .modal-btn-secondary:hover { background-color: #5a6268; }
+        .modal-btn-danger { background-color: #dc3545; color: white; }
+        .modal-btn-danger:hover { background-color: #c82333; }
 
-        /* Estilos de impressão (Visualização PDF) */
+        /* Estilos de Impressão (PDF) */
         @media print {
-            body { 
-                padding: 0; 
-                margin: 0;
-                background-color: white;
+            @page {
+                size: landscape; /* Força a orientação horizontal */
+                margin: 1cm;
             }
-            .container, .nav-bar, .action-buttons {
-                display: none;
-            }
-            .purchase-order {
-                display: block !important;
-            }
+
+            body { background-color: white !important; padding: 0 !important; }
+            .container, .po-print { max-width: 100%; width: 100%; margin: 0; padding: 0; box-shadow: none; border-radius: 0; }
+            .top-bar, .nav-bar, .action-buttons, .form-row:has(.hidden-print), .add-item-row, .btn-remove, .btn-add { display: none !important; }
+            input, select, textarea { border: none !important; background: none !important; padding: 0 !important; margin: 0 !important; }
+            .items-table td, .items-table th { border-color: #000 !important; }
+            .items-table th { background-color: #ccc !important; color: #000 !important; }
         }
     </style>
+    <!-- Incluir biblioteca jsPDF para geração de PDF (Opcional, mas útil para mais controle) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
-    <div class="nav-bar">
-        <a href="index.html" class="active">Criar Pedido</a>
-        <a href="fornecedores.html">Cadastrar Fornecedor</a>
-        <a href="produtos.html">Cadastrar Produto</a>
-        <a href="historico.html">Histórico (Salvos)</a>
-        <a href="rascunhos.html">Memorizados (Rascunhos)</a>
-    </div>
-
+    
     <div class="container">
+        <!-- Barra Superior com Info do Usuário e Logout -->
+        <div class="top-bar">
+            <div id="userInfo" class="user-info">Aguardando autenticação...</div>
+            <button id="logoutBtn" class="logout-btn" style="display:none;">SAIR</button>
+        </div>
+
         <div class="header">
-            <h1 id="pageTitle">NOVO PEDIDO DE COMPRA</h1>
+            <img src="Logo.jpg-441b687c-a62a-4e45-a35a-97f12550a156" alt="Logo" style="max-width: 150px; margin-bottom: 10px;">
+            <h1>Gerador de Pedido de Compra</h1>
         </div>
         
-        <input type="hidden" id="originalPoNumber"> 
-
-        <div class="form-group">
-            <label for="poNumber">Número do Pedido (PO):</label>
-            <input type="text" id="poNumber" value="PO-001" readonly>
-        </div>
-        
-        <div class="form-group">
-            <label for="poDate">Data do Pedido:</label>
-            <input type="date" id="poDate">
-        </div>
-        
-        <hr>
-        
-        <div class="form-group">
-            <label for="supplierSelect">Selecionar Fornecedor:</label>
-            <select id="supplierSelect" onchange="loadSupplierData()">
-                <option value="">-- Selecione ou Digite Abaixo --</option>
-            </select>
+        <!-- Navegação -->
+        <div class="nav-bar">
+            <a href="index.html" class="active">Novo Pedido</a>
+            <a href="historico.html">Histórico</a>
+            <a href="rascunhos.html">Rascunhos</a>
+            <a href="produtos.html">Produtos</a>
+            <a href="fornecedores.html">Fornecedores</a>
         </div>
 
-        <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-            <div>
-                <label for="supplierName">Nome do Fornecedor:</label>
-                <input type="text" id="supplierName" value="" placeholder="Nome do Fornecedor Ltda.">
+        <form id="poForm">
+            <!-- Dados do Pedido -->
+            <div class="form-row">
+                <div>
+                    <label for="poNumber">N° Pedido (PO)</label>
+                    <input type="text" id="poNumber" required readonly>
+                </div>
+                <div>
+                    <label for="poDate">Data do Pedido</label>
+                    <input type="date" id="poDate" required>
+                </div>
             </div>
-            <div>
-                <label for="supplierContact">Contato/Email:</label>
-                <input type="text" id="supplierContact" value="" placeholder="email@fornecedor.com">
+
+            <!-- Dados do Fornecedor (Select) -->
+            <div class="form-row">
+                <div>
+                    <label for="supplierSelect">Fornecedor</label>
+                    <select id="supplierSelect" required></select>
+                </div>
             </div>
-        </div>
-        
-        <div class="form-group">
-            <label for="deliveryDate">Previsão de Entrega:</label>
-            <input type="date" id="deliveryDate">
-        </div>
 
-        <hr>
+            <!-- Tabela de Itens -->
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%;">ITEM</th>
+                        <th style="width: 10%;">SKU</th>
+                        <th style="width: 45%;">Descrição do Produto</th>
+                        <th style="width: 10%;">Qtd.</th>
+                        <th style="width: 15%;">Preço Unit. (R$)</th>
+                        <th style="width: 15%;">Total (R$)</th>
+                        <th style="width: 5%;" class="hidden-print">Ação</th>
+                    </tr>
+                </thead>
+                <tbody id="itemsBody">
+                    <!-- Linhas de itens serão adicionadas aqui -->
+                </tbody>
+                <tfoot>
+                    <tr class="total-row">
+                        <td colspan="5" style="text-align: right; font-size: 1.2em;">Total Geral:</td>
+                        <td id="totalAmount" class="total-amount">R$ 0,00</td>
+                        <td class="hidden-print"></td>
+                    </tr>
+                </tfoot>
+            </table>
 
-        <label for="items">Itens do Pedido:</label>
-        
-        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-            <select id="productSelect" style="flex-grow: 1;">
-                <option value="">-- Adicionar Produto Cadastrado --</option>
-            </select>
-            <button onclick="addProductFromSelect()" style="width: 150px; background-color: #007bff;">Adicionar</button>
-        </div>
-        
-        <div id="itemsContainer">
-        </div>
-        <button onclick="addItem()" style="background-color: #0099cc; width: 100%;">Adicionar Item Manualmente</button>
-        
-        <div class="form-group" style="margin-top: 20px;">
-            <label for="notes">Observações:</label>
-            <textarea id="notes" rows="3">Por favor, envie a Nota Fiscal junto com a mercadoria.</textarea>
-        </div>
-        
+            <div style="text-align: right; margin-top: 10px;">
+                <button type="button" class="btn-add" onclick="addItem()">+ Adicionar Item</button>
+            </div>
+
+            <!-- Observações -->
+            <div style="margin-top: 20px;">
+                <label for="poNotes">Observações</label>
+                <textarea id="poNotes" rows="3" placeholder="Insira quaisquer notas ou instruções especiais."></textarea>
+            </div>
+        </form>
+
+        <!-- Botões de Ação -->
         <div class="action-buttons">
-            <button class="btn-draft" onclick="saveDraft()">1. Salvar Rascunho / Memorizar</button>
-            <button class="btn-save" id="saveButton" onclick="savePurchaseOrder()">2. Salvar Pedido Definitivo (Gravar)</button>
-            <button class="btn-print" onclick="printOrder()">3. Visualizar e Imprimir / PDF</button>
-        </div>
-        
-    </div>
-
-    <div class="purchase-order" id="purchaseOrderOutput" style="display: none;">
-        <div style="text-align: center; margin-bottom: 20px;">
-            <img 
-                src="https://dbrito10.github.io/Farm-cia-do-Trabalhador/Logo.jpg" 
-                alt="Logo Farmácia do Trabalhador e Aposentado" 
-                style="max-width: 200px; height: auto;" 
-            >
-            <h1 style="color: #004c99; font-size: 22px; margin: 5px 0 10px 0;">PEDIDO DE COMPRA</h1>
-            <div style="font-size: 11px; line-height: 1.5;">
-                <p style="margin: 0; font-weight: bold;">FARMÁCIA DO TRABALHADOR E APOSENTADO DE PINHEIROS LTDA | CNPJ: 32.927.077/0001-06</p>
-                <p style="margin: 0;">Endereço: PRAÇA BAIANA 75-B ANEXO B, Centro, Pinheiros/ES, CEP 29980-000</p>
-                <p style="margin: 0;">Telefone: (27) 99981-8349</p>
-            </div>
-            <hr style="border: 1px solid #004c99; margin-top: 10px;">
-        </div>
-
-        <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 13px;">
-            <div style="font-weight: bold;">
-                Pedido N°: <span id="outPoNumber">PO-001</span>
-            </div>
-            <div>
-                Data: <span id="outPoDate">2025-10-05</span>
-            </div>
-        </div>
-
-        <div style="display: flex; justify-content: space-between; border: 1px solid #ddd; padding: 10px; margin-bottom: 20px; font-size: 12px;">
-            <div>
-                <p style="font-weight: bold; color: #004c99; margin: 0 0 5px 0;">DADOS DO FORNECEDOR</p>
-                <div>**Fornecedor:** <span id="outSupplierName"></span></div>
-                <div>**Contato:** <span id="outSupplierContact"></span></div>
-            </div>
-            <div style="text-align: right;">
-                <p style="font-weight: bold; color: #004c99; margin: 0 0 5px 0;">DETALHES DA ENTREGA</p>
-                <div>**Previsão:** <span id="outDeliveryDate"></span></div>
-                <div>**Local:** PRAÇA BAIANA 75-B ANEXO B</div>
-            </div>
-        </div>
-        
-        <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
-            <thead>
-                <tr>
-                    <th style="border: 1px solid #333; padding: 8px; text-align: left; background-color: #f2f2f2; width: 45%;">Item / Descrição</th>
-                    <th style="border: 1px solid #333; padding: 8px; text-align: center; width: 10%;">SKU</th>
-                    <th style="border: 1px solid #333; padding: 8px; text-align: center; width: 10%;">Qtd.</th>
-                    <th style="border: 1px solid #333; padding: 8px; text-align: right; width: 15%;">Preço Unit. (R$)</th>
-                    <th style="border: 1px solid #333; padding: 8px; text-align: right; width: 20%;">Total (R$)</th>
-                </tr>
-            </thead>
-            <tbody id="poTableBody">
-            </tbody>
-        </table>
-
-        <div style="margin-top: 20px; text-align: right; font-size: 13px;">
-            <div>Subtotal: <span id="outSubtotal" style="font-weight: bold;">R$ 0,00</span></div>
-            <div style="margin-top: 5px; font-size: 16px; border-top: 1px solid #ccc; padding-top: 5px;">
-                **TOTAL GERAL:** <span id="outTotal" style="color: #dc3545;">R$ 0,00</span>
-            </div>
-        </div>
-
-        <div style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 15px; font-size: 12px;">
-            <p style="font-weight: bold; color: #004c99; margin: 0 0 5px 0;">OBSERVAÇÕES:</p>
-            <p id="outNotes" style="margin: 0;">Por favor, envie a Nota Fiscal junto com a mercadoria.</p>
-        </div>
-        
-        <div style="margin-top: 40px; text-align: center; font-size: 10px;">
-            <hr style="width: 50%; margin: 40px auto 5px auto;">
-            <p>Assinatura / Carimbo - FARMÁCIA DO TRABALHADOR E APOSENTADO</p>
+            <button type="button" class="btn-secondary" onclick="saveAsDraft()">Salvar como Rascunho</button>
+            <button type="button" class="btn-primary" onclick="saveAndFinalize()">Salvar e Finalizar</button>
+            <button type="button" class="btn-primary" onclick="window.print()">Imprimir (PDF)</button>
         </div>
     </div>
     
-    <script>
-        let items = [];
-        let itemIndexCounter = 0; 
+    <!-- Custom Modal Structure -->
+    <div id="customModal" class="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle" class="modal-title"></h2>
+            <p id="modalMessage" class="modal-message"></p>
+            <div id="modalActions" class="modal-actions">
+                <!-- Buttons dynamically added -->
+            </div>
+        </div>
+    </div>
 
-        function formatDate(dateString) {
-            if (!dateString) return 'N/A';
-            const [year, month, day] = dateString.split('-');
-            return `${day}/${month}/${year}`;
-        }
-        
-        // --- FUNÇÕES DE CADASTRO DE DADOS ---
+    <!-- Script principal com Firebase e Lógica -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signOut, onAuthStateChanged, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, query, limit, getDocs, updateDoc, deleteDoc, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        function loadSupplierSelect() {
-            const select = document.getElementById('supplierSelect');
-            select.innerHTML = '<option value="">-- Selecione ou Digite Abaixo --</option>';
-            const suppliers = JSON.parse(localStorage.getItem('suppliers')) || {};
-            
-            Object.keys(suppliers).forEach(key => {
-                const option = document.createElement('option');
-                option.value = key;
-                option.textContent = key;
-                select.appendChild(option);
-            });
-        }
-        
-        function loadSupplierData() {
-            const selectedName = document.getElementById('supplierSelect').value;
-            if (!selectedName) return;
+        // Variáveis globais fornecidas pelo ambiente
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
-            const suppliers = JSON.parse(localStorage.getItem('suppliers'));
-            const supplier = suppliers[selectedName];
+        let app, db, auth, userId = null;
+        let productsData = {};
+        let suppliersData = {};
+        let poCounter = 0; // Contador sequencial para POs
 
-            if (supplier) {
-                document.getElementById('supplierName').value = supplier.name || '';
-                document.getElementById('supplierContact').value = supplier.contact || '';
-            }
-        }
-        
-        function loadProductSelect() {
-            const select = document.getElementById('productSelect');
-            select.innerHTML = '<option value="">-- Adicionar Produto Cadastrado --</option>';
-            const products = JSON.parse(localStorage.getItem('products')) || {};
-            
-            Object.keys(products).forEach(key => {
-                const product = products[key];
-                const option = document.createElement('option');
-                option.value = product.sku;
-                option.textContent = `(${product.sku}) ${product.desc} - R$ ${product.price.replace('.', ',')}`;
-                select.appendChild(option);
-            });
-        }
-        
-        function addProductFromSelect() {
-            const selectedSku = document.getElementById('productSelect').value;
-            if (!selectedSku) {
-                alert("Por favor, selecione um produto do catálogo.");
-                return;
-            }
-            
-            const products = JSON.parse(localStorage.getItem('products'));
-            const product = products[selectedSku];
-            
-            if (product) {
-                addItem(product.desc, product.sku, 1, product.price);
-            }
-            document.getElementById('productSelect').value = "";
+        // --- Variáveis e Funções Comuns de UI (Modal) ---
+        let customModal, modalTitle, modalMessage, modalActions;
+
+        function setupModal() {
+            customModal = document.getElementById('customModal');
+            modalTitle = document.getElementById('modalTitle');
+            modalMessage = document.getElementById('modalMessage');
+            modalActions = document.getElementById('modalActions');
         }
 
-        function addItem(desc = '', sku = '', qty = 1, price = 0.00) {
-            const container = document.getElementById('itemsContainer');
-            const newIndex = itemIndexCounter++;
-            
-            const itemRow = document.createElement('div');
-            itemRow.classList.add('item-row');
-            itemRow.id = `row-${newIndex}`;
-            itemRow.innerHTML = `
-                <input type="text" id="desc-${newIndex}" value="${desc}" placeholder="Descrição do Item">
-                <input type="text" id="sku-${newIndex}" value="${sku}" placeholder="SKU/Cód.">
-                <input type="number" id="qty-${newIndex}" value="${qty}" min="1">
-                <input type="number" id="price-${newIndex}" value="${parseFloat(price).toFixed(2)}" min="0" step="0.01">
-                <button class="delete-btn" onclick="removeItem(${newIndex})">X</button>
+        function showCustomAlert(title, message) {
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            modalActions.innerHTML = '<button id="modalCloseBtn" class="modal-btn modal-btn-primary">OK</button>';
+            document.getElementById('modalCloseBtn').onclick = () => customModal.style.display = 'none';
+            customModal.style.display = 'flex';
+        }
+
+        function showCustomConfirm(title, message, onConfirm) {
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            modalActions.innerHTML = `
+                <button id="modalCancelBtn" class="modal-btn modal-btn-secondary">Cancelar</button>
+                <button id="modalConfirmBtn" class="modal-btn modal-btn-danger">Confirmar</button>
             `;
-            container.appendChild(itemRow);
-            
-            items.push({ index: newIndex }); 
+            document.getElementById('modalCancelBtn').onclick = () => customModal.style.display = 'none';
+            document.getElementById('modalConfirmBtn').onclick = () => {
+                customModal.style.display = 'none';
+                onConfirm();
+            };
+            customModal.style.display = 'flex';
         }
-
-        function removeItem(index) {
-            const element = document.getElementById(`row-${index}`);
-            if (element) {
-                element.remove();
-                items = items.filter(item => item.index !== index);
+        
+        // Função para atualizar a UI de Autenticação
+        function updateUserUI(userName) {
+            document.getElementById('userInfo').textContent = `Bem-vindo(a), ${userName}`;
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (userId && !auth.currentUser.isAnonymous) {
+                logoutBtn.style.display = 'block';
+            } else {
+                logoutBtn.style.display = 'none';
             }
         }
-        
-        // --- FUNÇÕES DE VISUALIZAÇÃO/IMPRESSÃO ---
 
-        function updateDraft() {
-            // Esta função preenche a estrutura do PDF/impressão
-            const poNumber = document.getElementById('poNumber').value;
-            const poDate = document.getElementById('poDate').value;
-            const supplierName = document.getElementById('supplierName').value;
-            const supplierContact = document.getElementById('supplierContact').value;
-            const deliveryDate = document.getElementById('deliveryDate').value;
-            const notes = document.getElementById('notes').value;
+        // --- Configuração e Autenticação do Firebase ---
 
-            document.getElementById('outPoNumber').textContent = poNumber || 'N/A';
-            document.getElementById('outPoDate').textContent = poDate ? formatDate(poDate) : 'N/A';
-            document.getElementById('outSupplierName').textContent = supplierName || 'N/A';
-            document.getElementById('outSupplierContact').textContent = supplierContact || 'N/A';
-            document.getElementById('outDeliveryDate').textContent = deliveryDate ? formatDate(deliveryDate) : 'N/A';
-            document.getElementById('outNotes').textContent = notes || 'Nenhuma observação.';
-            
-            let total = 0;
-            const poTableBody = document.getElementById('poTableBody');
-            poTableBody.innerHTML = ''; 
-
-            items = items.filter(item => document.getElementById(`desc-${item.index}`)); 
-
-            items.forEach(item => {
-                const index = item.index;
-                const desc = document.getElementById(`desc-${index}`)?.value || '';
-                const sku = document.getElementById(`sku-${index}`)?.value || '';
-                const qty = parseFloat(document.getElementById(`qty-${index}`)?.value) || 0;
-                const price = parseFloat(document.getElementById(`price-${index}`)?.value) || 0;
-                
-                if (!desc) return; 
-                
-                const itemTotal = qty * price;
-                total += itemTotal;
-                
-                const newRow = poTableBody.insertRow();
-                newRow.innerHTML = `
-                    <td style="border: 1px solid #ddd; padding: 8px;">**${desc}**</td>
-                    <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${sku || 'N/A'}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${qty.toLocaleString('pt-BR')}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">R$ ${price.toFixed(2).replace('.', ',')}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">R$ ${itemTotal.toFixed(2).replace('.', ',')}</td>
-                `;
-            });
-            
-            document.getElementById('outSubtotal').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
-            document.getElementById('outTotal').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
-        }
-        
-        function printOrder() {
-            if (items.filter(item => document.getElementById(`desc-${item.index}`)?.value).length === 0) {
-                alert("Adicione pelo menos um item ao pedido antes de visualizar/imprimir.");
+        async function setupFirebase() {
+            if (!firebaseConfig) {
+                console.error("Firebase config is missing. Redirecting to login.");
+                window.location.href = 'login.html'; 
                 return;
             }
-            updateDraft(); 
-            window.print();
-        }
 
-        // --- FUNÇÕES DE AÇÃO (SALVAR E RASCUNHO) ---
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            // setLogLevel('Debug'); // Descomentar para debug do Firestore
 
-        function getCurrentOrderData() {
-            const orderItems = [];
-            items.forEach(item => {
-                const index = item.index;
-                const descInput = document.getElementById(`desc-${index}`);
-                if (descInput && descInput.value.trim()) {
-                    orderItems.push({
-                        desc: descInput.value,
-                        sku: document.getElementById(`sku-${index}`).value,
-                        qty: document.getElementById(`qty-${index}`).value,
-                        price: document.getElementById(`price-${index}`).value
-                    });
+            // Tentativa de login inicial com token ou anônimo
+            if (initialAuthToken) {
+                try {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } catch (error) {
+                    console.error("Erro no token, tentando anônimo:", error);
+                    await signInAnonymously(auth);
+                }
+            } else {
+                await signInAnonymously(auth);
+            }
+            
+            // Listener de estado de autenticação
+            onAuthStateChanged(auth, async (user) => {
+                if (user && !user.isAnonymous) {
+                    userId = user.uid;
+                    // Tenta obter o nome de exibição, senão usa parte do e-mail
+                    let userName = user.email ? user.email.split('@')[0] : 'Usuário';
+                    
+                    const userDocRef = doc(db, `/artifacts/${appId}/users/${userId}/config/profile`);
+                    try {
+                        const userDoc = await getDoc(userDocRef);
+                        if (userDoc.exists() && userDoc.data().displayName) {
+                            userName = userDoc.data().displayName;
+                        }
+                    } catch(e) {
+                        console.warn("Could not fetch user profile.", e);
+                    }
+                    
+                    updateUserUI(userName);
+                    loadData(); // Chama a função de carregamento de dados específica da página
+                } else if (user && user.isAnonymous) {
+                    // Usuário anônimo/sem login. Redireciona para o login
+                    window.location.href = 'login.html';
+                } else {
+                    // Usuário deslogado. Redireciona para o login
+                    if (window.location.pathname.indexOf('login.html') === -1) {
+                        window.location.href = 'login.html';
+                    }
                 }
             });
+
+            document.getElementById('logoutBtn').addEventListener('click', async () => {
+                try {
+                    await signOut(auth);
+                    window.location.href = 'login.html';
+                } catch (error) {
+                    showCustomAlert('Erro de Logout', 'Não foi possível sair: ' + error.message);
+                }
+            });
+        }
+
+        // Helper para obter a referência da Coleção do Usuário
+        function getUserCollectionRef(collectionName) {
+            if (!db || !userId) {
+                console.error("Firestore não inicializado ou userId não disponível.");
+                return null;
+            }
+            return collection(db, `/artifacts/${appId}/users/${userId}/${collectionName}`);
+        }
+        
+        // Helper para obter a Referência de Documento (para Products/Suppliers - single document)
+        function getUserDocRef(collectionName, docId) {
+            if (!db || !userId) {
+                console.error("Firestore não inicializado ou userId não disponível.");
+                return null;
+            }
+            return doc(db, `/artifacts/${appId}/users/${userId}/${collectionName}/${docId}`);
+        }
+
+        // --- Funções de Carregamento de Dados (Firestore) ---
+
+        async function loadSupplierSelect() {
+            const select = document.getElementById('supplierSelect');
+            select.innerHTML = '<option value="" disabled selected>Carregando...</option>';
+            
+            const docRef = getUserDocRef('suppliers', 'catalog');
+            try {
+                const docSnap = await getDoc(docRef);
+                suppliersData = docSnap.exists() ? docSnap.data().data : {};
+                
+                select.innerHTML = '<option value="" disabled selected>Selecione um Fornecedor</option>';
+                Object.keys(suppliersData).forEach(cnpj => {
+                    const option = document.createElement('option');
+                    option.value = cnpj;
+                    option.textContent = suppliersData[cnpj].name;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error("Erro ao carregar fornecedores:", error);
+                select.innerHTML = '<option value="" disabled selected>Erro ao carregar</option>';
+            }
+        }
+
+        async function loadProductSelect() {
+            // Não precisa popular um <select> aqui, apenas carregar os dados
+            const docRef = getUserDocRef('products', 'catalog');
+            try {
+                const docSnap = await getDoc(docRef);
+                productsData = docSnap.exists() ? docSnap.data().data : {};
+            } catch (error) {
+                console.error("Erro ao carregar produtos:", error);
+            }
+        }
+
+        async function getNextPoNumber() {
+            // Esta função agora precisa de um contador do Firestore
+            const counterRef = doc(db, `/artifacts/${appId}/users/${userId}/config/po_counter`);
+            let currentNumber = 0;
+            
+            try {
+                const counterSnap = await getDoc(counterRef);
+                if (counterSnap.exists()) {
+                    currentNumber = counterSnap.data().count;
+                } else {
+                    // Inicializa o contador se não existir
+                    await setDoc(counterRef, { count: 0 });
+                }
+                
+                // Pega o próximo número (o último salvo + 1)
+                const nextNumber = currentNumber + 1;
+                poCounter = nextNumber;
+                return `PO-${nextNumber.toString().padStart(3, '0')}`;
+
+            } catch (error) {
+                console.error("Erro ao obter o próximo número de PO:", error);
+                return `PO-ERRO`;
+            }
+        }
+
+        // --- Lógica de Pedido de Compra (PO) ---
+
+        function calculateTotal() {
+            let grandTotal = 0;
+            const items = document.querySelectorAll('#itemsBody tr');
+            items.forEach(row => {
+                const qtyInput = row.querySelector('.qty-input');
+                const priceInput = row.querySelector('.price-input');
+                const totalCell = row.querySelector('.item-total');
+
+                const qty = parseFloat(qtyInput.value.replace(',', '.')) || 0;
+                const price = parseFloat(priceInput.value.replace(',', '.')) || 0;
+                const itemTotal = qty * price;
+
+                totalCell.textContent = `R$ ${itemTotal.toFixed(2).replace('.', ',')}`;
+                grandTotal += itemTotal;
+            });
+
+            document.getElementById('totalAmount').textContent = `R$ ${grandTotal.toFixed(2).replace('.', ',')}`;
+        }
+
+        function updateItemDescription(selectElement) {
+            const row = selectElement.closest('tr');
+            const sku = selectElement.value;
+            const descInput = row.querySelector('.desc-input');
+            const priceInput = row.querySelector('.price-input');
+
+            const product = productsData[sku];
+            if (product) {
+                descInput.value = product.desc;
+                priceInput.value = product.price.replace('.', ',');
+            } else {
+                descInput.value = '';
+                priceInput.value = '';
+            }
+            calculateTotal();
+        }
+
+        function addItem(item = {}) {
+            const itemsBody = document.getElementById('itemsBody');
+            const row = itemsBody.insertRow();
+            row.classList.add('po-item-row');
+            const index = itemsBody.rows.length; // Usa o número de linhas para a coluna ITEM
+
+            let skuOptions = '';
+            Object.keys(productsData).forEach(sku => {
+                skuOptions += `<option value="${sku}">${sku}</option>`;
+            });
+
+            const defaultSku = item.sku || (Object.keys(productsData)[0] || '');
+            const defaultProduct = productsData[defaultSku] || { desc: '', price: '0.00' };
+
+            row.innerHTML = `
+                <td style="text-align: center;" class="item-number">${index}</td>
+                <td>
+                    <select class="sku-select" onchange="updateItemDescription(this)" style="min-width: 80px;">
+                        <option value="">SKU</option>
+                        ${skuOptions}
+                    </select>
+                </td>
+                <td><input type="text" class="desc-input" value="${item.desc || defaultProduct.desc}" placeholder="Descrição do Produto"></td>
+                <td><input type="number" step="0.01" class="qty-input" value="${item.qty || '1'}" oninput="calculateTotal()" style="width: 60px;"></td>
+                <td><input type="text" class="price-input" value="${(item.price || defaultProduct.price).replace('.', ',')}" oninput="this.value = this.value.replace('.', ','); calculateTotal()" placeholder="0,00" style="width: 80px;"></td>
+                <td class="item-total" style="font-weight: bold;">R$ 0,00</td>
+                <td class="actions hidden-print">
+                    <button type="button" class="btn-remove" onclick="removeItem(this)">X</button>
+                </td>
+            `;
+            
+            // Define o valor do SKU do item (importante para edições/rascunhos)
+            if (item.sku) {
+                row.querySelector('.sku-select').value = item.sku;
+            } else if (defaultSku) {
+                 row.querySelector('.sku-select').value = defaultSku;
+            }
+
+            calculateTotal();
+            resequenceItems(); // Garante que a numeração da coluna ITEM esteja correta
+        }
+
+        function removeItem(button) {
+            const row = button.closest('tr');
+            row.remove();
+            calculateTotal();
+            resequenceItems();
+        }
+        
+        function resequenceItems() {
+            const items = document.querySelectorAll('#itemsBody tr');
+            items.forEach((row, index) => {
+                row.querySelector('.item-number').textContent = index + 1;
+            });
+        }
+
+        function gatherOrderData() {
+            const items = [];
+            const rows = document.querySelectorAll('#itemsBody tr');
+            rows.forEach(row => {
+                const sku = row.querySelector('.sku-select').value;
+                const desc = row.querySelector('.desc-input').value;
+                const qty = parseFloat(row.querySelector('.qty-input').value.replace(',', '.')) || 0;
+                const price = parseFloat(row.querySelector('.price-input').value.replace(',', '.')) || 0;
+
+                if (sku && desc && qty > 0) {
+                    items.push({ sku, desc, qty, price: price.toFixed(2) });
+                }
+            });
+
+            const supplierCNPJ = document.getElementById('supplierSelect').value;
+            const supplier = suppliersData[supplierCNPJ] || {};
 
             return {
                 poNumber: document.getElementById('poNumber').value,
                 poDate: document.getElementById('poDate').value,
-                supplierName: document.getElementById('supplierName').value,
-                supplierContact: document.getElementById('supplierContact').value,
-                deliveryDate: document.getElementById('deliveryDate').value,
-                notes: document.getElementById('notes').value,
-                items: orderItems
+                supplierCNPJ,
+                supplierName: supplier.name || 'N/A',
+                items,
+                total: document.getElementById('totalAmount').textContent.replace('R$ ', '').replace('.', '').replace(',', '.'),
+                notes: document.getElementById('poNotes').value,
+                createdAt: new Date().toISOString(),
+                userId: userId
             };
         }
-
-        // 1. Salvar Rascunho / Memorizar
-        function saveDraft() {
-            const poNumber = document.getElementById('poNumber').value;
-            
-            if (items.filter(item => document.getElementById(`desc-${item.index}`)?.value).length === 0) {
-                alert("Adicione pelo menos um item ao pedido para salvar como rascunho.");
-                return;
-            }
-            
-            const orderData = getCurrentOrderData();
-            let memorizedOrders = JSON.parse(localStorage.getItem('memorizedOrders')) || {};
-            
-            if (memorizedOrders[poNumber] && !document.getElementById('originalPoNumber').value) {
-                if (!confirm(`O Rascunho N° ${poNumber} já existe. Deseja sobrescrevê-lo?`)) {
+        
+        // Função para carregar um PO para edição (Histórico ou Rascunho)
+        async function loadOrderForEditing(poNumber, collectionName) {
+            const docRef = doc(getUserCollectionRef(collectionName), poNumber);
+            try {
+                const docSnap = await getDoc(docRef);
+                if (!docSnap.exists()) {
+                    showCustomAlert('Erro de Carregamento', `O pedido/rascunho N° ${poNumber} não foi encontrado.`);
+                    window.location.href = 'index.html'; // Redireciona para o novo pedido
                     return;
                 }
-            }
-            
-            // Salva na chave de rascunhos
-            memorizedOrders[poNumber] = orderData;
-            localStorage.setItem('memorizedOrders', JSON.stringify(memorizedOrders));
-            
-            alert(`Rascunho do Pedido N° ${poNumber} foi salvo com sucesso!`);
-            
-            // Recarrega para limpar o modo de edição
-            window.location.href = 'index.html'; 
-        }
+                const order = docSnap.data();
 
-
-        // 2. Salvar Pedido Definitivo (Gravação)
-        function savePurchaseOrder() {
-            const poNumber = document.getElementById('poNumber').value;
-            const originalPoNumber = document.getElementById('originalPoNumber').value;
-
-            if (!poNumber || poNumber.trim() === '') {
-                alert("O número do pedido (PO) é obrigatório para salvar!");
-                return;
-            }
-            if (items.filter(item => document.getElementById(`desc-${item.index}`)?.value).length === 0) {
-                 alert("Adicione pelo menos um item ao pedido antes de salvar.");
-                return;
-            }
-
-            const orderData = getCurrentOrderData();
-            let savedOrders = JSON.parse(localStorage.getItem('savedOrders')) || {};
-            
-            // Lógica de Edição: Se o PONumber foi alterado e havia um PO original, exclui o original
-            if (originalPoNumber && originalPoNumber !== poNumber && savedOrders[originalPoNumber]) {
-                 delete savedOrders[originalPoNumber];
-            }
-            
-            // Lógica de Sobrescrita:
-            if (savedOrders[poNumber] && !originalPoNumber && !confirm(`O Pedido N° ${poNumber} já existe. Deseja sobrescrevê-lo?`)) {
-                return;
-            }
-            
-            savedOrders[poNumber] = orderData;
-            localStorage.setItem('savedOrders', JSON.stringify(savedOrders));
-            
-            // Remove o rascunho correspondente se existir
-            let memorizedOrders = JSON.parse(localStorage.getItem('memorizedOrders')) || {};
-            if(memorizedOrders[poNumber]) {
-                delete memorizedOrders[poNumber];
-                localStorage.setItem('memorizedOrders', JSON.stringify(memorizedOrders));
-            }
-
-            alert(`Pedido N° ${poNumber} salvo/atualizado com sucesso! Você será redirecionado para o Histórico.`);
-            
-            window.location.href = 'historico.html';
-        }
-        
-        // --- FUNÇÃO DE CARREGAMENTO PARA EDIÇÃO/RASCUNHO ---
-
-        function loadOrderForEditing(poNumber, sourceKey) {
-            const orders = JSON.parse(localStorage.getItem(sourceKey)) || {};
-            const orderData = orders[poNumber];
-            
-            if (!orderData) {
-                alert(`Erro: Pedido de compra N° ${poNumber} não encontrado na fonte ${sourceKey}.`);
-                return;
-            }
-            
-            // 1. Preenche os campos principais
-            document.getElementById('originalPoNumber').value = poNumber; // Guarda o PO original
-            document.getElementById('poNumber').value = orderData.poNumber;
-            document.getElementById('poDate').value = orderData.poDate;
-            document.getElementById('supplierName').value = orderData.supplierName;
-            document.getElementById('supplierContact').value = orderData.supplierContact;
-            document.getElementById('deliveryDate').value = orderData.deliveryDate;
-            document.getElementById('notes').value = orderData.notes;
-            
-            // Atualiza o título e o botão
-            document.getElementById('pageTitle').textContent = (sourceKey === 'savedOrders' ? 'EDITANDO PEDIDO SALVO N° ' : 'EDITANDO RASCUNHO N° ') + poNumber;
-            document.getElementById('saveButton').textContent = '2. Atualizar Pedido (Gravar)';
-            
-            // 2. Limpa e recarrega os itens
-            document.getElementById('itemsContainer').innerHTML = '';
-            items = []; 
-            itemIndexCounter = 0;
-            
-            orderData.items.forEach(item => {
-                addItem(item.desc, item.sku, item.qty, item.price);
-            });
-
-            // 3. Tenta selecionar o fornecedor no select (se o nome coincidir)
-            const select = document.getElementById('supplierSelect');
-            select.value = orderData.supplierName;
-        }
-
-        function getNextPoNumber() {
-            const savedOrders = JSON.parse(localStorage.getItem('savedOrders')) || {};
-            const memorizedOrders = JSON.parse(localStorage.getItem('memorizedOrders')) || {};
-            
-            const allKeys = [...Object.keys(savedOrders), ...Object.keys(memorizedOrders)];
-            
-            let lastNumber = 0;
-            allKeys.forEach(key => {
-                const match = key.match(/PO-(\d+)/);
-                if (match) {
-                    const number = parseInt(match[1]);
-                    if (number > lastNumber) {
-                        lastNumber = number;
-                    }
+                document.getElementById('poNumber').value = order.poNumber;
+                document.getElementById('poDate').value = order.poDate;
+                document.getElementById('poNotes').value = order.notes || '';
+                
+                // Carrega os itens
+                const itemsBody = document.getElementById('itemsBody');
+                itemsBody.innerHTML = ''; // Limpa os itens padrão
+                order.items.forEach(item => addItem(item));
+                
+                // Seleciona o fornecedor
+                await loadSupplierSelect(); // Garante que a lista de fornecedores está carregada
+                const supplierSelect = document.getElementById('supplierSelect');
+                if (supplierSelect.querySelector(`option[value="${order.supplierCNPJ}"]`)) {
+                    supplierSelect.value = order.supplierCNPJ;
+                } else {
+                    // Adiciona uma opção temporária se o fornecedor não existir mais
+                    const option = document.createElement('option');
+                    option.value = order.supplierCNPJ;
+                    option.textContent = order.supplierName + ' (Excluído)';
+                    supplierSelect.appendChild(option);
+                    supplierSelect.value = order.supplierCNPJ;
                 }
-            });
-            return `PO-${(lastNumber + 1).toString().padStart(3, '0')}`;
+                calculateTotal(); // Recalcula o total
+                
+                // Se for um rascunho, adiciona um campo oculto para o PO anterior
+                if (collectionName === 'drafts') {
+                    document.getElementById('poForm').dataset.originalDraft = poNumber;
+                } else {
+                    document.getElementById('poForm').dataset.originalOrder = poNumber;
+                }
+
+            } catch (error) {
+                console.error("Erro ao carregar PO:", error);
+                showCustomAlert('Erro', 'Não foi possível carregar o Pedido/Rascunho para edição. ' + error.message);
+                window.location.href = 'index.html';
+            }
         }
         
-        function init() {
+        async function saveAsDraft() {
+            const order = gatherOrderData();
+            if (order.items.length === 0) {
+                showCustomAlert('Atenção', 'Adicione pelo menos um item ao pedido para salvar como rascunho.');
+                return;
+            }
+            
+            // O número do PO é usado como ID do documento
+            const poNumber = order.poNumber;
+            const docRef = doc(getUserCollectionRef('drafts'), poNumber);
+
+            try {
+                await setDoc(docRef, order);
+                showCustomAlert('Sucesso!', `Rascunho N° ${poNumber} salvo com sucesso!`);
+                
+                // Se for um rascunho novo, pega o próximo número para o formulário
+                if (!document.getElementById('poForm').dataset.originalDraft && !document.getElementById('poForm').dataset.originalOrder) {
+                    document.getElementById('poNumber').value = await getNextPoNumber();
+                    document.getElementById('itemsBody').innerHTML = '';
+                    addItem();
+                }
+                
+                // Limpa o estado de edição após salvar
+                delete document.getElementById('poForm').dataset.originalDraft;
+                delete document.getElementById('poForm').dataset.originalOrder;
+                
+                window.location.href = 'rascunhos.html';
+                
+            } catch (error) {
+                console.error("Erro ao salvar rascunho:", error);
+                showCustomAlert('Erro', 'Não foi possível salvar o rascunho: ' + error.message);
+            }
+        }
+        
+        async function saveAndFinalize() {
+            const order = gatherOrderData();
+            if (order.items.length === 0) {
+                showCustomAlert('Atenção', 'Adicione pelo menos um item ao pedido para finalizar.');
+                return;
+            }
+            if (!order.supplierCNPJ) {
+                showCustomAlert('Atenção', 'Selecione um fornecedor para finalizar o pedido.');
+                return;
+            }
+
+            const poNumber = order.poNumber;
+            const historyRef = doc(getUserCollectionRef('orders'), poNumber);
+            const draftRef = doc(getUserCollectionRef('drafts'), poNumber);
+            
+            try {
+                // 1. Verificar se o PO já existe no histórico
+                const historySnap = await getDoc(historyRef);
+
+                let confirmed = true;
+                if (historySnap.exists()) {
+                    await new Promise(resolve => {
+                        showCustomConfirm(
+                            'Atenção',
+                            `O Pedido N° ${poNumber} já existe no Histórico. Deseja sobrescrevê-lo?`, 
+                            () => { confirmed = true; resolve(); },
+                            () => { confirmed = false; resolve(); } // Não é necessário, mas fica de placeholder
+                        );
+                    });
+                }
+                
+                if (!confirmed) return;
+
+                // 2. Salvar no Histórico e incrementar o contador
+                const counterRef = doc(db, `/artifacts/${appId}/users/${userId}/config/po_counter`);
+                await updateDoc(counterRef, { count: poCounter }); // Incrementa o contador para evitar repetição
+
+                await setDoc(historyRef, order);
+
+                // 3. Remover do Rascunho (se existir)
+                const draftSnap = await getDoc(draftRef);
+                if (draftSnap.exists()) {
+                    await deleteDoc(draftRef);
+                }
+
+                showCustomAlert('Pedido Finalizado', `Pedido N° ${poNumber} salvo com sucesso no Histórico!`);
+                window.location.href = 'historico.html'; // Redireciona para ver o pedido salvo
+                
+            } catch (error) {
+                console.error("Erro ao salvar e finalizar PO:", error);
+                showCustomAlert('Erro', 'Não foi possível salvar e finalizar o pedido: ' + error.message);
+            }
+        }
+        
+        // --- Função de Inicialização (Chamada após Auth) ---
+
+        async function init() {
             const urlParams = new URLSearchParams(window.location.search);
             const poToEdit = urlParams.get('edit_po');
             const draftToEdit = urlParams.get('edit_draft');
 
-            loadSupplierSelect();
-            loadProductSelect();
+            await loadSupplierSelect();
+            await loadProductSelect();
             
             if (poToEdit) {
-                loadOrderForEditing(poToEdit, 'savedOrders');
+                await loadOrderForEditing(poToEdit, 'orders');
             } else if (draftToEdit) {
-                loadOrderForEditing(draftToEdit, 'memorizedOrders');
+                await loadOrderForEditing(draftToEdit, 'drafts');
             } else {
                 document.getElementById('poDate').value = new Date().toISOString().slice(0, 10);
-                document.getElementById('poNumber').value = getNextPoNumber();
+                document.getElementById('poNumber').value = await getNextPoNumber();
                 addItem(); 
             }
         }
 
-        window.onload = init;
+        // Função de carregamento que é chamada após a autenticação
+        window.loadData = init;
+
+        window.onload = () => {
+            setupModal();
+            setupFirebase();
+        };
+
+        // Exporta funções para uso global (onchange/onclick no HTML)
+        window.addItem = addItem;
+        window.removeItem = removeItem;
+        window.calculateTotal = calculateTotal;
+        window.updateItemDescription = updateItemDescription;
+        window.saveAsDraft = saveAsDraft;
+        window.saveAndFinalize = saveAndFinalize;
+        window.resequenceItems = resequenceItems; // Para ser usado ao manipular a tabela
     </script>
 </body>
 </html>
