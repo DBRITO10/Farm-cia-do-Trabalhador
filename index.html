@@ -44,10 +44,12 @@
             font-weight: bold;
             transition: background-color 0.3s;
         }
-        .btn-memorize { background-color: #ffc107; color: #333; }
-        .btn-memorize:hover { background-color: #e0a800; }
+        .btn-draft { background-color: #ffc107; color: #333; }
+        .btn-draft:hover { background-color: #e0a800; }
         .btn-save { background-color: #28a745; color: white; }
         .btn-save:hover { background-color: #1e7e34; }
+        .btn-print { background-color: #007bff; color: white; }
+        .btn-print:hover { background-color: #0056b3; }
         .delete-btn { background-color: #dc3545; color: white; padding: 8px 12px; margin-top: 0; }
         .delete-btn:hover { background-color: #c82333; }
 
@@ -58,11 +60,11 @@
                 margin: 0;
                 background-color: white;
             }
-            .container, .nav-bar, .action-buttons, .form-group:not(.print-only) {
+            .container, .nav-bar, .action-buttons {
                 display: none;
             }
             .purchase-order {
-                display: block; 
+                display: block !important;
             }
         }
     </style>
@@ -77,12 +79,14 @@
 
     <div class="container">
         <div class="header">
-            <h1>NOVO PEDIDO DE COMPRA</h1>
+            <h1 id="pageTitle">NOVO PEDIDO DE COMPRA</h1>
         </div>
+        
+        <input type="hidden" id="originalPoNumber"> 
 
         <div class="form-group">
             <label for="poNumber">Número do Pedido (PO):</label>
-            <input type="text" id="poNumber" value="PO-001">
+            <input type="text" id="poNumber" value="PO-001" readonly>
         </div>
         
         <div class="form-group">
@@ -136,8 +140,9 @@
         </div>
         
         <div class="action-buttons">
-            <button class="btn-memorize" onclick="saveDraft()">1. Visualizar Rascunho / Memorizar</button>
-            <button class="btn-save" onclick="savePurchaseOrder()">2. Salvar Pedido (Gravar)</button>
+            <button class="btn-draft" onclick="saveDraft()">1. Salvar Rascunho / Memorizar</button>
+            <button class="btn-save" id="saveButton" onclick="savePurchaseOrder()">2. Salvar Pedido Definitivo (Gravar)</button>
+            <button class="btn-print" onclick="printOrder()">3. Visualizar e Imprimir / PDF</button>
         </div>
         
     </div>
@@ -213,10 +218,16 @@
     </div>
     
     <script>
-        // Variável global para armazenar os itens do pedido em rascunho
         let items = [];
+        let itemIndexCounter = 0; // Para garantir IDs únicos nos itens
 
-        // --- FUNÇÕES DE CADASTRO DE DADOS (USADAS NO INDEX) ---
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const [year, month, day] = dateString.split('-');
+            return `${day}/${month}/${year}`;
+        }
+        
+        // --- FUNÇÕES DE CADASTRO DE DADOS ---
 
         function loadSupplierSelect() {
             const select = document.getElementById('supplierSelect');
@@ -269,54 +280,44 @@
             const product = products[selectedSku];
             
             if (product) {
-                const container = document.getElementById('itemsContainer');
-                const newIndex = items.length;
-                
-                const itemRow = document.createElement('div');
-                itemRow.classList.add('item-row');
-                itemRow.innerHTML = `
-                    <input type="text" id="desc-${newIndex}" value="${product.desc}" placeholder="Descrição do Item">
-                    <input type="text" id="sku-${newIndex}" value="${product.sku}" placeholder="SKU/Cód.">
-                    <input type="number" id="qty-${newIndex}" value="1" min="1">
-                    <input type="number" id="price-${newIndex}" value="${product.price}" min="0" step="0.01">
-                    <button class="delete-btn" onclick="removeItem(${newIndex})">X</button>
-                `;
-                container.appendChild(itemRow);
-                
-                items.push({ index: newIndex }); 
-                // Não chama updateOrder aqui, apenas no saveDraft ou savePurchaseOrder
+                addItem(product.desc, product.sku, 1, product.price);
             }
-            document.getElementById('productSelect').value = ""; // Limpa a seleção
+            document.getElementById('productSelect').value = "";
         }
 
-        function addItem() {
+        function addItem(desc = '', sku = '', qty = 1, price = 0.00) {
             const container = document.getElementById('itemsContainer');
-            const newIndex = items.length;
+            const newIndex = itemIndexCounter++;
             
             const itemRow = document.createElement('div');
             itemRow.classList.add('item-row');
+            itemRow.id = `row-${newIndex}`;
             itemRow.innerHTML = `
-                <input type="text" id="desc-${newIndex}" placeholder="Descrição do Item">
-                <input type="text" id="sku-${newIndex}" placeholder="SKU/Cód.">
-                <input type="number" id="qty-${newIndex}" value="1" min="1">
-                <input type="number" id="price-${newIndex}" value="0.00" min="0" step="0.01">
+                <input type="text" id="desc-${newIndex}" value="${desc}" placeholder="Descrição do Item">
+                <input type="text" id="sku-${newIndex}" value="${sku}" placeholder="SKU/Cód.">
+                <input type="number" id="qty-${newIndex}" value="${qty}" min="1">
+                <input type="number" id="price-${newIndex}" value="${parseFloat(price).toFixed(2)}" min="0" step="0.01">
                 <button class="delete-btn" onclick="removeItem(${newIndex})">X</button>
             `;
             container.appendChild(itemRow);
             
+            // Adiciona a referência do item à lista global, usando o novo índice
             items.push({ index: newIndex }); 
         }
 
         function removeItem(index) {
-            const element = document.getElementById(`desc-${index}`).parentNode;
-            element.remove();
-            items = items.filter(item => item.index !== index);
+            const element = document.getElementById(`row-${index}`);
+            if (element) {
+                element.remove();
+                // Remove a referência do item do array global
+                items = items.filter(item => item.index !== index);
+            }
         }
-
-        // --- FUNÇÕES DE AÇÃO (RASCUNHO E GRAVAÇÃO) ---
+        
+        // --- FUNÇÕES DE VISUALIZAÇÃO/IMPRESSÃO ---
 
         function updateDraft() {
-            // Esta função atualiza o PO na estrutura oculta para o PDF
+            // Esta função preenche a estrutura do PDF/impressão
             const poNumber = document.getElementById('poNumber').value;
             const poDate = document.getElementById('poDate').value;
             const supplierName = document.getElementById('supplierName').value;
@@ -324,7 +325,6 @@
             const deliveryDate = document.getElementById('deliveryDate').value;
             const notes = document.getElementById('notes').value;
 
-            // 1. Atualiza dados principais no PO (estrutura do PDF)
             document.getElementById('outPoNumber').textContent = poNumber || 'N/A';
             document.getElementById('outPoDate').textContent = poDate ? formatDate(poDate) : 'N/A';
             document.getElementById('outSupplierName').textContent = supplierName || 'N/A';
@@ -332,14 +332,15 @@
             document.getElementById('outDeliveryDate').textContent = deliveryDate ? formatDate(deliveryDate) : 'N/A';
             document.getElementById('outNotes').textContent = notes || 'Nenhuma observação.';
             
-            // 2. Atualiza a tabela de itens no PO
             let total = 0;
             const poTableBody = document.getElementById('poTableBody');
             poTableBody.innerHTML = ''; 
 
+            // Filtra apenas os itens cujos elementos ainda existem no DOM
+            items = items.filter(item => document.getElementById(`desc-${item.index}`)); 
+
             items.forEach(item => {
                 const index = item.index;
-                // Deve usar a função '?' para garantir que o elemento existe antes de pegar o valor
                 const desc = document.getElementById(`desc-${index}`)?.value || '';
                 const sku = document.getElementById(`sku-${index}`)?.value || '';
                 const qty = parseFloat(document.getElementById(`qty-${index}`)?.value) || 0;
@@ -360,65 +361,33 @@
                 `;
             });
             
-            // 3. Atualiza os totais
             document.getElementById('outSubtotal').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
             document.getElementById('outTotal').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
         }
-
-
-        // Memorizar/Visualizar Rascunho
-        function saveDraft() {
-            updateDraft(); // Atualiza a estrutura do PO
-            // Simula a impressão para visualização (que gera o PDF/memoriza)
+        
+        function printOrder() {
+            if (items.filter(item => document.getElementById(`desc-${item.index}`)?.value).length === 0) {
+                alert("Adicione pelo menos um item ao pedido antes de visualizar/imprimir.");
+                return;
+            }
+            updateDraft(); 
             window.print();
         }
 
-        // Salvar Pedido (Gravação Definitiva)
-        function savePurchaseOrder() {
-            const poNumber = document.getElementById('poNumber').value;
-            if (!poNumber || poNumber.trim() === '') {
-                alert("O número do pedido (PO) é obrigatório para salvar!");
-                return;
-            }
-            if (items.length === 0) {
-                 alert("Adicione pelo menos um item ao pedido antes de salvar.");
-                return;
-            }
+        // --- FUNÇÕES DE AÇÃO (SALVAR E RASCUNHO) ---
 
-            // 1. Atualiza o rascunho (garante que os dados mais recentes estão na memória)
-            updateDraft();
-
-            // 2. Coleta o JSON final do pedido
-            const orderData = getCurrentOrderData();
-            
-            // 3. Grava no LocalStorage
-            const savedOrders = JSON.parse(localStorage.getItem('savedOrders')) || {};
-            
-            if (savedOrders[poNumber] && !confirm(`O Pedido N° ${poNumber} já existe. Deseja sobrescrevê-lo?`)) {
-                return;
-            }
-            
-            savedOrders[poNumber] = orderData;
-            localStorage.setItem('savedOrders', JSON.stringify(savedOrders));
-
-            alert(`Pedido N° ${poNumber} salvo com sucesso! Você será redirecionado para o Histórico.`);
-            
-            // 4. Redireciona para o histórico
-            window.location.href = 'historico.html';
-        }
-
-        // Coleta todos os dados atuais do formulário
         function getCurrentOrderData() {
             const orderItems = [];
+            // Itera sobre as referências salvas e coleta os valores atuais
             items.forEach(item => {
                 const index = item.index;
-                const desc = document.getElementById(`desc-${index}`)?.value || '';
-                if (desc) {
+                const descInput = document.getElementById(`desc-${index}`);
+                if (descInput && descInput.value.trim()) {
                     orderItems.push({
-                        desc: desc,
-                        sku: document.getElementById(`sku-${index}`)?.value || '',
-                        qty: document.getElementById(`qty-${index}`)?.value || '',
-                        price: document.getElementById(`price-${index}`)?.value || ''
+                        desc: descInput.value,
+                        sku: document.getElementById(`sku-${index}`).value,
+                        qty: document.getElementById(`qty-${index}`).value,
+                        price: document.getElementById(`price-${index}`).value
                     });
                 }
             });
@@ -434,25 +403,143 @@
             };
         }
 
-        // Função auxiliar para formatar datas
-        function formatDate(dateString) {
-            if (!dateString) return 'N/A';
-            const [year, month, day] = dateString.split('-');
-            return `${day}/${month}/${year}`;
+        // 1. Salvar Rascunho / Memorizar
+        function saveDraft() {
+            if (items.filter(item => document.getElementById(`desc-${item.index}`)?.value).length === 0) {
+                alert("Adicione pelo menos um item ao pedido para salvar como rascunho.");
+                return;
+            }
+            
+            const poNumber = document.getElementById('poNumber').value;
+            const orderData = getCurrentOrderData();
+            
+            localStorage.setItem('draftOrder', JSON.stringify(orderData));
+            alert(`Rascunho do Pedido N° ${poNumber} foi salvo com sucesso!`);
         }
 
-        // Inicialização
-        function init() {
-            document.getElementById('poDate').value = new Date().toISOString().slice(0, 10);
+
+        // 2. Salvar Pedido Definitivo (Gravação)
+        function savePurchaseOrder() {
+            const poNumber = document.getElementById('poNumber').value;
+            const originalPoNumber = document.getElementById('originalPoNumber').value;
+
+            if (!poNumber || poNumber.trim() === '') {
+                alert("O número do pedido (PO) é obrigatório para salvar!");
+                return;
+            }
+            if (items.filter(item => document.getElementById(`desc-${item.index}`)?.value).length === 0) {
+                 alert("Adicione pelo menos um item ao pedido antes de salvar.");
+                return;
+            }
+
+            const orderData = getCurrentOrderData();
+            const savedOrders = JSON.parse(localStorage.getItem('savedOrders')) || {};
             
+            // Lógica de Edição: Se o PONumber foi alterado e havia um PO original, exclui o original
+            if (originalPoNumber && originalPoNumber !== poNumber && savedOrders[originalPoNumber]) {
+                 delete savedOrders[originalPoNumber];
+            }
+            
+            // Lógica de Sobrescrita:
+            if (savedOrders[poNumber] && !originalPoNumber && !confirm(`O Pedido N° ${poNumber} já existe. Deseja sobrescrevê-lo?`)) {
+                return;
+            }
+            
+            savedOrders[poNumber] = orderData;
+            localStorage.setItem('savedOrders', JSON.stringify(savedOrders));
+            localStorage.removeItem('draftOrder'); // Limpa o rascunho após salvar definitivamente
+
+            alert(`Pedido N° ${poNumber} salvo/atualizado com sucesso! Você será redirecionado para o Histórico.`);
+            
+            window.location.href = 'historico.html';
+        }
+        
+        // --- FUNÇÃO DE CARREGAMENTO PARA EDIÇÃO ---
+
+        function loadOrderForEditing(poNumber) {
+            const savedOrders = JSON.parse(localStorage.getItem('savedOrders')) || {};
+            const orderData = savedOrders[poNumber];
+            
+            if (!orderData) {
+                alert("Erro: Pedido de compra não encontrado.");
+                return;
+            }
+            
+            // 1. Preenche os campos principais
+            document.getElementById('originalPoNumber').value = poNumber; // Guarda o PO original
+            document.getElementById('poNumber').value = orderData.poNumber;
+            document.getElementById('poDate').value = orderData.poDate;
+            document.getElementById('supplierName').value = orderData.supplierName;
+            document.getElementById('supplierContact').value = orderData.supplierContact;
+            document.getElementById('deliveryDate').value = orderData.deliveryDate;
+            document.getElementById('notes').value = orderData.notes;
+            
+            // Atualiza o título e o botão
+            document.getElementById('pageTitle').textContent = 'EDITANDO PEDIDO DE COMPRA N° ' + poNumber;
+            document.getElementById('saveButton').textContent = '2. Atualizar Pedido (Gravar)';
+            
+            // 2. Limpa e recarrega os itens
+            document.getElementById('itemsContainer').innerHTML = '';
+            items = []; // Reseta o array de itens
+            itemIndexCounter = 0;
+            
+            orderData.items.forEach(item => {
+                addItem(item.desc, item.sku, item.qty, item.price);
+            });
+
+            // 3. Tenta selecionar o fornecedor no select (se o nome coincidir)
+            const select = document.getElementById('supplierSelect');
+            select.value = orderData.supplierName;
+        }
+
+        function getNextPoNumber() {
+            const savedOrders = JSON.parse(localStorage.getItem('savedOrders')) || {};
+            const keys = Object.keys(savedOrders);
+            
+            let lastNumber = 0;
+            keys.forEach(key => {
+                const match = key.match(/PO-(\d+)/);
+                if (match) {
+                    const number = parseInt(match[1]);
+                    if (number > lastNumber) {
+                        lastNumber = number;
+                    }
+                }
+            });
+            return `PO-${(lastNumber + 1).toString().padStart(3, '0')}`;
+        }
+        
+        function init() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const poToEdit = urlParams.get('edit_po');
+
             loadSupplierSelect();
             loadProductSelect();
-            addItem(); 
-
-            // Garante que o número do PO seja sequencial (simples)
-            const savedOrders = JSON.parse(localStorage.getItem('savedOrders')) || {};
-            const lastPoNumber = Object.keys(savedOrders).length;
-            document.getElementById('poNumber').value = `PO-${(lastPoNumber + 1).toString().padStart(3, '0')}`;
+            
+            if (poToEdit) {
+                loadOrderForEditing(poToEdit);
+            } else {
+                // Se não estiver editando, tenta carregar o rascunho
+                const draftData = JSON.parse(localStorage.getItem('draftOrder'));
+                
+                if (draftData) {
+                    if (confirm("Rascunho de pedido encontrado. Deseja carregá-lo?")) {
+                        // Simula o formato de edição para carregar o rascunho
+                        loadOrderForEditing(draftData.poNumber); 
+                        // Remove o PO original para garantir que um rascunho não sobrescreva um salvo com o mesmo PO
+                        document.getElementById('originalPoNumber').value = ''; 
+                    } else {
+                        localStorage.removeItem('draftOrder'); // O usuário não quer carregar, limpa.
+                        document.getElementById('poDate').value = new Date().toISOString().slice(0, 10);
+                        document.getElementById('poNumber').value = getNextPoNumber();
+                        addItem();
+                    }
+                } else {
+                    document.getElementById('poDate').value = new Date().toISOString().slice(0, 10);
+                    document.getElementById('poNumber').value = getNextPoNumber();
+                    addItem(); 
+                }
+            }
         }
 
         window.onload = init;
