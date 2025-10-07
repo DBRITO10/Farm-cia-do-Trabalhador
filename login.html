@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acesso ao Sistema</title>
+    <title>Acesso Restrito ao Sistema</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     
@@ -21,18 +21,16 @@
           appId: "1:144965717217:web:de43b2316e8b7a25293ba0"
         };
         
-        // FUNÇÃO DE INICIALIZAÇÃO
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
 
-        // Deixe as referências globais para serem usadas no script de login
         const auth = firebase.auth();
         const db = firebase.firestore();
     </script>
     
     <style>
-        /* Estilos Profissionais */
+        /* Estilos Profissionais e Limpos */
         body {
             font-family: 'Inter', Arial, sans-serif;
             margin: 0;
@@ -47,13 +45,13 @@
             padding: 40px;
             border-radius: 12px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            max-width: 400px;
+            max-width: 350px; /* Um pouco mais estreito, mais profissional */
             width: 90%;
             text-align: center;
         }
         .header h1 {
-            color: #004c99;
-            font-size: 28px;
+            color: #004c99; /* Cor institucional */
+            font-size: 26px;
             margin-bottom: 5px;
             font-weight: 700;
         }
@@ -98,11 +96,11 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-bottom: 15px;
         }
         .btn-login {
             background-color: #004c99;
             color: white;
+            margin-top: 10px;
         }
         .btn-login:hover {
             background-color: #003366;
@@ -127,32 +125,19 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        .toggle-link {
-            font-size: 14px;
-            color: #004c99;
-            cursor: pointer;
-            text-decoration: underline;
-        }
-        .toggle-link:hover {
-            color: #003366;
-        }
     </style>
 </head>
 <body>
     <div class="auth-container">
         <div class="header">
-            <h1 id="formTitle">Entrar no Sistema</h1>
-            <p>Gerenciamento de Pedidos de Compra</p>
+            <h1 id="formTitle">Acesso ao Sistema</h1>
+            <p>Insira suas credenciais para continuar.</p>
         </div>
         
         <form id="authForm">
-            <div id="nameGroup" class="form-group" style="display: none;">
-                <label for="name">Seu Nome/Usuário</label>
-                <input type="text" id="name" required placeholder="Ex: João Silva">
-            </div>
             <div class="form-group">
                 <label for="email">E-mail</label>
-                <input type="email" id="email" required placeholder="seu.email@exemplo.com">
+                <input type="email" id="email" required placeholder="seu.email@empresa.com">
             </div>
             <div class="form-group">
                 <label for="password">Senha</label>
@@ -161,67 +146,35 @@
             
             <button type="submit" id="submitBtn" class="btn-auth btn-login">
                 <span class="spinner"></span>
-                <span>Entrar</span>
+                <span>Entrar no Sistema</span>
             </button>
             
             <p id="error-msg" class="error-message">Mensagem de erro.</p>
         </form>
         
-        <p>
-            <span id="toggleText">Não tem conta?</span> 
-            <span id="toggleLink" class="toggle-link">Criar Conta</span>
-        </p>
-    </div>
+        </div>
 
     <script>
         const authForm = document.getElementById('authForm');
         const submitBtn = document.getElementById('submitBtn');
         const spinner = document.querySelector('.spinner');
         const errorMsg = document.getElementById('error-msg');
-        const formTitle = document.getElementById('formTitle');
-        const nameGroup = document.getElementById('nameGroup');
-        const toggleLink = document.getElementById('toggleLink');
-        const toggleText = document.getElementById('toggleText');
+        
+        // Define o estado inicial do botão como 'Entrar no Sistema'
+        submitBtn.querySelector('span:last-child').textContent = 'Entrar no Sistema';
 
-        let isLoginMode = true;
-        const COMPANY_MASTER_ID = "MASTER_ID_UNICO"; // ID FIXO PARA DADOS COMPARTILHADOS
-
-        // Função utilitária para mostrar erros
         function showError(message) {
             errorMsg.textContent = message;
             errorMsg.style.display = 'block';
         }
 
-        // Função utilitária para mudar o estado do botão
         function setButtonState(isLoading) {
             submitBtn.disabled = isLoading;
             spinner.style.display = isLoading ? 'inline-block' : 'none';
-            submitBtn.querySelector('span:last-child').textContent = isLoading 
-                ? 'Aguarde...' 
-                : isLoginMode ? 'Entrar' : 'Cadastrar';
+            submitBtn.querySelector('span:last-child').textContent = isLoading ? 'Aguarde...' : 'Entrar no Sistema';
         }
 
-        function toggleMode() {
-            isLoginMode = !isLoginMode;
-            
-            if (isLoginMode) {
-                formTitle.textContent = 'Entrar no Sistema';
-                submitBtn.querySelector('span:last-child').textContent = 'Entrar';
-                nameGroup.style.display = 'none';
-                nameGroup.querySelector('input').removeAttribute('required');
-                toggleText.textContent = 'Não tem conta?';
-                toggleLink.textContent = 'Criar Conta';
-            } else {
-                formTitle.textContent = 'Criar uma Nova Conta';
-                submitBtn.querySelector('span:last-child').textContent = 'Cadastrar';
-                nameGroup.style.display = 'block';
-                nameGroup.querySelector('input').setAttribute('required', 'required');
-                toggleText.textContent = 'Já tem conta?';
-                toggleLink.textContent = 'Fazer Login';
-            }
-        }
-        
-        // Lidar com o envio do formulário (LOGIN e CADASTRO)
+        // Lidar com o envio do formulário (SOMENTE LOGIN)
         authForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             errorMsg.style.display = 'none';
@@ -229,46 +182,22 @@
 
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            const name = document.getElementById('name').value;
 
             try {
-                if (isLoginMode) {
-                    // --- MODO LOGIN ---
-                    await auth.signInWithEmailAndPassword(email, password);
-                } else {
-                    // --- MODO CADASTRO ---
-                    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                    const uid = userCredential.user.uid;
-
-                    // OPCIONAL: Cria um documento básico para o usuário no nó compartilhado da empresa
-                    // Isto é importante para garantir que o UID do usuário exista em algum lugar
-                    const userProfileRef = db.collection('artifacts')
-                                             .doc('appId')
-                                             .collection('users') // Mantém o nó 'users'
-                                             .doc(uid); 
-                                             
-                    await userProfileRef.set({
-                        name: name,
-                        email: email,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-
-                    showError(`Conta criada com sucesso! Redirecionando...`);
-                }
+                // Tenta fazer o login com as credenciais
+                await auth.signInWithEmailAndPassword(email, password);
                 
-                // Redireciona para a página principal
+                // Se o login for bem-sucedido, redireciona
                 window.location.href = 'index.html'; 
 
             } catch (error) {
-                console.error("Erro de Autenticação:", error);
+                console.error("Erro de Login:", error);
                 
                 let friendlyMessage = "Erro ao fazer login. Verifique seu e-mail e senha.";
                 if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
                     friendlyMessage = "E-mail ou senha inválidos.";
                 } else if (error.code === 'auth/invalid-email') {
                     friendlyMessage = "E-mail inválido.";
-                } else if (error.code === 'auth/email-already-in-use') {
-                    friendlyMessage = "Este e-mail já está em uso.";
                 }
                 
                 showError(friendlyMessage);
@@ -276,24 +205,21 @@
             }
         });
 
-        // Event listener para o link de alternância
-        toggleLink.addEventListener('click', toggleMode);
-
-        // Inicialização
-        if (typeof firebase !== 'undefined' && typeof auth !== 'undefined') {
-            // Garante que a página inicialize no modo Login
-            toggleMode(); 
-             // Redireciona se o usuário já estiver logado
+        // Verificação de estado para redirecionamento automático
+        if (typeof auth !== 'undefined') {
             auth.onAuthStateChanged(user => {
                 if (user) {
+                    // Se já estiver logado, redireciona para a página principal
                     window.location.href = 'index.html';
                 } else {
-                    setButtonState(false); // Pronto para logar
+                    // Se não estiver logado, habilita o botão de login
+                    setButtonState(false);
                 }
             });
         } else {
+             // Tratamento de erro se o Firebase não carregar
              window.onload = () => {
-                showError("ERRO: As bibliotecas do Firebase não estão carregadas. Verifique seus scripts.");
+                showError("ERRO: As bibliotecas do Firebase não estão carregadas.");
                 setButtonState(false);
             };
         }
