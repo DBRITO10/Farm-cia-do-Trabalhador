@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerador de Pedido de Compra - Farmácia do Trabalhador</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+
     <style>
         /* Estilos Base */
         body { font-family: Arial, sans-serif; margin: 0; background-color: #f4f7f6; padding: 20px; }
@@ -15,658 +20,730 @@
         .logout-btn { background-color: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s; }
         .logout-btn:hover { background-color: #c82333; }
 
-        .header { text-align: center; margin-bottom: 30px; color: #004c99; }
-        .header h1 { font-size: 28px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header img { max-width: 150px; height: auto; margin-bottom: 10px; }
+        .header h1 { color: #004c99; margin: 0; font-size: 24px; }
+        .header p { color: #666; font-size: 16px; margin: 5px 0 0; }
         
-        /* Navegação */
-        .nav-bar { display: flex; justify-content: space-around; background-color: #004c99; margin-bottom: 20px; border-radius: 4px; }
-        .nav-bar a { color: white; padding: 12px 20px; text-decoration: none; font-weight: bold; transition: background-color 0.3s; border-radius: 4px; }
-        .nav-bar a:hover, .nav-bar a.active { background-color: #003366; }
-
-        /* Formulário e Listagem */
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; }
-        input[type="text"], input[type="date"], input[type="number"], select, textarea { 
-            width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; 
+        /* Formulário */
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: bold; margin-bottom: 5px; color: #333; }
+        .form-group input[type="date"],
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
         }
-        .form-row { display: flex; gap: 20px; margin-bottom: 15px; }
-        .form-row > div { flex: 1; }
+
+        .po-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+        }
 
         /* Tabela de Itens */
-        .items-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .items-table th, .items-table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-        .items-table th { background-color: #004c99; color: white; text-transform: uppercase; font-size: 12px; }
-        .items-table td input { border: none; padding: 5px; margin: 0; }
-        .items-table .actions { text-align: center; }
-        .btn-add, .btn-remove { background-color: #28a745; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s; }
-        .btn-remove { background-color: #dc3545; }
-        .btn-add:hover { background-color: #218838; }
-        .btn-remove:hover { background-color: #c82333; }
-        .total-row td { font-weight: bold; background-color: #e9ecef; }
-        .total-row .total-amount { color: #004c99; font-size: 1.1em; }
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .items-table th, .items-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .items-table th {
+            background-color: #004c99;
+            color: white;
+            font-weight: normal;
+        }
+        .items-table td input[type="text"],
+        .items-table td input[type="number"],
+        .items-table td select {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .items-table td.desc-cell { width: 40%; }
+        .items-table td.qty-cell { width: 10%; }
+        .items-table td.unit-cell { width: 15%; }
+        .items-table td.total-cell { width: 15%; }
+        .items-table td.action-cell { width: 5%; text-align: center; }
 
-        /* Botões de Ação */
-        .action-buttons { margin-top: 30px; text-align: center; display: flex; justify-content: center; gap: 15px; }
-        .btn-primary { background-color: #004c99; color: white; border: none; padding: 12px 25px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: background-color 0.3s, transform 0.1s; box-shadow: 0 4px 6px rgba(0, 76, 153, 0.2); }
-        .btn-primary:hover { background-color: #003366; transform: translateY(-1px); }
-        .btn-secondary { background-color: #6c757d; color: white; border: none; padding: 12px 25px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: background-color 0.3s; }
-        .btn-secondary:hover { background-color: #5a6268; }
+        .btn-add, .remove-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .btn-add:hover { background-color: #218838; }
+        .remove-btn { background-color: #dc3545; }
+        .remove-btn:hover { background-color: #c82333; }
+
+        /* Rodapé / Totais / Ações */
+        .po-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        .total-area {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #004c99;
+            border-top: 2px solid #004c99;
+            padding-top: 10px;
+        }
+        .total-area p { margin: 5px 0; }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-save, .btn-draft {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: opacity 0.3s;
+        }
+        .btn-save {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-save:hover { background-color: #0056b3; }
+        .btn-draft {
+            background-color: #ffc107;
+            color: #333;
+        }
+        .btn-draft:hover { background-color: #e0a800; }
         
-        /* Modal Customizado (Substitui alert/confirm) */
+        .disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Estilos do Modal (Alertas Customizados) */
         .modal {
             display: none; 
             position: fixed; 
             z-index: 1000; 
-            left: 0; 
-            top: 0; 
+            left: 0;
+            top: 0;
             width: 100%; 
             height: 100%; 
             overflow: auto; 
             background-color: rgba(0,0,0,0.4); 
-            justify-content: center;
-            align-items: center;
+            padding-top: 60px;
         }
         .modal-content {
             background-color: #fefefe;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            width: 80%;
+            margin: 5% auto; 
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; 
             max-width: 400px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             text-align: center;
         }
-        .modal-title { color: #004c99; margin-top: 0; }
-        .modal-message { margin: 15px 0 25px 0; color: #333; }
-        .modal-actions { display: flex; justify-content: center; gap: 10px; }
-        .modal-btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        .modal-btn-primary { background-color: #004c99; color: white; }
-        .modal-btn-primary:hover { background-color: #003366; }
-        .modal-btn-secondary { background-color: #6c757d; color: white; }
-        .modal-btn-secondary:hover { background-color: #5a6268; }
-        .modal-btn-danger { background-color: #dc3545; color: white; }
-        .modal-btn-danger:hover { background-color: #c82333; }
-
-        /* Estilos de Impressão (PDF) */
-        @media print {
-            @page {
-                size: landscape; /* Força a orientação horizontal */
-                margin: 1cm;
-            }
-
-            body { background-color: white !important; padding: 0 !important; }
-            .container, .po-print { max-width: 100%; width: 100%; margin: 0; padding: 0; box-shadow: none; border-radius: 0; }
-            .top-bar, .nav-bar, .action-buttons, .form-row:has(.hidden-print), .add-item-row, .btn-remove, .btn-add { display: none !important; }
-            input, select, textarea { border: none !important; background: none !important; padding: 0 !important; margin: 0 !important; }
-            .items-table td, .items-table th { border-color: #000 !important; }
-            .items-table th { background-color: #ccc !important; color: #000 !important; }
+        .modal-content h3 { margin-top: 0; color: #004c99; }
+        .modal-buttons { margin-top: 20px; }
+        .modal-buttons button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0 5px;
+            font-weight: bold;
         }
+        .modal-ok-btn { background-color: #007bff; color: white; }
+        .modal-cancel-btn { background-color: #6c757d; color: white; }
+        .modal-confirm-btn { background-color: #28a745; color: white; }
     </style>
-    <!-- Incluir biblioteca jsPDF para geração de PDF (Opcional, mas útil para mais controle) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
-    
     <div class="container">
-        <!-- Barra Superior com Info do Usuário e Logout -->
         <div class="top-bar">
-            <div id="userInfo" class="user-info">Aguardando autenticação...</div>
-            <button id="logoutBtn" class="logout-btn" style="display:none;">SAIR</button>
+            <span class="user-info">Carregando Usuário...</span>
+            <button class="logout-btn" onclick="firebase.auth().signOut().then(() => { window.location.href = 'login.html'; });">Sair</button>
         </div>
 
+        <nav>
+            <a href="index.html">Novo Pedido</a> | 
+            <a href="rascunhos.html">Rascunhos</a> | 
+            <a href="historico.html">Histórico</a> |
+            <a href="produtos.html">Catálogo Produtos</a> | 
+            <a href="fornecedores.html">Cadastro Fornecedores</a>
+        </nav>
+
         <div class="header">
-            <img src="Logo.jpg-441b687c-a62a-4e45-a35a-97f12550a156" alt="Logo" style="max-width: 150px; margin-bottom: 10px;">
-            <h1>Gerador de Pedido de Compra</h1>
-        </div>
-        
-        <!-- Navegação -->
-        <div class="nav-bar">
-            <a href="index.html" class="active">Novo Pedido</a>
-            <a href="historico.html">Histórico</a>
-            <a href="rascunhos.html">Rascunhos</a>
-            <a href="produtos.html">Produtos</a>
-            <a href="fornecedores.html">Fornecedores</a>
+            <img src="Logo.jpg" alt="Logo Farmácia do Trabalhador">
+            <h1>Pedido de Compra</h1>
+            <p>Farmácia do Trabalhador - Matriz</p>
         </div>
 
         <form id="poForm">
-            <!-- Dados do Pedido -->
-            <div class="form-row">
-                <div>
-                    <label for="poNumber">N° Pedido (PO)</label>
-                    <input type="text" id="poNumber" required readonly>
+            <div class="po-details">
+                <div class="form-group">
+                    <label for="poNumber">Nº do Pedido:</label>
+                    <input type="text" id="poNumber" name="poNumber" required readonly>
                 </div>
-                <div>
-                    <label for="poDate">Data do Pedido</label>
-                    <input type="date" id="poDate" required>
+                <div class="form-group">
+                    <label for="poDate">Data:</label>
+                    <input type="date" id="poDate" name="poDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="supplierSelect">Fornecedor:</label>
+                    <select id="supplierSelect" name="supplier" required>
+                        <option value="">Selecione um Fornecedor</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="poDescription">Descrição (Opcional):</label>
+                    <input type="text" id="poDescription" name="poDescription">
                 </div>
             </div>
 
-            <!-- Dados do Fornecedor (Select) -->
-            <div class="form-row">
-                <div>
-                    <label for="supplierSelect">Fornecedor</label>
-                    <select id="supplierSelect" required></select>
-                </div>
-            </div>
-
-            <!-- Tabela de Itens -->
+            <h2>Itens do Pedido</h2>
             <table class="items-table">
                 <thead>
                     <tr>
-                        <th style="width: 5%;">ITEM</th>
-                        <th style="width: 10%;">SKU</th>
-                        <th style="width: 45%;">Descrição do Produto</th>
-                        <th style="width: 10%;">Qtd.</th>
-                        <th style="width: 15%;">Preço Unit. (R$)</th>
-                        <th style="width: 15%;">Total (R$)</th>
-                        <th style="width: 5%;" class="hidden-print">Ação</th>
+                        <th>Nº</th>
+                        <th class="desc-cell">Produto (SKU)</th>
+                        <th class="qty-cell">Qtd.</th>
+                        <th class="unit-cell">Valor Un.</th>
+                        <th class="total-cell">Subtotal</th>
+                        <th class="action-cell">Ação</th>
                     </tr>
                 </thead>
                 <tbody id="itemsBody">
-                    <!-- Linhas de itens serão adicionadas aqui -->
-                </tbody>
-                <tfoot>
-                    <tr class="total-row">
-                        <td colspan="5" style="text-align: right; font-size: 1.2em;">Total Geral:</td>
-                        <td id="totalAmount" class="total-amount">R$ 0,00</td>
-                        <td class="hidden-print"></td>
-                    </tr>
-                </tfoot>
+                    </tbody>
             </table>
+            <button type="button" class="btn-add" onclick="addItem()">Adicionar Item</button>
 
-            <div style="text-align: right; margin-top: 10px;">
-                <button type="button" class="btn-add" onclick="addItem()">+ Adicionar Item</button>
-            </div>
-
-            <!-- Observações -->
-            <div style="margin-top: 20px;">
-                <label for="poNotes">Observações</label>
-                <textarea id="poNotes" rows="3" placeholder="Insira quaisquer notas ou instruções especiais."></textarea>
+            <div class="po-footer">
+                <div class="total-area">
+                    <p>Total do Pedido: <span id="poTotal">R$ 0,00</span></p>
+                </div>
+                <div class="actions">
+                    <button type="button" class="btn-draft" onclick="saveAsDraft()">Salvar Rascunho</button>
+                    <button type="button" class="btn-save" onclick="saveAndFinalize()">Finalizar Pedido</button>
+                </div>
             </div>
         </form>
-
-        <!-- Botões de Ação -->
-        <div class="action-buttons">
-            <button type="button" class="btn-secondary" onclick="saveAsDraft()">Salvar como Rascunho</button>
-            <button type="button" class="btn-primary" onclick="saveAndFinalize()">Salvar e Finalizar</button>
-            <button type="button" class="btn-primary" onclick="window.print()">Imprimir (PDF)</button>
-        </div>
     </div>
-    
-    <!-- Custom Modal Structure -->
+
     <div id="customModal" class="modal">
         <div class="modal-content">
-            <h2 id="modalTitle" class="modal-title"></h2>
-            <p id="modalMessage" class="modal-message"></p>
-            <div id="modalActions" class="modal-actions">
-                <!-- Buttons dynamically added -->
+            <h3 id="modalTitle">Título</h3>
+            <p id="modalMessage">Mensagem.</p>
+            <div class="modal-buttons" id="modalButtons">
+                <button class="modal-ok-btn" onclick="closeModal()">OK</button>
             </div>
         </div>
     </div>
 
-    <!-- Script principal com Firebase e Lógica -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signOut, onAuthStateChanged, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, query, limit, getDocs, updateDoc, deleteDoc, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    <script>
+        // SEUS DADOS DE CONFIGURAÇÃO FORNECIDOS (Copiei de login.html)
+        const firebaseConfig = {
+            apiKey: "AIzaSyAXKlq9WOs_5_ilfhG13xQwNVwQa6MaBfg",
+            authDomain: "farmacia-a6682.firebaseapp.com",
+            projectId: "farmacia-a6682",
+            storageBucket: "farmacia-a6682.firebasestorage.app",
+            messagingSenderId: "144965717217",
+            appId: "1:144965717217:web:de43b2316e8b7a25293ba0"
+        };
+        
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
 
-        // Variáveis globais fornecidas pelo ambiente
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        const auth = firebase.auth();
+        const db = firebase.firestore();
 
-        let app, db, auth, userId = null;
-        let productsData = {};
-        let suppliersData = {};
-        let poCounter = 0; // Contador sequencial para POs
+        // Variáveis globais para os dados carregados
+        let suppliersList = {};
+        let productsCatalog = {};
 
-        // --- Variáveis e Funções Comuns de UI (Modal) ---
-        let customModal, modalTitle, modalMessage, modalActions;
+        // --- Funções de Utilitários (Copiei de historico.html/login.html) ---
 
         function setupModal() {
-            customModal = document.getElementById('customModal');
-            modalTitle = document.getElementById('modalTitle');
-            modalMessage = document.getElementById('modalMessage');
-            modalActions = document.getElementById('modalActions');
+            window.customModal = document.getElementById('customModal');
+            window.modalTitle = document.getElementById('modalTitle');
+            window.modalMessage = document.getElementById('modalMessage');
+            window.modalButtons = document.getElementById('modalButtons');
         }
 
-        function showCustomAlert(title, message) {
-            modalTitle.textContent = title;
-            modalMessage.textContent = message;
-            modalActions.innerHTML = '<button id="modalCloseBtn" class="modal-btn modal-btn-primary">OK</button>';
-            document.getElementById('modalCloseBtn').onclick = () => customModal.style.display = 'none';
-            customModal.style.display = 'flex';
+        function closeModal() {
+            if (window.customModal) {
+                window.customModal.style.display = 'none';
+            }
         }
 
-        function showCustomConfirm(title, message, onConfirm) {
-            modalTitle.textContent = title;
-            modalMessage.textContent = message;
-            modalActions.innerHTML = `
-                <button id="modalCancelBtn" class="modal-btn modal-btn-secondary">Cancelar</button>
-                <button id="modalConfirmBtn" class="modal-btn modal-btn-danger">Confirmar</button>
+        function showCustomAlert(title, message, callback) {
+            window.modalTitle.textContent = title;
+            window.modalMessage.textContent = message;
+            window.modalButtons.innerHTML = `<button class="modal-ok-btn" onclick="closeModal(); ${callback ? 'window.alertCallback();' : ''}">OK</button>`;
+            if (callback) {
+                window.alertCallback = callback;
+            }
+            window.customModal.style.display = 'block';
+        }
+        
+        function showCustomConfirm(title, message, onConfirm, onCancel) {
+            window.modalTitle.textContent = title;
+            window.modalMessage.textContent = message;
+            window.modalButtons.innerHTML = `
+                <button class="modal-confirm-btn" onclick="closeModal(); window.confirmCallback(true);">Confirmar</button>
+                <button class="modal-cancel-btn" onclick="closeModal(); window.confirmCallback(false);">Cancelar</button>
             `;
-            document.getElementById('modalCancelBtn').onclick = () => customModal.style.display = 'none';
-            document.getElementById('modalConfirmBtn').onclick = () => {
-                customModal.style.display = 'none';
-                onConfirm();
+            window.confirmCallback = (isConfirmed) => {
+                if (isConfirmed && onConfirm) {
+                    onConfirm();
+                } else if (!isConfirmed && onCancel) {
+                    onCancel();
+                }
             };
-            customModal.style.display = 'flex';
-        }
-        
-        // Função para atualizar a UI de Autenticação
-        function updateUserUI(userName) {
-            document.getElementById('userInfo').textContent = `Bem-vindo(a), ${userName}`;
-            const logoutBtn = document.getElementById('logoutBtn');
-            if (userId && !auth.currentUser.isAnonymous) {
-                logoutBtn.style.display = 'block';
-            } else {
-                logoutBtn.style.display = 'none';
-            }
+            window.customModal.style.display = 'block';
         }
 
-        // --- Configuração e Autenticação do Firebase ---
-
-        async function setupFirebase() {
-            if (!firebaseConfig) {
-                console.error("Firebase config is missing. Redirecting to login.");
-                window.location.href = 'login.html'; 
-                return;
-            }
-
-            app = initializeApp(firebaseConfig);
-            auth = getAuth(app);
-            db = getFirestore(app);
-            // setLogLevel('Debug'); // Descomentar para debug do Firestore
-
-            // Tentativa de login inicial com token ou anônimo
-            if (initialAuthToken) {
-                try {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                } catch (error) {
-                    console.error("Erro no token, tentando anônimo:", error);
-                    await signInAnonymously(auth);
-                }
-            } else {
-                await signInAnonymously(auth);
-            }
-            
-            // Listener de estado de autenticação
-            onAuthStateChanged(auth, async (user) => {
-                if (user && !user.isAnonymous) {
-                    userId = user.uid;
-                    // Tenta obter o nome de exibição, senão usa parte do e-mail
-                    let userName = user.email ? user.email.split('@')[0] : 'Usuário';
-                    
-                    const userDocRef = doc(db, `/artifacts/${appId}/users/${userId}/config/profile`);
-                    try {
-                        const userDoc = await getDoc(userDocRef);
-                        if (userDoc.exists() && userDoc.data().displayName) {
-                            userName = userDoc.data().displayName;
-                        }
-                    } catch(e) {
-                        console.warn("Could not fetch user profile.", e);
-                    }
-                    
-                    updateUserUI(userName);
-                    loadData(); // Chama a função de carregamento de dados específica da página
-                } else if (user && user.isAnonymous) {
-                    // Usuário anônimo/sem login. Redireciona para o login
-                    window.location.href = 'login.html';
-                } else {
-                    // Usuário deslogado. Redireciona para o login
-                    if (window.location.pathname.indexOf('login.html') === -1) {
-                        window.location.href = 'login.html';
-                    }
-                }
-            });
-
-            document.getElementById('logoutBtn').addEventListener('click', async () => {
-                try {
-                    await signOut(auth);
-                    window.location.href = 'login.html';
-                } catch (error) {
-                    showCustomAlert('Erro de Logout', 'Não foi possível sair: ' + error.message);
-                }
-            });
+        function formatCurrency(value) {
+            const num = parseFloat(String(value).replace(',', '.'));
+            if (isNaN(num)) return 'R$ 0,00';
+            return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
 
-        // Helper para obter a referência da Coleção do Usuário
+        // --- Autenticação Corrigida ---
+
         function getUserCollectionRef(collectionName) {
-            if (!db || !userId) {
-                console.error("Firestore não inicializado ou userId não disponível.");
-                return null;
+            const user = auth.currentUser;
+            if (!user) {
+                // Se a função for chamada antes do auth.onAuthStateChanged ser resolvido, isso garante o erro
+                throw new Error("Usuário não autenticado para acessar o Firestore.");
             }
-            return collection(db, `/artifacts/${appId}/users/${userId}/${collectionName}`);
-        }
-        
-        // Helper para obter a Referência de Documento (para Products/Suppliers - single document)
-        function getUserDocRef(collectionName, docId) {
-            if (!db || !userId) {
-                console.error("Firestore não inicializado ou userId não disponível.");
-                return null;
-            }
-            return doc(db, `/artifacts/${appId}/users/${userId}/${collectionName}/${docId}`);
+            // Usa o UID do usuário para isolar os dados
+            return db.collection('users').doc(user.uid).collection(collectionName);
         }
 
-        // --- Funções de Carregamento de Dados (Firestore) ---
+        // FUNÇÃO CRÍTICA: CORREÇÃO DO LOOP INFINITO
+        function setupFirebase() {
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    // Usuário logado:
+                    const userInfoElement = document.querySelector('.user-info');
+                    if (userInfoElement) {
+                        userInfoElement.textContent = 'Usuário: ' + user.email;
+                    }
+                    
+                    // Chama a função de carregamento de dados específica desta página
+                    if (window.loadData) {
+                        window.loadData();
+                    }
 
+                } else {
+                    // Usuário NÃO logado: Redireciona para a página de login
+                    window.location.href = 'login.html';
+                }
+            });
+        }
+
+        // --- Funções Específicas da Página ---
+
+        // Função para carregar a lista de fornecedores
         async function loadSupplierSelect() {
             const select = document.getElementById('supplierSelect');
-            select.innerHTML = '<option value="" disabled selected>Carregando...</option>';
-            
-            const docRef = getUserDocRef('suppliers', 'catalog');
+            select.innerHTML = '<option value="">Selecione um Fornecedor</option>';
+
             try {
-                const docSnap = await getDoc(docRef);
-                suppliersData = docSnap.exists() ? docSnap.data().data : {};
-                
-                select.innerHTML = '<option value="" disabled selected>Selecione um Fornecedor</option>';
-                Object.keys(suppliersData).forEach(cnpj => {
+                const snapshot = await getUserCollectionRef('suppliers').get();
+                suppliersList = {}; // Limpa a lista global
+                snapshot.forEach(doc => {
+                    const supplier = doc.data();
+                    suppliersList[supplier.cnpj] = supplier; // Armazena por CNPJ
                     const option = document.createElement('option');
-                    option.value = cnpj;
-                    option.textContent = suppliersData[cnpj].name;
+                    option.value = supplier.cnpj;
+                    option.textContent = `${supplier.name} (${supplier.cnpj})`;
                     select.appendChild(option);
                 });
             } catch (error) {
                 console.error("Erro ao carregar fornecedores:", error);
-                select.innerHTML = '<option value="" disabled selected>Erro ao carregar</option>';
+                showCustomAlert('Erro', 'Não foi possível carregar a lista de fornecedores.');
             }
         }
 
+        // Função para carregar o catálogo de produtos
         async function loadProductSelect() {
-            // Não precisa popular um <select> aqui, apenas carregar os dados
-            const docRef = getUserDocRef('products', 'catalog');
             try {
-                const docSnap = await getDoc(docRef);
-                productsData = docSnap.exists() ? docSnap.data().data : {};
+                const snapshot = await getUserCollectionRef('products').get();
+                productsCatalog = {}; // Limpa o catálogo global
+                snapshot.forEach(doc => {
+                    const product = doc.data();
+                    productsCatalog[product.sku] = product; // Armazena por SKU
+                });
+                // Recarrega todos os selects de produto existentes
+                resequenceItems(); 
             } catch (error) {
                 console.error("Erro ao carregar produtos:", error);
+                showCustomAlert('Erro', 'Não foi possível carregar o catálogo de produtos.');
             }
         }
 
+        // Função para obter o próximo número de PO
         async function getNextPoNumber() {
-            // Esta função agora precisa de um contador do Firestore
-            const counterRef = doc(db, `/artifacts/${appId}/users/${userId}/config/po_counter`);
-            let currentNumber = 0;
-            
             try {
-                const counterSnap = await getDoc(counterRef);
-                if (counterSnap.exists()) {
-                    currentNumber = counterSnap.data().count;
+                const counterDoc = await getUserCollectionRef('meta').doc('poCounter').get();
+                if (counterDoc.exists) {
+                    return counterDoc.data().nextNumber.toString().padStart(6, '0');
                 } else {
-                    // Inicializa o contador se não existir
-                    await setDoc(counterRef, { count: 0 });
+                    // Inicializa se não existir
+                    await getUserCollectionRef('meta').doc('poCounter').set({ nextNumber: 1 });
+                    return '000001';
                 }
-                
-                // Pega o próximo número (o último salvo + 1)
-                const nextNumber = currentNumber + 1;
-                poCounter = nextNumber;
-                return `PO-${nextNumber.toString().padStart(3, '0')}`;
-
             } catch (error) {
                 console.error("Erro ao obter o próximo número de PO:", error);
-                return `PO-ERRO`;
+                showCustomAlert('Erro', 'Não foi possível gerar o número do pedido.');
+                return 'ERRO00';
             }
         }
 
-        // --- Lógica de Pedido de Compra (PO) ---
-
-        function calculateTotal() {
-            let grandTotal = 0;
-            const items = document.querySelectorAll('#itemsBody tr');
-            items.forEach(row => {
-                const qtyInput = row.querySelector('.qty-input');
-                const priceInput = row.querySelector('.price-input');
-                const totalCell = row.querySelector('.item-total');
-
-                const qty = parseFloat(qtyInput.value.replace(',', '.')) || 0;
-                const price = parseFloat(priceInput.value.replace(',', '.')) || 0;
-                const itemTotal = qty * price;
-
-                totalCell.textContent = `R$ ${itemTotal.toFixed(2).replace('.', ',')}`;
-                grandTotal += itemTotal;
-            });
-
-            document.getElementById('totalAmount').textContent = `R$ ${grandTotal.toFixed(2).replace('.', ',')}`;
-        }
-
-        function updateItemDescription(selectElement) {
-            const row = selectElement.closest('tr');
-            const sku = selectElement.value;
-            const descInput = row.querySelector('.desc-input');
-            const priceInput = row.querySelector('.price-input');
-
-            const product = productsData[sku];
-            if (product) {
-                descInput.value = product.desc;
-                priceInput.value = product.price.replace('.', ',');
-            } else {
-                descInput.value = '';
-                priceInput.value = '';
+        // Função para atualizar o contador de PO
+        async function updatePoCounter() {
+            try {
+                const counterDocRef = getUserCollectionRef('meta').doc('poCounter');
+                await db.runTransaction(async (transaction) => {
+                    const doc = await transaction.get(counterDocRef);
+                    if (doc.exists) {
+                        const newNumber = doc.data().nextNumber + 1;
+                        transaction.update(counterDocRef, { nextNumber: newNumber });
+                    } else {
+                        // Isso só deve acontecer na primeira vez
+                        transaction.set(counterDocRef, { nextNumber: 2 });
+                    }
+                });
+            } catch (error) {
+                console.error("Erro ao atualizar contador de PO:", error);
+                // Permite a finalização, mas loga o erro
             }
-            calculateTotal();
         }
 
-        function addItem(item = {}) {
+        // Função para adicionar uma nova linha de item
+        function addItem(productData = {}) {
             const itemsBody = document.getElementById('itemsBody');
-            const row = itemsBody.insertRow();
-            row.classList.add('po-item-row');
-            const index = itemsBody.rows.length; // Usa o número de linhas para a coluna ITEM
+            const newRow = itemsBody.insertRow();
+            newRow.setAttribute('data-item-index', itemsBody.rows.length);
 
-            let skuOptions = '';
-            Object.keys(productsData).forEach(sku => {
-                skuOptions += `<option value="${sku}">${sku}</option>`;
-            });
+            // Célula Nº
+            const numCell = newRow.insertCell();
+            numCell.textContent = itemsBody.rows.length;
+            numCell.classList.add('item-num');
 
-            const defaultSku = item.sku || (Object.keys(productsData)[0] || '');
-            const defaultProduct = productsData[defaultSku] || { desc: '', price: '0.00' };
+            // Célula Produto/Descrição
+            const descCell = newRow.insertCell();
+            descCell.classList.add('desc-cell');
+            const select = document.createElement('select');
+            select.classList.add('item-product');
+            select.onchange = (e) => updateItemDescription(e.target);
+            select.innerHTML = '<option value="">Selecione um Produto</option>';
+            for (const sku in productsCatalog) {
+                const option = document.createElement('option');
+                option.value = sku;
+                option.textContent = `${sku} - ${productsCatalog[sku].desc}`;
+                select.appendChild(option);
+            }
+            select.value = productData.sku || '';
 
-            row.innerHTML = `
-                <td style="text-align: center;" class="item-number">${index}</td>
-                <td>
-                    <select class="sku-select" onchange="updateItemDescription(this)" style="min-width: 80px;">
-                        <option value="">SKU</option>
-                        ${skuOptions}
-                    </select>
-                </td>
-                <td><input type="text" class="desc-input" value="${item.desc || defaultProduct.desc}" placeholder="Descrição do Produto"></td>
-                <td><input type="number" step="0.01" class="qty-input" value="${item.qty || '1'}" oninput="calculateTotal()" style="width: 60px;"></td>
-                <td><input type="text" class="price-input" value="${(item.price || defaultProduct.price).replace('.', ',')}" oninput="this.value = this.value.replace('.', ','); calculateTotal()" placeholder="0,00" style="width: 80px;"></td>
-                <td class="item-total" style="font-weight: bold;">R$ 0,00</td>
-                <td class="actions hidden-print">
-                    <button type="button" class="btn-remove" onclick="removeItem(this)">X</button>
-                </td>
-            `;
+            const descriptionInput = document.createElement('input');
+            descriptionInput.type = 'text';
+            descriptionInput.placeholder = 'Descrição (preenchimento automático)';
+            descriptionInput.classList.add('item-desc');
+            descriptionInput.value = productData.desc || '';
+            descriptionInput.disabled = true; // Mantém desabilitado para garantir o uso do catálogo
             
-            // Define o valor do SKU do item (importante para edições/rascunhos)
-            if (item.sku) {
-                row.querySelector('.sku-select').value = item.sku;
-            } else if (defaultSku) {
-                 row.querySelector('.sku-select').value = defaultSku;
+            descCell.appendChild(select);
+            descCell.appendChild(descriptionInput);
+            
+            // Célula Quantidade
+            const qtyCell = newRow.insertCell();
+            qtyCell.classList.add('qty-cell');
+            const qtyInput = document.createElement('input');
+            qtyInput.type = 'number';
+            qtyInput.min = '1';
+            qtyInput.value = productData.qty || '1';
+            qtyInput.onchange = calculateTotal;
+            qtyCell.appendChild(qtyInput);
+
+            // Célula Valor Unitário
+            const unitCell = newRow.insertCell();
+            unitCell.classList.add('unit-cell');
+            const unitInput = document.createElement('input');
+            unitInput.type = 'text';
+            unitInput.classList.add('item-unit-price');
+            unitInput.value = (productData.unitPrice || '0.00').replace('.', ',');
+            unitInput.onchange = calculateTotal;
+            unitCell.appendChild(unitInput);
+
+            // Célula Subtotal
+            const totalCell = newRow.insertCell();
+            totalCell.classList.add('total-cell');
+            totalCell.textContent = formatCurrency(productData.subTotal || 0);
+
+            // Célula Ação (Remover)
+            const actionCell = newRow.insertCell();
+            actionCell.classList.add('action-cell');
+            const removeButton = document.createElement('button');
+            removeButton.type = 'button';
+            removeButton.classList.add('remove-btn');
+            removeButton.textContent = 'X';
+            removeButton.onclick = () => removeItem(newRow);
+            actionCell.appendChild(removeButton);
+
+            // Preenche os dados iniciais do produto se um SKU foi carregado
+            if (productData.sku) {
+                 updateItemDescription(select);
             }
 
-            calculateTotal();
-            resequenceItems(); // Garante que a numeração da coluna ITEM esteja correta
+            calculateTotal(); // Recalcula o total geral
         }
 
-        function removeItem(button) {
-            const row = button.closest('tr');
+        // Função para remover uma linha de item
+        function removeItem(row) {
             row.remove();
-            calculateTotal();
             resequenceItems();
+            calculateTotal();
         }
-        
+
+        // Função para resequenciar os itens da tabela (após remoção)
         function resequenceItems() {
-            const items = document.querySelectorAll('#itemsBody tr');
-            items.forEach((row, index) => {
-                row.querySelector('.item-number').textContent = index + 1;
-            });
+            const itemsBody = document.getElementById('itemsBody');
+            for (let i = 0; i < itemsBody.rows.length; i++) {
+                const row = itemsBody.rows[i];
+                row.cells[0].textContent = i + 1; // Atualiza o número da linha
+            }
         }
 
-        function gatherOrderData() {
+        // Função para atualizar descrição e preço ao selecionar o produto
+        function updateItemDescription(selectElement) {
+            const sku = selectElement.value;
+            const row = selectElement.closest('tr');
+            
+            const descriptionInput = row.querySelector('.item-desc');
+            const unitPriceInput = row.querySelector('.item-unit-price');
+            
+            if (sku && productsCatalog[sku]) {
+                const product = productsCatalog[sku];
+                descriptionInput.value = product.desc;
+                unitPriceInput.value = product.price.replace('.', ',');
+            } else {
+                descriptionInput.value = '';
+                unitPriceInput.value = '0,00';
+            }
+
+            calculateTotal(); // Recalcula após a mudança
+        }
+
+        // Função para calcular o total do pedido
+        function calculateTotal() {
+            const itemsBody = document.getElementById('itemsBody');
+            let grandTotal = 0;
+
+            for (let i = 0; i < itemsBody.rows.length; i++) {
+                const row = itemsBody.rows[i];
+                const qtyInput = row.cells[2].querySelector('input');
+                const unitInput = row.cells[3].querySelector('input');
+                const totalCell = row.cells[4];
+
+                const qty = parseInt(qtyInput.value) || 0;
+                // Converte de R$X,XX para número
+                const unitPrice = parseFloat(unitInput.value.replace('.', '').replace(',', '.')) || 0;
+
+                const subTotal = qty * unitPrice;
+                grandTotal += subTotal;
+
+                totalCell.textContent = formatCurrency(subTotal);
+            }
+
+            document.getElementById('poTotal').textContent = formatCurrency(grandTotal);
+        }
+
+        // Função para coletar os dados do formulário
+        function collectFormData(status) {
+            const poNumber = document.getElementById('poNumber').value;
+            const poDate = document.getElementById('poDate').value;
+            const supplierCnpj = document.getElementById('supplierSelect').value;
+            const poDescription = document.getElementById('poDescription').value;
+            const supplier = suppliersList[supplierCnpj] || { name: 'Desconhecido', cnpj: supplierCnpj };
+
             const items = [];
-            const rows = document.querySelectorAll('#itemsBody tr');
-            rows.forEach(row => {
-                const sku = row.querySelector('.sku-select').value;
-                const desc = row.querySelector('.desc-input').value;
-                const qty = parseFloat(row.querySelector('.qty-input').value.replace(',', '.')) || 0;
-                const price = parseFloat(row.querySelector('.price-input').value.replace(',', '.')) || 0;
-
-                if (sku && desc && qty > 0) {
-                    items.push({ sku, desc, qty, price: price.toFixed(2) });
-                }
-            });
-
-            const supplierCNPJ = document.getElementById('supplierSelect').value;
-            const supplier = suppliersData[supplierCNPJ] || {};
-
-            return {
-                poNumber: document.getElementById('poNumber').value,
-                poDate: document.getElementById('poDate').value,
-                supplierCNPJ,
-                supplierName: supplier.name || 'N/A',
-                items,
-                total: document.getElementById('totalAmount').textContent.replace('R$ ', '').replace('.', '').replace(',', '.'),
-                notes: document.getElementById('poNotes').value,
-                createdAt: new Date().toISOString(),
-                userId: userId
-            };
-        }
-        
-        // Função para carregar um PO para edição (Histórico ou Rascunho)
-        async function loadOrderForEditing(poNumber, collectionName) {
-            const docRef = doc(getUserCollectionRef(collectionName), poNumber);
-            try {
-                const docSnap = await getDoc(docRef);
-                if (!docSnap.exists()) {
-                    showCustomAlert('Erro de Carregamento', `O pedido/rascunho N° ${poNumber} não foi encontrado.`);
-                    window.location.href = 'index.html'; // Redireciona para o novo pedido
-                    return;
-                }
-                const order = docSnap.data();
-
-                document.getElementById('poNumber').value = order.poNumber;
-                document.getElementById('poDate').value = order.poDate;
-                document.getElementById('poNotes').value = order.notes || '';
+            const itemsBody = document.getElementById('itemsBody');
+            for (let i = 0; i < itemsBody.rows.length; i++) {
+                const row = itemsBody.rows[i];
+                const sku = row.cells[1].querySelector('.item-product').value;
+                const desc = row.cells[1].querySelector('.item-desc').value;
+                const qty = parseInt(row.cells[2].querySelector('input').value) || 0;
+                const unitPrice = parseFloat(row.cells[3].querySelector('input').value.replace('.', '').replace(',', '.')) || 0;
                 
-                // Carrega os itens
-                const itemsBody = document.getElementById('itemsBody');
-                itemsBody.innerHTML = ''; // Limpa os itens padrão
-                order.items.forEach(item => addItem(item));
-                
-                // Seleciona o fornecedor
-                await loadSupplierSelect(); // Garante que a lista de fornecedores está carregada
-                const supplierSelect = document.getElementById('supplierSelect');
-                if (supplierSelect.querySelector(`option[value="${order.supplierCNPJ}"]`)) {
-                    supplierSelect.value = order.supplierCNPJ;
-                } else {
-                    // Adiciona uma opção temporária se o fornecedor não existir mais
-                    const option = document.createElement('option');
-                    option.value = order.supplierCNPJ;
-                    option.textContent = order.supplierName + ' (Excluído)';
-                    supplierSelect.appendChild(option);
-                    supplierSelect.value = order.supplierCNPJ;
-                }
-                calculateTotal(); // Recalcula o total
-                
-                // Se for um rascunho, adiciona um campo oculto para o PO anterior
-                if (collectionName === 'drafts') {
-                    document.getElementById('poForm').dataset.originalDraft = poNumber;
-                } else {
-                    document.getElementById('poForm').dataset.originalOrder = poNumber;
-                }
-
-            } catch (error) {
-                console.error("Erro ao carregar PO:", error);
-                showCustomAlert('Erro', 'Não foi possível carregar o Pedido/Rascunho para edição. ' + error.message);
-                window.location.href = 'index.html';
-            }
-        }
-        
-        async function saveAsDraft() {
-            const order = gatherOrderData();
-            if (order.items.length === 0) {
-                showCustomAlert('Atenção', 'Adicione pelo menos um item ao pedido para salvar como rascunho.');
-                return;
-            }
-            
-            // O número do PO é usado como ID do documento
-            const poNumber = order.poNumber;
-            const docRef = doc(getUserCollectionRef('drafts'), poNumber);
-
-            try {
-                await setDoc(docRef, order);
-                showCustomAlert('Sucesso!', `Rascunho N° ${poNumber} salvo com sucesso!`);
-                
-                // Se for um rascunho novo, pega o próximo número para o formulário
-                if (!document.getElementById('poForm').dataset.originalDraft && !document.getElementById('poForm').dataset.originalOrder) {
-                    document.getElementById('poNumber').value = await getNextPoNumber();
-                    document.getElementById('itemsBody').innerHTML = '';
-                    addItem();
-                }
-                
-                // Limpa o estado de edição após salvar
-                delete document.getElementById('poForm').dataset.originalDraft;
-                delete document.getElementById('poForm').dataset.originalOrder;
-                
-                window.location.href = 'rascunhos.html';
-                
-            } catch (error) {
-                console.error("Erro ao salvar rascunho:", error);
-                showCustomAlert('Erro', 'Não foi possível salvar o rascunho: ' + error.message);
-            }
-        }
-        
-        async function saveAndFinalize() {
-            const order = gatherOrderData();
-            if (order.items.length === 0) {
-                showCustomAlert('Atenção', 'Adicione pelo menos um item ao pedido para finalizar.');
-                return;
-            }
-            if (!order.supplierCNPJ) {
-                showCustomAlert('Atenção', 'Selecione um fornecedor para finalizar o pedido.');
-                return;
-            }
-
-            const poNumber = order.poNumber;
-            const historyRef = doc(getUserCollectionRef('orders'), poNumber);
-            const draftRef = doc(getUserCollectionRef('drafts'), poNumber);
-            
-            try {
-                // 1. Verificar se o PO já existe no histórico
-                const historySnap = await getDoc(historyRef);
-
-                let confirmed = true;
-                if (historySnap.exists()) {
-                    await new Promise(resolve => {
-                        showCustomConfirm(
-                            'Atenção',
-                            `O Pedido N° ${poNumber} já existe no Histórico. Deseja sobrescrevê-lo?`, 
-                            () => { confirmed = true; resolve(); },
-                            () => { confirmed = false; resolve(); } // Não é necessário, mas fica de placeholder
-                        );
+                // Validação mínima para garantir que o item é válido
+                if (sku && desc && qty > 0 && unitPrice >= 0) {
+                    items.push({
+                        num: i + 1,
+                        sku: sku,
+                        desc: desc,
+                        qty: qty,
+                        unitPrice: unitPrice.toFixed(2), // Garante 2 casas decimais
+                        subTotal: (qty * unitPrice).toFixed(2)
                     });
                 }
+            }
+
+            if (!poNumber || !poDate || !supplierCnpj) {
+                showCustomAlert('Atenção', 'Por favor, preencha o número, a data e selecione o fornecedor.');
+                return null;
+            }
+            if (items.length === 0) {
+                showCustomAlert('Atenção', 'O pedido deve ter pelo menos um item válido.');
+                return null;
+            }
+
+            const poTotalElement = document.getElementById('poTotal').textContent.replace('R$', '').trim().replace('.', '').replace(',', '.');
+            const totalValue = parseFloat(poTotalElement);
+
+            return {
+                poNumber: poNumber,
+                poDate: poDate,
+                poDescription: poDescription,
+                supplier: supplier,
+                items: items,
+                totalValue: totalValue.toFixed(2),
+                status: status,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp() // Data/Hora da criação/finalização
+            };
+        }
+
+        // Função para carregar um PO para edição (rascunho ou histórico)
+        async function loadOrderForEditing(poNumber, collectionName) {
+            try {
+                const poDoc = await getUserCollectionRef(collectionName).doc(poNumber).get();
+                if (!poDoc.exists) {
+                    showCustomAlert('Erro', `Pedido N° ${poNumber} não encontrado.`);
+                    return;
+                }
+                const poData = poDoc.data();
+
+                // 1. Preenche detalhes
+                document.getElementById('poNumber').value = poData.poNumber;
+                document.getElementById('poDate').value = poData.poDate;
+                document.getElementById('poDescription').value = poData.poDescription || '';
                 
-                if (!confirmed) return;
-
-                // 2. Salvar no Histórico e incrementar o contador
-                const counterRef = doc(db, `/artifacts/${appId}/users/${userId}/config/po_counter`);
-                await updateDoc(counterRef, { count: poCounter }); // Incrementa o contador para evitar repetição
-
-                await setDoc(historyRef, order);
-
-                // 3. Remover do Rascunho (se existir)
-                const draftSnap = await getDoc(draftRef);
-                if (draftSnap.exists()) {
-                    await deleteDoc(draftRef);
+                // 2. Preenche o Fornecedor e desabilita (se for do histórico)
+                await loadSupplierSelect(); // Garante que a lista está carregada
+                document.getElementById('supplierSelect').value = poData.supplier.cnpj;
+                if (collectionName === 'orders') {
+                    document.getElementById('supplierSelect').disabled = true;
+                    document.getElementById('poDate').disabled = true;
+                    document.getElementById('poDescription').disabled = true;
                 }
 
-                showCustomAlert('Pedido Finalizado', `Pedido N° ${poNumber} salvo com sucesso no Histórico!`);
-                window.location.href = 'historico.html'; // Redireciona para ver o pedido salvo
+                // 3. Carrega os itens na tabela
+                const itemsBody = document.getElementById('itemsBody');
+                itemsBody.innerHTML = ''; // Limpa os itens
                 
+                // Garante que o catálogo de produtos esteja carregado
+                await loadProductSelect(); 
+                
+                poData.items.forEach(item => {
+                    // Garante que os valores venham formatados corretamente para os inputs
+                    addItem({
+                        sku: item.sku,
+                        desc: item.desc,
+                        qty: item.qty,
+                        unitPrice: item.unitPrice,
+                        subTotal: item.subTotal
+                    });
+                });
+
+                calculateTotal();
+
+                // Desabilita botões se for PO do Histórico (só para visualização)
+                if (collectionName === 'orders') {
+                    document.querySelector('.btn-draft').style.display = 'none';
+                    document.querySelector('.btn-save').style.display = 'none';
+                    document.querySelector('.btn-add').style.display = 'none';
+                    itemsBody.querySelectorAll('.remove-btn').forEach(btn => btn.style.display = 'none');
+                    showCustomAlert('Visualizando', `Visualizando Pedido N° ${poNumber} do Histórico. Edição desabilitada.`);
+                }
             } catch (error) {
-                console.error("Erro ao salvar e finalizar PO:", error);
-                showCustomAlert('Erro', 'Não foi possível salvar e finalizar o pedido: ' + error.message);
+                console.error("Erro ao carregar PO:", error);
+                showCustomAlert('Erro', 'Não foi possível carregar o pedido para edição: ' + error.message);
             }
+        }
+
+        // --- Funções de Salvar ---
+
+        async function saveAsDraft() {
+            const poData = collectFormData('Rascunho');
+            if (!poData) return;
+
+            showCustomConfirm(
+                'Confirmação',
+                `Deseja salvar o Pedido N° ${poData.poNumber} como rascunho?`,
+                async () => {
+                    try {
+                        await getUserCollectionRef('drafts').doc(poData.poNumber).set(poData);
+                        showCustomAlert('Sucesso!', `Rascunho N° ${poData.poNumber} salvo com sucesso!`, () => {
+                            window.location.href = 'rascunhos.html';
+                        });
+                    } catch (error) {
+                        console.error("Erro ao salvar rascunho:", error);
+                        showCustomAlert('Erro', 'Não foi possível salvar como rascunho: ' + error.message);
+                    }
+                }
+            );
+        }
+
+        async function saveAndFinalize() {
+            const poData = collectFormData('Finalizado');
+            if (!poData) return;
+
+            showCustomConfirm(
+                'Confirmação Final',
+                `Deseja FINALIZAR e salvar o Pedido N° ${poData.poNumber} no Histórico? Esta ação não pode ser desfeita.`,
+                async () => {
+                    try {
+                        // 1. Tenta salvar na coleção principal ('orders')
+                        await getUserCollectionRef('orders').doc(poData.poNumber).set(poData);
+
+                        // 2. Atualiza o contador de POs se for um novo PO
+                        const urlParams = new URLSearchParams(window.location.search);
+                        if (!urlParams.get('edit_po') && !urlParams.get('edit_draft')) {
+                            await updatePoCounter();
+                        }
+                        
+                        // 3. Se for um rascunho sendo finalizado, remove da coleção de rascunhos
+                        if (urlParams.get('edit_draft')) {
+                             await getUserCollectionRef('drafts').doc(poData.poNumber).delete();
+                        }
+
+                        showCustomAlert('Sucesso!', `Pedido N° ${poData.poNumber} finalizado e salvo no Histórico!`, () => {
+                            window.location.href = 'historico.html';
+                        });
+                    } catch (error) {
+                        console.error("Erro ao finalizar pedido:", error);
+                        showCustomAlert('Erro', 'Não foi possível finalizar o pedido: ' + error.message);
+                    }
+                }
+            );
         }
         
         // --- Função de Inicialização (Chamada após Auth) ---
@@ -676,17 +753,20 @@
             const poToEdit = urlParams.get('edit_po');
             const draftToEdit = urlParams.get('edit_draft');
 
+            // Carrega primeiro as listas, pois são necessárias para a interface
             await loadSupplierSelect();
             await loadProductSelect();
             
+            // Verifica se está editando ou criando novo
             if (poToEdit) {
                 await loadOrderForEditing(poToEdit, 'orders');
             } else if (draftToEdit) {
                 await loadOrderForEditing(draftToEdit, 'drafts');
             } else {
+                // Novo pedido: Define data e número
                 document.getElementById('poDate').value = new Date().toISOString().slice(0, 10);
                 document.getElementById('poNumber').value = await getNextPoNumber();
-                addItem(); 
+                addItem(); // Adiciona um item inicial vazio
             }
         }
 
@@ -695,7 +775,8 @@
 
         window.onload = () => {
             setupModal();
-            setupFirebase();
+            // CHAMA A FUNÇÃO CORRIGIDA
+            setupFirebase(); 
         };
 
         // Exporta funções para uso global (onchange/onclick no HTML)
@@ -705,7 +786,8 @@
         window.updateItemDescription = updateItemDescription;
         window.saveAsDraft = saveAsDraft;
         window.saveAndFinalize = saveAndFinalize;
-        window.resequenceItems = resequenceItems; // Para ser usado ao manipular a tabela
+        window.resequenceItems = resequenceItems; 
+        window.closeModal = closeModal; // Exporta também para o HTML do modal
     </script>
 </body>
 </html>
