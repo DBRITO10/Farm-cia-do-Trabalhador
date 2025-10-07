@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Acesso ao Sistema</title>
+    
     <style>
         /* Estilos Profissionais */
         body {
@@ -25,13 +26,15 @@
             text-align: center;
         }
         .header h1 {
-            color: #004c99;
-            font-size: 24px;
+            color: #004c99; /* Cor institucional */
+            font-size: 28px;
             margin-bottom: 5px;
+            font-weight: 700;
         }
         .header p {
             color: #666;
             margin-bottom: 30px;
+            font-size: 14px;
         }
         .form-group {
             margin-bottom: 20px;
@@ -42,16 +45,18 @@
             margin-bottom: 8px;
             font-weight: bold;
             color: #333;
+            font-size: 14px;
         }
-        input[type="email"], input[type="password"] {
+        input {
             width: 100%;
             padding: 12px;
             border: 1px solid #ccc;
             border-radius: 6px;
             box-sizing: border-box;
+            font-size: 16px;
             transition: border-color 0.3s;
         }
-        input[type="email"]:focus, input[type="password"]:focus {
+        input:focus {
             border-color: #004c99;
             outline: none;
         }
@@ -60,10 +65,13 @@
             padding: 12px;
             border: none;
             border-radius: 6px;
-            cursor: pointer;
+            font-size: 16px;
             font-weight: bold;
+            cursor: pointer;
             transition: background-color 0.3s;
-            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         .btn-login {
             background-color: #004c99;
@@ -72,171 +80,37 @@
         .btn-login:hover {
             background-color: #003366;
         }
-        .toggle-mode {
-            background: none;
-            border: none;
-            color: #004c99;
-            margin-top: 20px;
-            cursor: pointer;
-            font-size: 14px;
-        }
         .error-message {
             color: #dc3545;
-            margin-top: 15px;
+            margin-top: 10px;
             font-size: 14px;
-            text-align: left;
-        }
-        /* Loading Spinner */
-        .spinner {
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid #fff;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-            vertical-align: middle;
-            margin-right: 5px;
             display: none;
         }
-        .btn-login.loading .spinner { display: inline-block; }
-        .btn-login.loading span { opacity: 0; }
+        /* Estilos para o spinner */
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #ffffff;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+            display: none; /* Inicia oculto */
+        }
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
     </style>
-    <!-- Firebase SDKs -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, onAuthStateChanged, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Variáveis globais fornecidas pelo ambiente
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-        let auth, db;
-        let isLoginMode = true; // Estado da UI
-
-        if (firebaseConfig) {
-            const app = initializeApp(firebaseConfig);
-            auth = getAuth(app);
-            db = getFirestore(app);
-
-            // Tenta logar automaticamente (importante para o ambiente Canvas)
-            if (initialAuthToken) {
-                signInWithCustomToken(auth, initialAuthToken).catch(e => {
-                    console.error("Erro no token de auth inicial, tentando anônimo.", e);
-                    signInAnonymously(auth);
-                });
-            } else {
-                signInAnonymously(auth);
-            }
-
-            // Ouve o estado de autenticação para redirecionamento
-            onAuthStateChanged(auth, (user) => {
-                if (user && !user.isAnonymous) {
-                    // Se o usuário estiver logado com conta (não anônimo), redireciona
-                    console.log("Usuário autenticado, redirecionando para index.html");
-                    window.location.href = 'index.html';
-                }
-            });
-        } else {
-            document.getElementById('error-msg').textContent = "Erro: Configuração do Firebase não encontrada.";
-        }
-
-        function toggleMode() {
-            isLoginMode = !isLoginMode;
-            document.getElementById('formTitle').textContent = isLoginMode ? 'Entrar no Sistema' : 'Criar Conta';
-            document.getElementById('submitBtn').textContent = isLoginMode ? 'Entrar' : 'Registrar';
-            document.getElementById('toggleBtn').textContent = isLoginMode ? 'Precisa de uma conta? Registrar' : 'Já tem uma conta? Entrar';
-            
-            // Adiciona/remove campo de Nome
-            const nameGroup = document.getElementById('nameGroup');
-            if (isLoginMode) {
-                nameGroup.style.display = 'none';
-            } else {
-                nameGroup.style.display = 'block';
-            }
-        }
-
-        async function handleSubmit(event) {
-            event.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const name = document.getElementById('name').value;
-            const errorMsg = document.getElementById('error-msg');
-            const submitBtn = document.getElementById('submitBtn');
-
-            errorMsg.textContent = '';
-            submitBtn.classList.add('loading');
-            
-            if (isLoginMode) {
-                // Lógica de Login
-                try {
-                    await signInWithEmailAndPassword(auth, email, password);
-                    // O redirecionamento acontece no onAuthStateChanged
-                } catch (error) {
-                    errorMsg.textContent = 'Erro ao fazer login: ' + formatFirebaseError(error.code);
-                    submitBtn.classList.remove('loading');
-                }
-            } else {
-                // Lógica de Registro
-                try {
-                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                    const user = userCredential.user;
-
-                    // 1. Atualiza o displayName no objeto User do Firebase Auth
-                    await updateProfile(user, { displayName: name });
-                    
-                    // 2. Salva o displayName em um documento de perfil no Firestore
-                    const userDocRef = doc(db, `/artifacts/${appId}/users/${user.uid}/config/profile`);
-                    await setDoc(userDocRef, { displayName: name, email: email, createdAt: new Date() });
-                    
-                    // O redirecionamento acontece no onAuthStateChanged
-                } catch (error) {
-                    errorMsg.textContent = 'Erro ao registrar: ' + formatFirebaseError(error.code);
-                    submitBtn.classList.remove('loading');
-                }
-            }
-        }
-
-        function formatFirebaseError(code) {
-            switch(code) {
-                case 'auth/user-not-found': return 'Usuário não encontrado.';
-                case 'auth/wrong-password': return 'Senha incorreta.';
-                case 'auth/email-already-in-use': return 'Este e-mail já está em uso.';
-                case 'auth/weak-password': return 'A senha deve ter pelo menos 6 caracteres.';
-                case 'auth/invalid-email': return 'E-mail inválido.';
-                default: return 'Ocorreu um erro desconhecido.';
-            }
-        }
-
-        window.onload = () => {
-            if (firebaseConfig) {
-                document.getElementById('authForm').addEventListener('submit', handleSubmit);
-                document.getElementById('toggleBtn').addEventListener('click', toggleMode);
-                toggleMode(); // Inicializa no modo Login
-            }
-        }
-    </script>
 </head>
 <body>
     <div class="auth-container">
         <div class="header">
-            <img src="Logo.jpg-441b687c-a62a-4e45-a35a-97f12550a156" alt="Logo" style="max-width: 100px; margin-bottom: 20px;">
-            <h1 id="formTitle">Entrar no Sistema</h1>
-            <p>Gerador de Pedido de Compra</p>
+            <h1 id="formTitle">Acesso Restrito</h1>
+            <p>Faça login para gerenciar os Pedidos de Compra</p>
         </div>
         
         <form id="authForm">
-            <div id="nameGroup" class="form-group" style="display: none;">
-                <label for="name">Seu Nome/Usuário</label>
-                <input type="text" id="name" required placeholder="Ex: João Silva">
-            </div>
             <div class="form-group">
                 <label for="email">E-mail</label>
                 <input type="email" id="email" required placeholder="seu.email@exemplo.com">
@@ -248,13 +122,89 @@
             
             <button type="submit" id="submitBtn" class="btn-auth btn-login">
                 <span class="spinner"></span>
-                <span>Entrar</span>
+                <span>Entrar no Sistema</span>
             </button>
             
-            <p id="error-msg" class="error-message"></p>
+            <p id="error-msg" class="error-message">Mensagem de erro.</p>
         </form>
         
-        <button id="toggleBtn" class="toggle-mode">Precisa de uma conta? Registrar</button>
-    </div>
+        </div>
+
+    <script>
+        // Use a função setupFirebase() e as referências do seu arquivo de configuração
+        // Este é um stub (código de exemplo) que você deve integrar com sua lógica do Firebase
+        
+        const authForm = document.getElementById('authForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const spinner = document.querySelector('.spinner');
+        const errorMsg = document.getElementById('error-msg');
+
+        // Função utilitária para mostrar erros
+        function showError(message) {
+            errorMsg.textContent = message;
+            errorMsg.style.display = 'block';
+        }
+
+        // Função utilitária para mudar o estado do botão
+        function setButtonState(isLoading) {
+            submitBtn.disabled = isLoading;
+            spinner.style.display = isLoading ? 'inline-block' : 'none';
+            submitBtn.querySelector('span:last-child').textContent = isLoading ? 'Aguarde...' : 'Entrar no Sistema';
+        }
+
+        // Lidar com o envio do formulário (AGORA SOMENTE LOGIN)
+        authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorMsg.style.display = 'none';
+            setButtonState(true);
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                // *** CHAMA A FUNÇÃO DE LOGIN DO FIREBASE ***
+                // Você precisa ter a lógica de setupFirebase e a variável 'auth' definidas globalmente
+                const auth = firebase.auth(); 
+                
+                await auth.signInWithEmailAndPassword(email, password);
+                
+                // Se o login for bem-sucedido:
+                window.location.href = 'index.html'; // Redireciona para a página principal
+
+            } catch (error) {
+                console.error("Erro de Login:", error);
+                
+                let friendlyMessage = "Erro ao fazer login. Verifique seu e-mail e senha.";
+                if (error.code === 'auth/user-not-found') {
+                    friendlyMessage = "Usuário não encontrado.";
+                } else if (error.code === 'auth/wrong-password') {
+                    friendlyMessage = "Senha incorreta.";
+                } else if (error.code === 'auth/invalid-email') {
+                    friendlyMessage = "E-mail inválido.";
+                }
+                
+                showError(friendlyMessage);
+                setButtonState(false);
+            }
+        });
+
+        // Este é um stub. Garanta que suas configurações do Firebase estejam funcionando
+        // e que você tenha a função 'setupFirebase' do seu projeto rodando.
+        if (typeof firebase === 'undefined' || typeof firebase.auth === 'undefined') {
+            window.onload = () => {
+                showError("ERRO: As bibliotecas do Firebase não estão carregadas. Verifique seus scripts.");
+                setButtonState(false);
+            };
+        } else {
+             // Redireciona se o usuário já estiver logado
+            firebase.auth().onAuthStateChanged(user => {
+                if (user) {
+                    window.location.href = 'index.html';
+                } else {
+                    setButtonState(false); // Pronto para logar
+                }
+            });
+        }
+    </script>
 </body>
 </html>
