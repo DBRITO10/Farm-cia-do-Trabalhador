@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerador de Pedido de Compra - Farmácia do Trabalhador</title>
     
-    <!-- Importações do Firebase v8 -->
+    <!-- Firebase SDKs V8 (Mantendo compatibilidade com o código) -->
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
@@ -18,230 +18,208 @@
         /* Barra Superior (User/Logout) */
         .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; margin-bottom: 10px; border-bottom: 1px solid #ddd; }
         .user-info { font-weight: bold; color: #004c99; font-size: 14px; }
-        .logout-btn { background-color: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s; }
-        .logout-btn:hover { background-color: #c82333; }
-        
-        /* Cabeçalho */
-        h1 { color: #004c99; margin-top: 0; border-bottom: 2px solid #004c99; padding-bottom: 10px; }
-        
+        .logout-btn { background-color: #d9534f; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; transition: background-color 0.3s; }
+        .logout-btn:hover { background-color: #c9302c; }
+
         /* Menu de Navegação */
-        .nav-menu {
-            margin-bottom: 20px;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 10px;
-        }
-        .nav-menu a {
-            text-decoration: none;
-            color: #004c99;
-            padding: 8px 15px;
-            margin-right: 5px;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-            font-weight: bold;
-        }
-        .nav-menu a:hover {
-            background-color: #e9ecef;
-        }
-        .nav-menu .active {
-            background-color: #004c99;
-            color: white;
-        }
+        .nav-menu { display: flex; justify-content: space-around; margin-bottom: 30px; padding: 10px 0; border-bottom: 2px solid #004c99; }
+        .nav-menu a { text-decoration: none; color: #004c99; font-weight: bold; padding: 8px 15px; border-radius: 5px; transition: background-color 0.3s; }
+        .nav-menu a.active, .nav-menu a:hover { background-color: #e6f0ff; }
         
+        /* Título */
+        h1 { color: #004c99; text-align: center; margin-bottom: 25px; }
+
         /* Formulário */
-        .form-section { margin-bottom: 25px; padding: 15px; border: 1px solid #ccc; border-radius: 6px; }
-        .form-header { display: flex; justify-content: space-between; gap: 20px; margin-bottom: 20px; }
-        .form-group { margin-bottom: 15px; flex: 1; }
+        .header-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; }
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
+        .form-group select, .form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
         
         /* Tabela de Itens */
-        .items-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        .items-table th, .items-table td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 14px; }
-        .items-table th { background-color: #f8f9fa; color: #333; }
-        .items-table td input, .items-table td select { padding: 6px; border: 1px solid #ddd; border-radius: 3px; width: 100%; box-sizing: border-box; }
-        .items-table .item-total { text-align: right; font-weight: bold; }
-        .items-table .action-col { width: 50px; text-align: center; }
+        .item-list-container { margin-bottom: 30px; }
+        .item-list-container h2 { color: #004c99; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px; font-size: 1.2em; }
         
-        /* Totais */
-        .totals-section { text-align: right; margin-top: 20px; padding-top: 10px; border-top: 2px solid #004c99; }
-        .totals-section p { font-size: 18px; font-weight: bold; color: #004c99; }
+        .item-row { display: grid; grid-template-columns: 50px 1fr 100px 100px 100px 50px; gap: 10px; align-items: center; margin-bottom: 10px; padding: 5px; border-bottom: 1px dotted #eee; }
+        .item-row.header { font-weight: bold; background-color: #f0f4f8; padding: 10px 5px; border-radius: 5px; border-bottom: 2px solid #004c99; }
+        
+        .item-row input, .item-row select { padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .item-row .sequence { text-align: center; font-weight: bold; }
+        
+        .remove-btn, .add-btn { background-color: #d9534f; color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s; }
+        .remove-btn:hover { background-color: #c9302c; }
+        .add-btn { background-color: #5cb85c; }
+        .add-btn:hover { background-color: #4cae4c; }
+
+        .total-section { text-align: right; margin-top: 20px; font-size: 1.5em; font-weight: bold; color: #004c99; border-top: 2px solid #ddd; padding-top: 15px; }
 
         /* Ações */
-        .actions-section { display: flex; justify-content: flex-end; gap: 15px; margin-top: 20px; }
-        .actions-section button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: background-color 0.3s; }
-        .btn-draft { background-color: #ffc107; color: #212529; }
-        .btn-draft:hover { background-color: #e0a800; }
-        .btn-finalize { background-color: #28a745; color: white; }
-        .btn-finalize:hover { background-color: #1e7e34; }
-        .btn-add-item { background-color: #007bff; color: white; margin-top: 10px; }
-        .btn-add-item:hover { background-color: #0056b3; }
-        .btn-remove-item { background-color: #dc3545; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; }
+        .actions { display: flex; justify-content: center; gap: 20px; margin-top: 30px; }
+        .actions button { padding: 12px 25px; font-size: 1.1em; border: none; border-radius: 6px; cursor: pointer; transition: background-color 0.3s, transform 0.1s; }
+        .actions button:active { transform: scale(0.98); }
+        .draft-btn { background-color: #f0ad4e; color: white; }
+        .draft-btn:hover { background-color: #ec971f; }
+        .finalize-btn { background-color: #004c99; color: white; }
+        .finalize-btn:hover { background-color: #003366; }
 
-        /* Modal */
-        .modal {
-            display: none; 
-            position: fixed; 
-            z-index: 10; 
-            left: 0; 
-            top: 0; 
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
-            background-color: rgba(0,0,0,0.6); 
+        /* Modal Customizado (Alerta/Confirmação) */
+        .custom-modal-backdrop {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); z-index: 1000;
+            display: none; justify-content: center; align-items: center;
         }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 10% auto;
-            padding: 30px;
-            border-radius: 8px;
-            width: 80%;
-            max-width: 500px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            position: relative;
+        .custom-modal-content {
+            background-color: white; padding: 25px; border-radius: 8px;
+            width: 90%; max-width: 400px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            text-align: center; animation: fadeIn 0.3s;
         }
-        .close-btn {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            line-height: 20px;
+        .custom-modal-content h3 { color: #004c99; margin-top: 0; }
+        .custom-modal-actions button {
+            padding: 10px 20px; margin: 5px; border: none; border-radius: 5px;
+            cursor: pointer; transition: background-color 0.3s; color: white;
         }
+        .custom-modal-actions .confirm-yes { background-color: #5cb85c; }
+        .custom-modal-actions .confirm-yes:hover { background-color: #4cae4c; }
+        .custom-modal-actions .confirm-no { background-color: #f0ad4e; }
+        .custom-modal-actions .confirm-no:hover { background-color: #ec971f; }
+        .custom-modal-actions .alert-ok { background-color: #004c99; }
+        .custom-modal-actions .alert-ok:hover { background-color: #003366; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
         
-        /* Estilos do Modal de Confirmação/Alerta (Customizado) */
-        #customModal { z-index: 20; }
-        .modal-message { margin-bottom: 20px; font-size: 16px; text-align: center; }
-        .modal-actions { display: flex; justify-content: space-around; }
-        .modal-actions button { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .modal-actions .confirm-yes { background-color: #28a745; color: white; }
-        .modal-actions .confirm-no { background-color: #6c757d; color: white; }
-        .modal-actions .alert-ok { background-color: #007bff; color: white; width: 100%; }
-
+        /* Responsividade */
+        @media (max-width: 600px) {
+            .header-fields { grid-template-columns: 1fr; }
+            .nav-menu { flex-direction: column; }
+            .nav-menu a { margin: 5px 0; text-align: center; }
+            .item-row { grid-template-columns: 30px 1fr 80px 80px 80px 30px; font-size: 0.8em; }
+            .item-row input, .item-row select { padding: 5px; }
+            .actions { flex-direction: column; gap: 10px; }
+            .actions button { width: 100%; }
+        }
     </style>
 </head>
 <body>
-
     <div class="container">
-        
+        <!-- Barra Superior -->
         <div class="top-bar">
-            <div class="user-info" id="userInfo">Aguardando autenticação...</div>
+            <span class="user-info">Carregando usuário...</span>
             <button class="logout-btn" onclick="logout()">Sair</button>
         </div>
 
+        <!-- Navegação -->
         <div class="nav-menu">
-            <a href="index.html" class="active">Pedido de Compra</a>
-            <a href="rascunhos.html">Rascunhos</a>
+            <a href="index.html" class="active">Novo Pedido</a>
             <a href="historico.html">Histórico</a>
-            <a href="produtos.html">Catálogo de Produtos</a>
-            <a href="fornecedores.html">Catálogo de Fornecedores</a>
+            <a href="rascunhos.html">Rascunhos</a>
+            <a href="produtos.html">Catálogo</a>
+            <a href="fornecedores.html">Fornecedores</a>
         </div>
-
-        <h1>Novo Pedido de Compra (P.O.)</h1>
         
-        <form id="purchaseOrderForm">
-            <div class="form-section">
-                <h3>Dados do Pedido</h3>
-                <div class="form-header">
-                    <div class="form-group" style="flex: 2;">
-                        <label for="supplierSelect">Fornecedor</label>
-                        <select id="supplierSelect" name="supplierSelect" required>
-                            <option value="">Selecione um Fornecedor...</option>
-                            <!-- Lista de fornecedores injetada via JS -->
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="poNumber">N° do Pedido</label>
-                        <input type="text" id="poNumber" name="poNumber" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label for="poDate">Data</label>
-                        <input type="date" id="poDate" name="poDate" required>
-                    </div>
-                </div>
-            </div>
+        <h1>Novo Pedido de Compra</h1>
 
-            <div class="form-section">
-                <h3>Itens do Pedido</h3>
-                
-                <table class="items-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 5%;">#</th>
-                            <th style="width: 15%;">SKU</th>
-                            <th style="width: 35%;">Produto / Descrição</th>
-                            <th style="width: 10%;">Qtd</th>
-                            <th style="width: 15%;">Preço Unitário</th>
-                            <th style="width: 15%; text-align: right;">Total Item</th>
-                            <th class="action-col">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="itemsBody">
-                        <!-- Linhas de itens injetadas via JS -->
-                    </tbody>
-                </table>
-                
-                <button type="button" class="btn-add-item" onclick="addItem()">+ Adicionar Item</button>
-            </div>
-            
-            <div class="form-section">
-                <h3>Observações</h3>
+        <!-- Formulário Principal -->
+        <form id="poForm">
+            <!-- Cabeçalho do Pedido -->
+            <div class="header-fields">
                 <div class="form-group">
-                    <textarea id="notes" name="notes" rows="3" style="width: 100%; resize: vertical; padding: 10px; border-radius: 4px; border: 1px solid #ccc;"></textarea>
+                    <label for="poNumber">Número do Pedido (PO)</label>
+                    <input type="text" id="poNumber" required readonly>
+                </div>
+                <div class="form-group">
+                    <label for="poDate">Data do Pedido</label>
+                    <input type="date" id="poDate" required>
+                </div>
+                <div class="form-group" style="grid-column: 1 / 3;">
+                    <label for="supplierSelect">Fornecedor</label>
+                    <select id="supplierSelect" required></select>
                 </div>
             </div>
 
-            <div class="totals-section">
-                <p>Total Geral: <span id="totalAmount">R$ 0,00</span></p>
+            <!-- Lista de Itens -->
+            <div class="item-list-container">
+                <h2>Itens do Pedido</h2>
+                <div class="item-row header">
+                    <div class="sequence">#</div>
+                    <div class="description">Produto</div>
+                    <div class="qty">Qtde.</div>
+                    <div class="price">Preço Unit.</div>
+                    <div class="total">Total</div>
+                    <div></div> <!-- Botão Remover -->
+                </div>
+                <div id="itemList">
+                    <!-- Itens serão injetados aqui -->
+                </div>
+                <button type="button" class="add-btn" onclick="addItem()">+ Adicionar Item</button>
+                
+                <div class="total-section">
+                    TOTAL GERAL: R$ <span id="grandTotal">0,00</span>
+                </div>
             </div>
 
-            <div class="actions-section">
-                <button type="button" class="btn-draft" onclick="saveAsDraft()">Salvar como Rascunho</button>
-                <button type="button" class="btn-finalize" onclick="saveAndFinalize()">Finalizar Pedido</button>
+            <!-- Observações -->
+            <div class="form-group">
+                <label for="notes">Observações</label>
+                <textarea id="notes" rows="3" style="width: 100%;"></textarea>
+            </div>
+
+            <!-- Ações -->
+            <div class="actions">
+                <button type="button" class="draft-btn" onclick="saveAsDraft()">Memorizar (Rascunho)</button>
+                <button type="button" class="finalize-btn" onclick="saveAndFinalize()">Finalizar e Salvar</button>
             </div>
         </form>
-
     </div>
 
-    <!-- Modal de Confirmação/Alerta Customizado -->
-    <div id="customModal" class="modal">
-        <div class="modal-content">
-            <h2 id="customModalTitle"></h2>
-            <p class="modal-message" id="customModalMessage"></p>
-            <div class="modal-actions" id="customModalActions">
-                <!-- Botões serão inseridos via JS -->
+    <!-- Modal Customizado (Alerta/Confirmação/Visualização) -->
+    <div id="customModal" class="custom-modal-backdrop">
+        <div class="custom-modal-content">
+            <h3 id="modalTitle">Título</h3>
+            <p id="modalMessage">Mensagem</p>
+            <div id="modalContent"></div> <!-- Conteúdo para visualização de PO -->
+            <div id="modalActions" class="custom-modal-actions">
+                <!-- Botões injetados por JS -->
             </div>
         </div>
     </div>
 
     <script>
-        // Variáveis globais para Firebase e dados
-        let auth, db, userId;
-        let suppliers = [];
-        let products = {}; // Usar objeto para busca rápida por SKU
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        let db;
+        let auth;
+
+        // SEUS DADOS DE CONFIGURAÇÃO FORNECIDOS (CORRIGIDO)
+        const firebaseConfig = {
+            apiKey: "AIzaSyAXKlq9WOs_5_ilfhG13xQwNVwQa6MaBfg",
+            authDomain: "farmacia-a6682.firebaseapp.com",
+            projectId: "farmacia-a6682",
+            storageBucket: "farmacia-a6682.firebasestorage.app",
+            messagingSenderId: "144965717217",
+            appId: "1:144965717217:web:de43b2316e8b7a25293ba0"
+        };
         
-        // Variável de controle para edição/rascunho
-        let currentPoRef = null;
-        let currentCollectionName = null;
+        // Variáveis globais para controlar a edição
+        let poToEdit = new URLSearchParams(window.location.search).get('po');
+        let draftToEdit = new URLSearchParams(window.location.search).get('draft');
+        let itemCounter = 0; // Contador global para IDs de item
+        
+        /* --------------------------------------------------
+        * FUNÇÕES DE UTILIDADE E FIREBASE 
+        * -------------------------------------------------- */
 
-        /**
-         * Configuração inicial do Firebase e autenticação.
-         */
-        async function setupFirebase() {
-            if (!firebaseConfig) {
-                console.error("Firebase config not found.");
-                document.getElementById('userInfo').textContent = "ERRO: Configuração do Firebase ausente.";
-                return;
+        // Função auxiliar para obter a referência da coleção do usuário logado
+        function getUserCollectionRef(collectionName) {
+            const user = auth.currentUser;
+            if (!user) {
+                // Em caso de erro, redireciona para login (tecnicamente o onAuthStateChanged já faria isso)
+                window.location.href = 'login.html';
+                throw new Error("Usuário não autenticado.");
             }
+            // Cria o caminho: 'users/{UID_DO_USUARIO}/[collectionName]'
+            return db.collection('users').doc(user.uid).collection(collectionName);
+        }
 
+        // --------------------------------------------------
+        // Configuração e Autenticação do Firebase
+        // --------------------------------------------------
+        function setupFirebase() {
             if (!firebase.apps.length) {
                 firebase.initializeApp(firebaseConfig);
             }
@@ -249,379 +227,301 @@
             auth = firebase.auth();
             db = firebase.firestore();
 
-            try {
-                 db.enablePersistence().catch(err => {
-                    if (err.code === 'failed-precondition') {
-                        console.warn("Persistência desabilitada: Múltiplas abas abertas.");
-                    } else if (err.code === 'unimplemented') {
-                        console.warn("Persistência desabilitada: Navegador não suportado.");
-                    }
-                });
-            } catch (e) {
-                console.warn("Erro ao tentar habilitar persistência:", e);
-            }
-
-            // Função de Login/Autenticação
-            auth.onAuthStateChanged(async (user) => {
+            // Listener de autenticação: verifica se o usuário está logado
+            auth.onAuthStateChanged(user => {
                 if (user) {
-                    userId = user.uid;
-                    document.getElementById('userInfo').textContent = `Usuário: ${user.email || 'Anônimo'}`;
-                    window.loadData(); 
+                    // Usuário logado: exibe info e carrega dados
+                    document.querySelector('.user-info').textContent = 'Usuário: ' + (user.email || 'Admin');
+                    if (typeof window.loadData === 'function') {
+                        window.loadData();
+                    }
                 } else {
-                    if (initialAuthToken) {
-                        try {
-                            await auth.signInWithCustomToken(initialAuthToken);
-                        } catch (error) {
-                            console.error("Erro na autenticação do token:", error);
-                            await auth.signInAnonymously();
-                        }
-                    } else {
-                        await auth.signInAnonymously();
+                    // Usuário não logado: redireciona para login
+                    if (window.location.pathname.indexOf('login.html') === -1) {
+                        window.location.href = 'login.html';
                     }
                 }
             });
-            
-            // CORRIGIDO: Define o nível de log para debug (Sintaxe correta para Firebase v8)
-            firebase.firestore.setLogLevel('debug');
         }
-        
-        // --- Funções Auxiliares de UI/UX ---
 
         function logout() {
-            showCustomConfirm(
-                'Confirmação',
-                'Tem certeza que deseja sair?',
-                async () => {
-                    try {
-                        await auth.signOut();
-                        window.location.href = 'login.html';
-                    } catch (error) {
-                        console.error("Erro ao fazer logout:", error);
-                        showCustomAlert('Erro', 'Não foi possível sair: ' + error.message);
-                    }
-                }
-            );
+            auth.signOut().then(() => {
+                window.location.href = 'login.html';
+            }).catch(error => {
+                console.error("Erro ao fazer logout:", error);
+            });
         }
+        window.logout = logout; // Exporta para o HTML
 
-        /**
-         * Retorna a referência da coleção de um usuário.
-         * Coleção: /artifacts/{appId}/users/{userId}/{collectionName}
-         */
-        function getUserCollectionRef(collectionName) {
-            if (!db || !userId) {
-                console.error("Firestore ou UserId não inicializados.");
-                return db.collection('invalid_path');
-            }
-            return db.collection('artifacts').doc(appId).collection('users').doc(userId).collection(collectionName);
-        }
-
-        function formatCurrency(value) {
-            if (typeof value === 'string') {
-                value = parseFloat(value.replace(',', '.'));
-            }
-            if (isNaN(value)) return 'R$ 0,00';
-            return 'R$ ' + value.toFixed(2).replace('.', ',');
-        }
-
-        // --- Funções do Modal Customizado ---
-
+        // Funções de Modal (Alerta/Confirmação)
+        let resolveModalPromise;
+        
         function setupModal() {
             const modal = document.getElementById('customModal');
-            window.onclick = function(event) {
-                if (event.target == modal) {
-                    modal.style.display = "none";
+            modal.addEventListener('click', (e) => {
+                // Fechar apenas se clicar no backdrop, não no conteúdo
+                if (e.target === modal) {
+                    closeModal();
                 }
-            }
+            });
         }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
+        
         function showCustomAlert(title, message, callback) {
             const modal = document.getElementById('customModal');
-            document.getElementById('customModalTitle').textContent = title;
-            document.getElementById('customModalMessage').textContent = message;
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').innerHTML = message;
+            document.getElementById('modalContent').innerHTML = ''; // Limpa conteúdo de visualização
             
-            const actions = document.getElementById('customModalActions');
-            actions.innerHTML = `<button class="alert-ok" onclick="closeModal('customModal')">OK</button>`;
-            
-            if (callback) {
-                actions.querySelector('.alert-ok').onclick = () => {
-                    closeModal('customModal');
-                    callback();
-                };
-            }
+            const actions = document.getElementById('modalActions');
+            actions.innerHTML = `<button class="alert-ok" onclick="closeModal()">OK</button>`;
 
-            modal.style.display = 'block';
+            modal.style.display = 'flex';
+            if (callback) {
+                resolveModalPromise = callback;
+            } else {
+                resolveModalPromise = null;
+            }
         }
 
-        function showCustomConfirm(title, message, onYes, onNo = () => {}) {
+        function showCustomConfirm(title, message, onYes) {
             const modal = document.getElementById('customModal');
-            document.getElementById('customModalTitle').textContent = title;
-            document.getElementById('customModalMessage').textContent = message;
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').innerHTML = message;
+            document.getElementById('modalContent').innerHTML = ''; // Limpa conteúdo de visualização
             
-            const actions = document.getElementById('customModalActions');
+            const actions = document.getElementById('modalActions');
             actions.innerHTML = `
-                <button class="confirm-yes">Sim</button>
-                <button class="confirm-no">Não</button>
+                <button class="confirm-yes" id="modalConfirmYes">Sim</button>
+                <button class="confirm-no" onclick="closeModal()">Não</button>
             `;
 
-            actions.querySelector('.confirm-yes').onclick = () => {
-                closeModal('customModal');
+            document.getElementById('modalConfirmYes').onclick = () => {
+                closeModal();
                 onYes();
             };
-            actions.querySelector('.confirm-no').onclick = () => {
-                closeModal('customModal');
-                onNo();
-            };
 
-            modal.style.display = 'block';
+            modal.style.display = 'flex';
         }
 
-        // --- Funções de Carregamento de Dados ---
+        function closeModal() {
+            document.getElementById('customModal').style.display = 'none';
+            if (resolveModalPromise) {
+                resolveModalPromise();
+                resolveModalPromise = null;
+            }
+        }
         
+        /* --------------------------------------------------
+        * FUNÇÕES DE DADOS (CARREGAMENTO DE LISTAS)
+        * -------------------------------------------------- */
+
+        // Carrega o seletor de fornecedores
         async function loadSupplierSelect() {
             const select = document.getElementById('supplierSelect');
-            const collectionRef = getUserCollectionRef('suppliers');
-            
-            select.innerHTML = '<option value="">Carregando Fornecedores...</option>';
-            
+            select.innerHTML = '<option value="">Selecione um Fornecedor</option>';
+
             try {
-                const snapshot = await collectionRef.orderBy('name', 'asc').get();
-                suppliers = [];
-                select.innerHTML = '<option value="">Selecione um Fornecedor...</option>';
-                
-                if (snapshot.empty) {
-                    select.innerHTML = '<option value="">Nenhum fornecedor cadastrado.</option>';
-                    return;
-                }
-                
+                const snapshot = await getUserCollectionRef('suppliers').get();
                 snapshot.forEach(doc => {
                     const data = doc.data();
-                    suppliers.push(data);
                     const option = document.createElement('option');
-                    option.value = data.cnpj; // CNPJ como valor
-                    option.textContent = `${data.name} (${data.cnpj})`;
+                    option.value = data.cnpj; // CNPJ como valor único
+                    option.textContent = data.name;
                     select.appendChild(option);
                 });
-
             } catch (error) {
                 console.error("Erro ao carregar fornecedores:", error);
-                select.innerHTML = '<option value="">Erro ao carregar lista.</option>';
+                showCustomAlert('Erro', 'Não foi possível carregar a lista de fornecedores.');
             }
         }
 
+        // Carrega o seletor de produtos
         async function loadProductSelect() {
-            const collectionRef = getUserCollectionRef('products');
-            products = {}; // Limpa o cache
-            
+            const select = document.getElementById('templateProductSelect'); // Pega o template
+            select.innerHTML = '<option value="">Selecione o Produto</option>';
+
             try {
-                const snapshot = await collectionRef.get();
-                
-                if (snapshot.empty) {
-                    console.warn("Nenhum produto cadastrado.");
-                    return;
-                }
-                
+                const snapshot = await getUserCollectionRef('products').get();
                 snapshot.forEach(doc => {
                     const data = doc.data();
-                    products[data.sku] = data; // Armazena o produto pela SKU
+                    const option = document.createElement('option');
+                    option.value = data.sku; // SKU como valor único
+                    option.setAttribute('data-price', data.price); // Armazena o preço
+                    option.textContent = `${data.name} (R$ ${data.price.replace('.', ',')})`;
+                    select.appendChild(option);
                 });
-
             } catch (error) {
                 console.error("Erro ao carregar produtos:", error);
-            }
-        }
-        
-        async function getNextPoNumber() {
-            const metadataRef = getUserCollectionRef('metadata').doc('po_sequence');
-            
-            try {
-                const doc = await db.runTransaction(async (transaction) => {
-                    const docSnapshot = await transaction.get(metadataRef);
-                    
-                    let nextNumber;
-                    if (!docSnapshot.exists) {
-                        nextNumber = 1001; // Começa em um número arbitrário
-                    } else {
-                        nextNumber = (docSnapshot.data().lastPoNumber || 1000) + 1;
-                    }
-
-                    transaction.set(metadataRef, { lastPoNumber: nextNumber });
-                    return nextNumber;
-                });
-                
-                return doc;
-
-            } catch (error) {
-                console.error("Erro ao gerar número do pedido:", error);
-                return 'ERRO-' + Date.now();
+                showCustomAlert('Erro', 'Não foi possível carregar a lista de produtos.');
             }
         }
 
-        // --- Funções de Manipulação de Itens ---
+        /* --------------------------------------------------
+        * FUNÇÕES DE LÓGICA DO PEDIDO
+        * -------------------------------------------------- */
 
-        let itemCounter = 0; // Contador único para IDs dos elementos
-        
-        function updateItemDescription(selectElement) {
-            const row = selectElement.closest('tr');
-            const sku = selectElement.value;
-            const itemDescriptionInput = row.querySelector('.item-description');
-            const itemPriceInput = row.querySelector('.item-unit-price');
-            
-            if (sku && products[sku]) {
-                const product = products[sku];
-                itemDescriptionInput.value = product.name;
-                itemPriceInput.value = product.price;
-            } else {
-                itemDescriptionInput.value = '';
-                itemPriceInput.value = '';
-            }
-            
-            // Recalcula o total
+        function getNextPoNumber() {
+             return getUserCollectionRef('poCounter').doc('current').get().then(doc => {
+                if (doc.exists) {
+                    return doc.data().lastNumber + 1;
+                }
+                // Se não existir, começa em 1001 (ou outro valor inicial)
+                return 1001; 
+            }).catch(error => {
+                console.error("Erro ao obter contador:", error);
+                // Retorna um valor padrão ou um timestamp em caso de falha crítica
+                return Math.floor(Date.now() / 1000); 
+            });
+        }
+
+        function resequenceItems() {
+            const rows = document.querySelectorAll('#itemList .item-row:not(.header)');
+            rows.forEach((row, index) => {
+                row.querySelector('.sequence').textContent = index + 1;
+            });
             calculateTotal();
         }
 
-        function addItem(itemData = {}) {
+        function addItem(productSku = '', quantity = '', unitPrice = '', itemTotal = '') {
             itemCounter++;
-            const itemsBody = document.getElementById('itemsBody');
-            const newRow = itemsBody.insertRow();
-            newRow.id = `item-row-${itemCounter}`;
+            const itemList = document.getElementById('itemList');
+            const newRow = document.createElement('div');
+            newRow.className = 'item-row';
+            newRow.setAttribute('data-id', itemCounter);
 
-            // Cria o HTML do seletor de produtos (com base no cache de products)
-            let productOptions = '<option value="">Selecione...</option>';
-            for (const sku in products) {
-                const selected = itemData.sku === sku ? 'selected' : '';
-                productOptions += `<option value="${sku}" ${selected}>${sku}</option>`;
-            }
-
-            // Define valores padrão se não houver dados
-            const skuValue = itemData.sku || '';
-            const quantityValue = itemData.quantity || '1';
-            const priceValue = itemData.unitPrice || '0.00';
-            const descriptionValue = itemData.productName || '';
-            const totalValue = formatCurrency((parseFloat(quantityValue) * parseFloat(priceValue)) || 0);
+            // Clonar o seletor de produtos do template
+            const productSelectTemplate = document.createElement('select');
+            productSelectTemplate.innerHTML = document.getElementById('templateProductSelect').innerHTML;
+            productSelectTemplate.className = 'product-select';
+            productSelectTemplate.setAttribute('required', true);
+            productSelectTemplate.value = productSku;
 
             newRow.innerHTML = `
-                <td><span class="item-index">${itemsBody.rows.length}</span></td>
-                <td>
-                    <select class="item-sku" onchange="updateItemDescription(this)" data-original-sku="${skuValue}" required>
-                        ${productOptions}
-                    </select>
-                </td>
-                <td><input type="text" class="item-description" value="${descriptionValue}" placeholder="Descrição do Produto" required></td>
-                <td><input type="number" class="item-quantity" value="${quantityValue}" min="1" step="any" onchange="calculateTotal()" required></td>
-                <td><input type="text" class="item-unit-price" value="${priceValue.replace('.', ',')}" oninput="this.value = this.value.replace(/[^0-9,]/g, ''); calculateTotal()" required></td>
-                <td class="item-total">${totalValue}</td>
-                <td class="action-col">
-                    <button type="button" class="btn-remove-item" onclick="removeItem('${newRow.id}')">X</button>
-                </td>
+                <div class="sequence">${itemList.children.length + 1}</div>
+                <div class="description">
+                    <!-- O select real será adicionado aqui via JS -->
+                </div>
+                <div class="qty">
+                    <input type="number" value="${quantity}" min="1" step="1" placeholder="Qtde" oninput="calculateTotal()" required>
+                </div>
+                <div class="price">
+                    <input type="text" value="${unitPrice}" placeholder="0,00" oninput="formatPrice(this); calculateTotal()" required>
+                </div>
+                <div class="total">
+                    <span class="item-total-display">${itemTotal}</span>
+                </div>
+                <div class="remove-btn-container">
+                    <button type="button" class="remove-btn" onclick="removeItem(${itemCounter})">X</button>
+                </div>
             `;
-
-            // Garante que o item selecione o valor correto se estiver carregando dados existentes
-            const skuSelect = newRow.querySelector('.item-sku');
-            if (itemData.sku) {
-                 skuSelect.value = itemData.sku;
-            } else {
-                // Se for um novo item, verifica se há apenas um produto, e seleciona-o
-                if (Object.keys(products).length === 1) {
-                    skuSelect.value = Object.keys(products)[0];
-                    updateItemDescription(skuSelect);
-                }
-            }
-
-            resequenceItems();
+            
+            // Adiciona o select (clonado ou do template)
+            const descriptionDiv = newRow.querySelector('.description');
+            descriptionDiv.appendChild(productSelectTemplate);
+            
+            // Adiciona o event listener ao novo select
+            productSelectTemplate.addEventListener('change', updateItemDescription);
+            
+            itemList.appendChild(newRow);
+            resequenceItems(); // Recalcula a numeração e total
             calculateTotal();
         }
-
-        function removeItem(rowId) {
-            const row = document.getElementById(rowId);
-            if (document.getElementById('itemsBody').rows.length > 1) {
+        
+        function removeItem(id) {
+            const row = document.querySelector(`.item-row[data-id="${id}"]`);
+            if (row) {
                 row.remove();
                 resequenceItems();
-                calculateTotal();
-            } else {
-                showCustomAlert('Atenção', 'O pedido deve ter pelo menos um item.');
-            }
-        }
-        
-        function resequenceItems() {
-            const rows = document.getElementById('itemsBody').rows;
-            for (let i = 0; i < rows.length; i++) {
-                rows[i].querySelector('.item-index').textContent = i + 1;
             }
         }
 
+        function formatPrice(input) {
+            let value = input.value.replace(/\D/g, ''); // Remove tudo que não é número
+            if (value.length > 2) {
+                // Adiciona a vírgula para centavos
+                value = value.replace(/(\d{2})$/, ',$1'); 
+            } else if (value.length === 1) {
+                value = '0,0' + value;
+            } else if (value.length === 2) {
+                value = '0,' + value;
+            }
+            input.value = value;
+        }
+
+        function updateItemDescription(event) {
+            const select = event.target;
+            const selectedOption = select.options[select.selectedIndex];
+            const price = selectedOption.getAttribute('data-price');
+            const row = select.closest('.item-row');
+            
+            if (row && price) {
+                // Atualiza o preço unitário com o preço padrão do catálogo
+                const priceInput = row.querySelector('.price input');
+                priceInput.value = price.replace('.', ',');
+            }
+            calculateTotal(); // Recalcula quando o produto muda
+        }
+        
         function calculateTotal() {
             let grandTotal = 0;
-            const rows = document.getElementById('itemsBody').rows;
-            
-            for (let i = 0; i < rows.length; i++) {
-                const row = rows[i];
-                const quantity = parseFloat(row.querySelector('.item-quantity').value || 0);
-                // Substitui vírgula por ponto para cálculo
-                const priceText = row.querySelector('.item-unit-price').value.replace(',', '.');
-                const price = parseFloat(priceText || 0);
+            const rows = document.querySelectorAll('#itemList .item-row:not(.header)');
+
+            rows.forEach(row => {
+                const qtyInput = row.querySelector('.qty input');
+                const priceInput = row.querySelector('.price input');
+                const totalDisplay = row.querySelector('.item-total-display');
                 
-                const itemTotal = quantity * price;
+                const qty = parseFloat(qtyInput.value) || 0;
+                // Converte preço de R$,## para float
+                const priceStr = priceInput.value.replace('.', '').replace(',', '.');
+                const price = parseFloat(priceStr) || 0;
+                
+                const itemTotal = qty * price;
                 grandTotal += itemTotal;
                 
-                row.querySelector('.item-total').textContent = formatCurrency(itemTotal);
-            }
+                // Formata o total do item para exibição (R$,##)
+                totalDisplay.textContent = itemTotal.toFixed(2).replace('.', ',');
+            });
             
-            document.getElementById('totalAmount').textContent = formatCurrency(grandTotal);
+            // Formata o total geral para exibição
+            document.getElementById('grandTotal').textContent = grandTotal.toFixed(2).replace('.', ',');
         }
 
-        // --- Funções de Salvar/Finalizar ---
-        
-        function getPoData(status) {
-            const form = document.getElementById('purchaseOrderForm');
-            
-            // 1. Dados do Cabeçalho
-            const supplierSelect = form.elements['supplierSelect'];
+        /* --------------------------------------------------
+        * FUNÇÕES DE PERSISTÊNCIA (SALVAR/FINALIZAR)
+        * -------------------------------------------------- */
+
+        function getOrderData() {
+            const poNumber = document.getElementById('poNumber').value;
+            const poDate = document.getElementById('poDate').value;
+            const supplierSelect = document.getElementById('supplierSelect');
             const supplierCnpj = supplierSelect.value;
-            const supplierName = supplierSelect.options[supplierSelect.selectedIndex].text.split('(')[0].trim();
-            const poNumber = form.elements['poNumber'].value;
-            const poDate = form.elements['poDate'].value; // Salva como YYYY-MM-DD
-            const notes = form.elements['notes'].value;
-
-            if (!supplierCnpj || !poDate || !poNumber) {
-                showCustomAlert('Atenção', 'Selecione o Fornecedor e preencha a Data do Pedido.');
-                return null;
-            }
-
-            // 2. Itens do Pedido
-            const items = [];
-            const rows = document.getElementById('itemsBody').rows;
-            let totalAmount = 0;
+            const supplierName = supplierSelect.options[supplierSelect.selectedIndex].textContent;
+            const notes = document.getElementById('notes').value;
+            const grandTotal = document.getElementById('grandTotal').textContent.replace('.', '').replace(',', '.');
             
-            for (let i = 0; i < rows.length; i++) {
-                const row = rows[i];
-                const sku = row.querySelector('.item-sku').value;
-                const name = row.querySelector('.item-description').value;
-                const quantity = parseFloat(row.querySelector('.item-quantity').value || 0);
-                const price = parseFloat(row.querySelector('.item-unit-price').value.replace(',', '.') || 0);
+            const items = [];
+            const rows = document.querySelectorAll('#itemList .item-row:not(.header)');
+            rows.forEach(row => {
+                const sku = row.querySelector('.product-select').value;
+                const name = row.querySelector('.product-select').options[row.querySelector('.product-select').selectedIndex].textContent;
+                const quantity = row.querySelector('.qty input').value;
+                const priceStr = row.querySelector('.price input').value.replace('.', '').replace(',', '.');
+                const totalStr = row.querySelector('.item-total-display').textContent.replace('.', '').replace(',', '.');
 
-                if (!sku || !name || quantity <= 0 || price <= 0) {
-                    showCustomAlert('Atenção', `O item ${i + 1} está incompleto ou tem valores inválidos.`);
-                    return null;
+                if (sku && quantity) {
+                    items.push({
+                        sku: sku,
+                        name: name,
+                        quantity: parseFloat(quantity),
+                        unitPrice: parseFloat(priceStr),
+                        total: parseFloat(totalStr)
+                    });
                 }
-                
-                const itemTotal = quantity * price;
-                totalAmount += itemTotal;
-                
-                items.push({
-                    sku: sku,
-                    productName: name,
-                    quantity: quantity.toFixed(2),
-                    unitPrice: price.toFixed(2),
-                    total: itemTotal.toFixed(2)
-                });
-            }
+            });
 
-            if (items.length === 0) {
-                showCustomAlert('Atenção', 'Adicione pelo menos um item ao pedido.');
+            if (!poNumber || !poDate || !supplierCnpj || items.length === 0) {
+                showCustomAlert('Erro', 'Preencha todos os campos obrigatórios e adicione pelo menos um item.');
                 return null;
             }
 
@@ -631,112 +531,106 @@
                 supplierCnpj: supplierCnpj,
                 supplierName: supplierName,
                 notes: notes,
+                grandTotal: parseFloat(grandTotal),
                 items: items,
-                totalAmount: totalAmount.toFixed(2),
-                status: status, // 'draft' ou 'finalized'
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
             };
         }
 
-        async function saveOrder(status) {
-            const poData = getPoData(status);
-            if (!poData) return;
-
-            const collectionName = status === 'draft' ? 'drafts' : 'orders';
-            const collectionRef = getUserCollectionRef(collectionName);
-
-            try {
-                // Se estiver editando um rascunho/pedido, a referência já está definida
-                let docRef = currentPoRef;
-                
-                if (!docRef) {
-                    // Se for novo ou se vier de um rascunho anterior que está sendo promovido a finalizado, cria a nova referência
-                    docRef = collectionRef.doc(poData.poNumber.toString());
-                } else if (currentCollectionName !== collectionName) {
-                    // Caso raro: Se estiver promovendo um rascunho (drafts) para finalizado (orders),
-                    // precisa criar uma nova referência na coleção 'orders'
-                    docRef = getUserCollectionRef('orders').doc(poData.poNumber.toString());
+        async function saveAsDraft() {
+            const data = getOrderData();
+            if (!data) return;
+            
+            showCustomConfirm('Memorizar Rascunho', `Deseja memorizar o Pedido N° ${data.poNumber} como Rascunho?`, async () => {
+                try {
+                    // Salva na coleção 'drafts'
+                    await getUserCollectionRef('drafts').doc(data.poNumber).set(data);
+                    
+                    showCustomAlert('Memorizado!', `Rascunho N° ${data.poNumber} salvo com sucesso.`, () => {
+                         window.location.href = 'rascunhos.html';
+                    });
+                } catch (error) {
+                    console.error("Erro ao salvar rascunho:", error);
+                    showCustomAlert('Erro', 'Não foi possível salvar como rascunho: ' + error.message);
                 }
-                
-                // 1. Salva o documento
-                await docRef.set(poData);
+            });
+        }
 
-                // 2. Se for finalizado E veio de um rascunho, deleta o rascunho antigo
-                if (status === 'finalized' && currentCollectionName === 'drafts') {
-                    // currentPoRef apontava para 'drafts', agora precisa ser deletado
-                    await getUserCollectionRef('drafts').doc(poData.poNumber.toString()).delete();
-                }
+        async function saveAndFinalize() {
+            const data = getOrderData();
+            if (!data) return;
 
-                showCustomAlert('Sucesso', `Pedido N° ${poData.poNumber} salvo como ${status === 'draft' ? 'RASCUNHO' : 'FINALIZADO'}!`, () => {
-                    if (status === 'finalized') {
-                        window.location.href = 'historico.html'; // Redireciona para o histórico
-                    } else {
-                        window.location.href = 'rascunhos.html'; // Redireciona para os rascunhos
+            showCustomConfirm('Finalizar e Salvar', `Confirma a finalização e o salvamento do Pedido N° ${data.poNumber} no Histórico?`, async () => {
+                try {
+                    // 1. Salva na coleção 'orders' (Histórico)
+                    await getUserCollectionRef('orders').doc(data.poNumber).set(data);
+
+                    // 2. Atualiza o contador de PO se for um novo pedido (não rascunho)
+                    if (!poToEdit && !draftToEdit) {
+                        const counterRef = getUserCollectionRef('poCounter').doc('current');
+                        await counterRef.set({ lastNumber: parseInt(data.poNumber) }, { merge: true });
                     }
-                });
+                    
+                    // 3. Se for um rascunho que foi finalizado, remove da coleção 'drafts'
+                    if (draftToEdit) {
+                        await getUserCollectionRef('drafts').doc(draftToEdit).delete();
+                    }
 
-            } catch (error) {
-                console.error(`Erro ao salvar pedido como ${status}:`, error);
-                showCustomAlert('Erro', `Não foi possível salvar: ${error.message}`);
-            }
-        }
-
-        function saveAsDraft() {
-            showCustomConfirm('Salvar Rascunho', 'Deseja salvar o pedido atual como rascunho?', () => saveOrder('draft'));
-        }
-
-        function saveAndFinalize() {
-            showCustomConfirm('Finalizar Pedido', 'Tem certeza que deseja finalizar e registrar este pedido no Histórico?', () => saveOrder('finalized'));
-        }
-
-        // --- Funções de Edição (Carregamento de Parâmetros) ---
-
-        function getQueryParam(param) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(param);
+                    showCustomAlert('Sucesso!', `Pedido N° ${data.poNumber} finalizado e salvo no Histórico.`, () => {
+                        window.location.href = 'historico.html'; // Redireciona para o histórico
+                    });
+                } catch (error) {
+                    console.error("Erro ao finalizar pedido:", error);
+                    showCustomAlert('Erro', 'Não foi possível finalizar o pedido: ' + error.message);
+                }
+            });
         }
 
         async function loadOrderForEditing(poNumber, collectionName) {
-            document.title = `Editando ${collectionName === 'drafts' ? 'Rascunho' : 'Pedido'} N° ${poNumber}`;
-            document.getElementById('poNumber').value = poNumber;
-
-            currentCollectionName = collectionName;
-            currentPoRef = getUserCollectionRef(collectionName).doc(poNumber);
-            
-            const doc = await currentPoRef.get();
-
-            if (!doc.exists) {
-                showCustomAlert('Erro', 'Pedido não encontrado para edição.', () => {
-                    window.location.href = 'index.html'; // Volta para novo pedido
+            try {
+                const doc = await getUserCollectionRef(collectionName).doc(poNumber).get();
+                if (!doc.exists) {
+                    showCustomAlert('Erro', `Pedido/Rascunho N° ${poNumber} não encontrado.`);
+                    return;
+                }
+                const data = doc.data();
+                
+                // Preenche campos do cabeçalho
+                document.getElementById('poNumber').value = data.poNumber;
+                document.getElementById('poDate').value = data.poDate;
+                document.getElementById('supplierSelect').value = data.supplierCnpj;
+                document.getElementById('notes').value = data.notes || '';
+                
+                // Limpa e preenche itens
+                document.getElementById('itemList').innerHTML = '';
+                itemCounter = 0; // Reseta o contador
+                data.items.forEach(item => {
+                    const totalFormatted = item.total.toFixed(2).replace('.', ',');
+                    const priceFormatted = item.unitPrice.toFixed(2).replace('.', ',');
+                    addItem(item.sku, item.quantity, priceFormatted, totalFormatted);
                 });
-                return;
+                
+                calculateTotal();
+
+            } catch (error) {
+                console.error(`Erro ao carregar ${collectionName}:`, error);
+                showCustomAlert('Erro', 'Não foi possível carregar os dados para edição.');
             }
-
-            const po = doc.data();
-
-            // 1. Carrega o Cabeçalho
-            document.getElementById('supplierSelect').value = po.supplierCnpj;
-            document.getElementById('poDate').value = po.poDate;
-            document.getElementById('notes').value = po.notes || '';
-
-            // 2. Carrega os Itens
-            const itemsBody = document.getElementById('itemsBody');
-            itemsBody.innerHTML = ''; // Limpa a lista existente
-            
-            po.items.forEach(item => addItem(item));
         }
 
-
-        // --- Inicialização Principal ---
+        /* --------------------------------------------------
+        * INICIALIZAÇÃO
+        * -------------------------------------------------- */
 
         async function init() {
-            if (!db || !userId) return; // Garante que o Firebase está pronto
-
-            const poToEdit = getQueryParam('editPo'); // Se estiver editando um pedido finalizado
-            const draftToEdit = getQueryParam('editDraft'); // Se estiver editando um rascunho
-            
             // Carrega primeiro as listas, pois são necessárias para a interface
             await loadSupplierSelect();
+            // Clonar o select para criar o template antes de carregar produtos
+            const templateSelect = document.getElementById('supplierSelect').cloneNode(true);
+            templateSelect.id = 'templateProductSelect';
+            templateSelect.style.display = 'none';
+            document.body.appendChild(templateSelect);
+
             await loadProductSelect();
             
             // Verifica se está editando ou criando novo
@@ -770,7 +664,7 @@
         window.saveAndFinalize = saveAndFinalize;
         window.resequenceItems = resequenceItems; 
         window.closeModal = closeModal; // Exporta também para o HTML do modal
-        window.logout = logout;
+        window.formatPrice = formatPrice;
     </script>
 </body>
 </html>
