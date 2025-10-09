@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo de Produtos</title>
 
+    <!-- Firebase SDKs V8 (Mantendo compatibilidade com o código) -->
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
@@ -17,77 +18,183 @@
         /* Barra Superior (User/Logout) */
         .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; margin-bottom: 10px; border-bottom: 1px solid #ddd; }
         .user-info { font-weight: bold; color: #004c99; font-size: 14px; }
-        .logout-btn { background-color: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; transition: background-color 0.3s; }
-        .logout-btn:hover { background-color: #c82333; }
+        .logout-btn { background-color: #d9534f; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; transition: background-color 0.3s; }
+        .logout-btn:hover { background-color: #c9302c; }
 
-        /* Navegação */
-        .nav { display: flex; gap: 15px; margin-bottom: 25px; }
-        .nav a { text-decoration: none; color: #004c99; font-weight: bold; padding: 8px 15px; border-radius: 5px; transition: background-color 0.3s; }
-        .nav a:hover { background-color: #e6f0ff; }
-        .nav a.active { border-bottom: 3px solid #004c99; }
+        /* Menu de Navegação */
+        .nav-menu { display: flex; justify-content: space-around; margin-bottom: 30px; padding: 10px 0; border-bottom: 2px solid #004c99; }
+        .nav-menu a { text-decoration: none; color: #004c99; font-weight: bold; padding: 8px 15px; border-radius: 5px; transition: background-color 0.3s; }
+        .nav-menu a.active, .nav-menu a:hover { background-color: #e6f0ff; }
+        
+        /* Título e Botão de Ação */
+        h1 { color: #004c99; text-align: center; margin-bottom: 20px; }
+        .action-bar { text-align: right; margin-bottom: 20px; }
+        .add-btn { background-color: #004c99; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; transition: background-color 0.3s; }
+        .add-btn:hover { background-color: #003366; }
 
-        /* Título e Ação */
-        .header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #004c99; padding-bottom: 10px; }
-        h1 { color: #333; margin: 0; font-size: 1.5em; }
-        .btn-new { background-color: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: background-color 0.3s; }
-        .btn-new:hover { background-color: #218838; }
-
-        /* Lista */
+        /* Lista de Produtos */
         .product-list { list-style: none; padding: 0; }
-        .list-item { 
-            background-color: #f9f9f9; padding: 15px; border-radius: 6px; margin-bottom: 10px; 
-            border-left: 5px solid #004c99; display: flex; justify-content: space-between; align-items: center;
+        .product-list li {
+            background-color: #f9f9f9; 
+            padding: 15px; 
+            border: 1px solid #eee; 
+            border-radius: 6px; 
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: box-shadow 0.2s;
         }
-        .list-item-info { flex-grow: 1; text-align: left; }
-        .list-item-info strong { display: block; font-size: 1.1em; color: #004c99; margin-bottom: 5px; }
-        .list-item-actions button { 
-            margin-left: 10px; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; border: none;
-        }
-        .btn-edit { background-color: #ffc107; color: #333; }
-        .delete-btn { background-color: #dc3545; color: white; }
-        .btn-edit:hover { opacity: 0.8; }
-        .delete-btn:hover { background-color: #c82333; }
+        .product-list li:hover { box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+        
+        .list-item-details { flex-grow: 1; }
+        .list-item-details strong { color: #333; }
+        .list-item-details .name { font-size: 1.1em; color: #004c99; font-weight: bold; margin-bottom: 5px; }
 
-        /* Modal */
-        .modal {
-            display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto;
-            background-color: rgba(0,0,0,0.4); justify-content: center; align-items: center;
+        .list-item-actions button {
+            margin-left: 10px;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
-        .modal-content {
-            background-color: #fefefe; padding: 20px; border: 1px solid #888; width: 80%; max-width: 400px;
-            border-radius: 8px; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        .btn-edit { background-color: #f0ad4e; color: white; }
+        .btn-edit:hover { background-color: #ec971f; }
+        .delete-btn { background-color: #d9534f; color: white; }
+        .delete-btn:hover { background-color: #c9302c; }
+
+        /* Modal de Cadastro/Edição */
+        .custom-modal-backdrop {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); z-index: 1000;
+            display: none; justify-content: center; align-items: center;
         }
-        .close-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
-        .close-btn:hover, .close-btn:focus { color: #000; text-decoration: none; cursor: pointer; }
-        .modal-content input, .modal-content button, .modal-content textarea { width: 100%; padding: 10px; margin-bottom: 10px; box-sizing: border-box; }
-        .modal-content button { margin-top: 10px; background-color: #004c99; color: white; font-weight: bold; border: none; }
-        .modal-content button:hover { background-color: #003366; }
+        .custom-modal-content {
+            background-color: white; padding: 25px; border-radius: 8px;
+            width: 90%; max-width: 500px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            animation: fadeIn 0.3s;
+        }
+        .custom-modal-content h3 { color: #004c99; margin-top: 0; }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; }
+        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        
+        .form-actions { text-align: right; margin-top: 20px; }
+        .form-actions button {
+            padding: 10px 20px; margin-left: 10px; border: none; border-radius: 5px;
+            cursor: pointer; transition: background-color 0.3s; color: white;
+        }
+        .save-btn { background-color: #5cb85c; }
+        .save-btn:hover { background-color: #4cae4c; }
+        .cancel-btn { background-color: #f0ad4e; }
+        .cancel-btn:hover { background-color: #ec971f; }
 
-        /* Custom Alert/Confirm */
-        .custom-dialog-content { text-align: center; }
-        .custom-dialog-content h2 { color: #004c99; margin-top: 0; }
-        .custom-dialog-actions { margin-top: 20px; display: flex; justify-content: center; gap: 10px; }
-        .dialog-btn { padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; border: none; }
-        .dialog-btn-primary { background-color: #007bff; color: white; }
-        .dialog-btn-secondary { background-color: #6c757d; color: white; }
-
-        .loading-overlay {
-            display: flex; justify-content: center; align-items: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(255, 255, 255, 0.8); z-index: 9999; font-size: 1.5em; color: #004c99;
+        /* Modal Customizado (Alerta/Confirmação) */
+        .custom-modal-actions button {
+            padding: 10px 20px; margin: 5px; border: none; border-radius: 5px;
+            cursor: pointer; transition: background-color 0.3s; color: white;
+        }
+        .custom-modal-actions .alert-ok { background-color: #004c99; }
+        .custom-modal-actions .alert-ok:hover { background-color: #003366; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        
+        /* Responsividade */
+        @media (max-width: 600px) {
+            .nav-menu { flex-direction: column; }
+            .nav-menu a { margin: 5px 0; text-align: center; }
+            .product-list li { flex-direction: column; align-items: flex-start; }
+            .list-item-actions { margin-top: 10px; width: 100%; display: flex; justify-content: flex-end; }
         }
     </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Barra Superior -->
+        <div class="top-bar">
+            <span class="user-info">Carregando usuário...</span>
+            <button class="logout-btn" onclick="logout()">Sair</button>
+        </div>
+
+        <!-- Navegação -->
+        <div class="nav-menu">
+            <a href="index.html">Novo Pedido</a>
+            <a href="historico.html">Histórico</a>
+            <a href="rascunhos.html">Rascunhos</a>
+            <a href="produtos.html" class="active">Catálogo</a>
+            <a href="fornecedores.html">Fornecedores</a>
+        </div>
+        
+        <h1>Catálogo de Produtos</h1>
+
+        <!-- Botão Adicionar -->
+        <div class="action-bar">
+            <button class="add-btn" onclick="openProductModal()">+ Adicionar Produto</button>
+        </div>
+
+        <!-- Lista de Produtos -->
+        <ul id="productsList" class="product-list">
+            <!-- Produtos serão injetados aqui -->
+        </ul>
+    </div>
+
+    <!-- Modal de Cadastro/Edição -->
+    <div id="customModal" class="custom-modal-backdrop">
+        <div id="productModal" class="custom-modal-content">
+            <h3 id="modalTitle">Cadastrar Produto</h3>
+            
+            <form id="productForm">
+                <input type="hidden" id="skuHidden">
+                
+                <div class="form-group">
+                    <label for="sku">SKU (Código)</label>
+                    <input type="text" id="sku" required maxlength="10">
+                </div>
+                
+                <div class="form-group">
+                    <label for="name">Nome do Produto</label>
+                    <input type="text" id="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="desc">Descrição / Detalhes</label>
+                    <textarea id="desc" rows="2"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="price">Preço Padrão (R$)</label>
+                    <input type="text" id="price" required placeholder="0,00" oninput="formatPrice(this)">
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" onclick="closeModal()">Cancelar</button>
+                    <button type="submit" class="save-btn">Salvar Produto</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Modal Customizado (Alerta) -->
+        <div id="alertContent" class="custom-modal-content" style="display: none;">
+            <h3 id="alertTitle">Título</h3>
+            <p id="alertMessage">Mensagem</p>
+            <div id="modalActions" class="custom-modal-actions">
+                <button class="alert-ok" onclick="closeModal()">OK</button>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // =============================================================
-        // FIREBASE CONFIGURAÇÃO E AUTENTICAÇÃO (BLOCO PADRONIZADO)
-        // =============================================================
+        let db;
+        let auth;
+        let isEditing = false;
+        let originalSku = ''; // Armazena o SKU original ao editar
 
-        // Variáveis globais para Firebase
-        let app, auth, db, userId;
-
-        // Seus dados de configuração
+        // SEUS DADOS DE CONFIGURAÇÃO FORNECIDOS (CORRIGIDO)
         const firebaseConfig = {
-            apiKey: "AIzaSyAXKlq9WOs_5_ilfhG13xQwNVwQa6MaFbg",
+            apiKey: "AIzaSyAXKlq9WOs_5_ilfhG13xQwNVwQa6MaBfg",
             authDomain: "farmacia-a6682.firebaseapp.com",
             projectId: "farmacia-a6682",
             storageBucket: "farmacia-a6682.firebasestorage.app",
@@ -95,386 +202,223 @@
             appId: "1:144965717217:web:de43b2316e8b7a25293ba0"
         };
 
-        /**
-         * Configura o Firebase e tenta autenticar o usuário.
-         * Deve ser chamada no window.onload.
-         */
-        async function setupFirebase() {
-            try {
-                // 1. Inicializa o App
-                if (typeof firebase === 'undefined') {
-                    console.error("Firebase SDK não carregado.");
-                    return;
-                }
-                if (!firebase.apps.length) {
-                    app = firebase.initializeApp(firebaseConfig);
-                } else {
-                    app = firebase.app();
-                }
+        /* --------------------------------------------------
+        * FUNÇÕES DE UTILIDADE E FIREBASE 
+        * -------------------------------------------------- */
 
-                // 2. Inicializa os serviços
-                auth = firebase.auth();
-                db = firebase.firestore();
-                db.settings({
-                    timestampsInSnapshots: true
-                });
-                console.log("Firebase services initialized.");
-
-                // 3. Autenticação (usando token customizado ou anônimo)
-                const token = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-                if (token) {
-                    await auth.signInWithCustomToken(token);
-                    console.log("Signed in with custom token.");
-                } else {
-                    await auth.signInAnonymously();
-                    console.log("Signed in anonymously.");
-                }
-                
-                // 4. Define o userId e observa o estado de autenticação
-                auth.onAuthStateChanged(user => {
-                    if (user) {
-                        userId = user.uid;
-                        console.log("User authenticated. UID:", userId);
-                        // Garante que o usuário está logado e carrega os dados
-                        if (window.loadData) {
-                            window.loadData();
-                        }
-                        // Atualiza a informação do usuário na tela
-                        document.getElementById('userInfoText').textContent = user.email || `ID: ${userId}`;
-                        document.getElementById('loadingOverlay').style.display = 'none';
-                        document.getElementById('mainContent').style.display = 'block';
-
-                    } else {
-                        console.log("User signed out or failed authentication. Redirecting to login.");
-                        // Redireciona para o login se não houver usuário logado (exceto na própria página de login)
-                        if (window.location.pathname.indexOf('login.html') === -1) {
-                            window.location.href = 'login.html';
-                        }
-                    }
-                });
-
-            } catch (error) {
-                console.error("ERRO FATAL NA CONFIGURAÇÃO DO FIREBASE:", error);
+        // Função auxiliar para obter a referência da coleção do usuário logado
+        function getUserCollectionRef(collectionName) {
+            const user = auth.currentUser;
+            if (!user) {
+                window.location.href = 'login.html';
+                throw new Error("Usuário não autenticado.");
             }
+            // Cria o caminho: 'users/{UID_DO_USUARIO}/[collectionName]'
+            return db.collection('users').doc(user.uid).collection(collectionName);
+        }
+
+        // --------------------------------------------------
+        // Configuração e Autenticação do Firebase
+        // --------------------------------------------------
+        function setupFirebase() {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
+
+            auth = firebase.auth();
+            db = firebase.firestore();
+
+            // Listener de autenticação: verifica se o usuário está logado
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    // Usuário logado: exibe info e carrega dados
+                    document.querySelector('.user-info').textContent = 'Usuário: ' + (user.email || 'Admin');
+                    if (typeof window.loadData === 'function') {
+                        window.loadData();
+                    }
+                } else {
+                    // Usuário não logado: redireciona para login
+                    if (window.location.pathname.indexOf('login.html') === -1) {
+                        window.location.href = 'login.html';
+                    }
+                }
+            });
+        }
+
+        function logout() {
+            auth.signOut().then(() => {
+                window.location.href = 'login.html';
+            }).catch(error => {
+                console.error("Erro ao fazer logout:", error);
+            });
+        }
+        window.logout = logout; // Exporta para o HTML
+
+        // Funções de Modal (Alerta)
+        function setupModal() {
+            const modal = document.getElementById('customModal');
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
         }
         
-        /**
-         * Constrói a referência para a coleção do usuário.
-         * @param {string} collectionName - Nome da coleção (ex: 'products', 'drafts', 'orders').
-         * @returns {firebase.firestore.CollectionReference}
-         */
-        function getUserCollectionRef(collectionName) {
-            if (!db || !userId) {
-                console.error("Firebase ou userId não estão inicializados. Tentativa de acesso bloqueada.");
-                return;
-            }
-            // Utiliza a estrutura de dados privada do Canvas
-            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-            return db.collection('artifacts').doc(appId).collection('users').doc(userId).collection(collectionName);
-        }
-
-        /**
-         * Lógica de Logout
-         */
-        window.logout = async function() {
-            try {
-                await auth.signOut();
-                console.log("User signed out. Redirecting to login.");
-                window.location.href = 'login.html';
-            } catch (error) {
-                console.error("Erro ao fazer logout:", error);
-            }
-        }
-
-        // =============================================================
-        // FIM DO BLOCO PADRONIZADO
-        // =============================================================
-
-
-        // Variável de controle para o modo de edição (SKU atual sendo editado)
-        let currentEditingSku = null;
-
-        /**
-         * Inicializa o modal de alerta e confirmação customizado.
-         */
-        function setupModal() {
-            const modalHtml = `
-                <div id="customModal" class="modal">
-                    <div class="modal-content custom-dialog-content">
-                        <span class="close-btn" onclick="closeModal()">&times;</span>
-                        <h2 id="customDialogTitle"></h2>
-                        <p id="customDialogMessage"></p>
-                        <div id="customDialogActions" class="custom-dialog-actions"></div>
-                    </div>
-                </div>
-            `;
-            // Garante que o modal só seja adicionado uma vez
-            if (!document.getElementById('customModal')) {
-                document.body.insertAdjacentHTML('beforeend', modalHtml);
-            }
-            window.modal = document.getElementById('customModal');
-            window.modalTitle = document.getElementById('customDialogTitle');
-            window.modalMessage = document.getElementById('customDialogMessage');
-            window.modalActions = document.getElementById('customDialogActions');
-        }
-
-        /** Fecha o modal. */
-        function closeModal() {
-            if (window.modal) {
-                window.modal.style.display = 'none';
-            }
-            if (document.getElementById('productModal')) {
-                 document.getElementById('productModal').style.display = 'none';
-            }
-        }
-
-        /**
-         * Exibe um alerta customizado.
-         */
-        function showCustomAlert(title, message, callback = null) {
-            closeModal(); // Fecha outros modais
-            window.modalTitle.textContent = title;
-            window.modalMessage.innerHTML = message;
-            window.modalActions.innerHTML = '';
+        function showCustomAlert(title, message, callback) {
+            document.getElementById('productModal').style.display = 'none'; // Esconde o formulário
+            document.getElementById('alertContent').style.display = 'block'; // Mostra o alerta
             
-            const okBtn = document.createElement('button');
-            okBtn.className = 'dialog-btn dialog-btn-primary';
-            okBtn.textContent = 'OK';
-            okBtn.onclick = () => {
-                closeModal();
-                if (callback) callback();
-            };
-            window.modalActions.appendChild(okBtn);
-            window.modal.style.display = 'flex';
-        }
-
-        /**
-         * Exibe uma confirmação customizada.
-         */
-        function showCustomConfirm(title, message, onConfirm, onCancel = null) {
-            closeModal(); // Fecha outros modais
-            window.modalTitle.textContent = title;
-            window.modalMessage.innerHTML = message;
-            window.modalActions.innerHTML = '';
-
-            const cancelBtn = document.createElement('button');
-            cancelBtn.className = 'dialog-btn dialog-btn-secondary';
-            cancelBtn.textContent = 'Cancelar';
-            cancelBtn.onclick = () => {
-                closeModal();
-                if (onCancel) onCancel();
-            };
-            window.modalActions.appendChild(cancelBtn);
-
-            const confirmBtn = document.createElement('button');
-            confirmBtn.className = 'dialog-btn dialog-btn-primary';
-            confirmBtn.textContent = 'Confirmar';
-            confirmBtn.onclick = () => {
-                closeModal();
-                onConfirm();
-            };
-            window.modalActions.appendChild(confirmBtn);
-
-            window.modal.style.display = 'flex';
-        }
-
-        /**
-         * Formata o preço para o padrão brasileiro (R$ 0.000,00)
-         */
-        function formatPrice(value) {
-            if (!value) return '';
+            document.getElementById('alertTitle').textContent = title;
+            document.getElementById('alertMessage').innerHTML = message;
             
-            // Remove tudo que não é dígito e já existe (ponto de milhares)
-            let rawValue = value.replace(/\D/g, ''); 
-
-            if (rawValue.length > 2) {
-                // Garante pelo menos 0,00
-                rawValue = rawValue.padStart(3, '0');
-                // Insere a vírgula antes dos dois últimos dígitos
-                let integerPart = rawValue.substring(0, rawValue.length - 2);
-                const decimalPart = rawValue.substring(rawValue.length - 2);
-                
-                // Formatação para milhares (pontos)
-                integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-                
-                return integerPart + ',' + decimalPart;
-            } else if (rawValue.length > 0) {
-                 // Caso 1 dígito: 0,0x. Caso 2 dígitos: 0,xx
-                return '0,' + rawValue.padStart(2, '0');
+            document.getElementById('customModal').style.display = 'flex';
+            if (callback) {
+                document.getElementById('modalActions').querySelector('.alert-ok').onclick = () => {
+                    closeModal();
+                    callback();
+                };
             } else {
-                return '';
+                document.getElementById('modalActions').querySelector('.alert-ok').onclick = closeModal;
             }
         }
 
-
-        /**
-         * Aplica máscara de formatação (preço) ao campo de input.
-         */
-        function applyInputFormat(input, formatType) {
-            if (formatType === 'price') {
-                input.value = formatPrice(input.value);
+        function closeModal() {
+            document.getElementById('customModal').style.display = 'none';
+            document.getElementById('productModal').style.display = 'block'; // Restaura o formulário
+            document.getElementById('alertContent').style.display = 'none'; // Esconde o alerta
+        }
+        
+        // Formatação de Preço (R$,##)
+        function formatPrice(input) {
+            let value = input.value.replace(/\D/g, ''); // Remove tudo que não é número
+            if (value.length > 2) {
+                value = value.replace(/(\d{2})$/, ',$1'); // Adiciona a vírgula
+            } else if (value.length === 1) {
+                value = '0,0' + value;
+            } else if (value.length === 2) {
+                value = '0,' + value;
             }
+            input.value = value;
         }
 
+        /* --------------------------------------------------
+        * FUNÇÕES DE UI E LISTAGEM
+        * -------------------------------------------------- */
 
-        /**
-         * Abre o modal de cadastro/edição de produto.
-         * @param {string} mode - 'new' ou 'edit'.
-         * @param {object} [productData] - Dados do produto para edição.
-         */
-        function openProductModal(mode = 'new', productData = {}) {
-            currentEditingSku = null;
-            
-            document.getElementById('modalTitle').textContent = mode === 'new' ? 'Novo Produto' : 'Editar Produto';
-            document.getElementById('sku').value = productData.sku || '';
-            document.getElementById('name').value = productData.name || '';
-            document.getElementById('desc').value = productData.desc || '';
-            // Preço é armazenado como string US (ponto) e deve ser exibido como BR (vírgula)
-            document.getElementById('price').value = productData.price ? productData.price.replace('.', ',') : ''; 
-
-            // Desabilita/habilita SKU
-            document.getElementById('sku').readOnly = (mode === 'edit');
-
-            if (mode === 'edit') {
-                currentEditingSku = productData.sku;
-            }
-
-            document.getElementById('productModal').style.display = 'flex';
+        function openProductModal() {
+            isEditing = false;
+            originalSku = '';
+            document.getElementById('modalTitle').textContent = 'Cadastrar Produto';
+            document.getElementById('productForm').reset();
+            document.getElementById('sku').removeAttribute('readonly'); // Permite editar SKU em novo
+            document.getElementById('customModal').style.display = 'flex';
         }
 
-        /**
-         * Função de edição chamada pelo botão na lista.
-         */
-        async function editProduct(sku, event) {
-            if (event) event.stopPropagation();
-            try {
-                const docRef = getUserCollectionRef('products').doc(sku);
-                const doc = await docRef.get();
+        function editProduct(sku, event) {
+            event.stopPropagation();
+            isEditing = true;
+            originalSku = sku;
+            document.getElementById('modalTitle').textContent = 'Editar Produto';
+            document.getElementById('sku').setAttribute('readonly', true); // Não permite editar SKU
+            document.getElementById('customModal').style.display = 'flex';
+
+            getUserCollectionRef('products').doc(sku).get().then(doc => {
                 if (doc.exists) {
-                    openProductModal('edit', doc.data());
+                    const data = doc.data();
+                    document.getElementById('sku').value = data.sku;
+                    document.getElementById('name').value = data.name;
+                    document.getElementById('desc').value = data.desc || '';
+                    document.getElementById('price').value = data.price.replace('.', ','); // Formata para exibição
                 } else {
-                    showCustomAlert('Erro', 'Produto não encontrado.');
+                    showCustomAlert('Erro', 'Produto não encontrado para edição.');
+                    closeModal();
                 }
-            } catch (error) {
-                console.error("Erro ao carregar produto para edição:", error);
-                showCustomAlert('Erro', 'Não foi possível carregar os dados do produto.');
-            }
+            }).catch(error => {
+                console.error("Erro ao carregar produto:", error);
+                showCustomAlert('Erro', 'Falha ao carregar dados do produto.');
+            });
         }
 
-        /**
-         * Salva um novo produto ou atualiza um existente.
-         */
-        async function saveProduct(e) {
-            e.preventDefault();
-
-            const form = document.getElementById('productForm');
-            const sku = form.sku.value.toUpperCase().trim(); // SKU como ID e maiúsculo
-            const name = form.name.value;
-            const desc = form.desc.value;
+        async function saveProduct(event) {
+            event.preventDefault();
             
-            // Converte preço do formato BR (vírgula) para US (ponto) para salvar
-            const priceBr = form.price.value;
-            const priceUs = priceBr.replace(/\./g, '').replace(',', '.'); // Remove pontos de milhar, troca vírgula por ponto
+            const sku = document.getElementById('sku').value.trim();
+            const name = document.getElementById('name').value.trim();
+            const desc = document.getElementById('desc').value.trim();
+            // Converte preço de R$,## para R$.##
+            const price = document.getElementById('price').value.replace('.', '').replace(',', '.'); 
             
-            if (!sku || !name || !priceUs) {
-                showCustomAlert('Atenção', 'SKU, Nome e Preço são campos obrigatórios.');
-                return;
-            }
-            if (isNaN(parseFloat(priceUs))) {
-                showCustomAlert('Atenção', 'O preço deve ser um valor numérico válido.');
+            if (!sku || !name || !price) {
+                showCustomAlert('Erro', 'SKU, Nome e Preço são obrigatórios.');
                 return;
             }
 
-            const productData = {
+            const data = {
                 sku: sku,
                 name: name,
                 desc: desc,
-                price: parseFloat(priceUs).toFixed(2) // Salva como string US com 2 casas
+                price: price,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             };
 
-            // Determina se é uma edição ou um novo registro
-            const docId = currentEditingSku || sku;
+            const docRef = getUserCollectionRef('products').doc(sku);
 
             try {
-                const docRef = getUserCollectionRef('products').doc(docId);
-
-                if (currentEditingSku) {
-                    // Edição
-                    await docRef.update(productData);
-                    showCustomAlert('Sucesso', `Produto ${name} (SKU: ${sku}) atualizado!`);
+                if (isEditing) {
+                    await docRef.update(data);
+                    showCustomAlert('Sucesso!', `Produto ${sku} atualizado com sucesso.`, closeModal);
                 } else {
-                    // Novo registro
-                    const doc = await docRef.get();
-                    if (doc.exists) {
-                        showCustomAlert('Atenção', `Já existe um produto cadastrado com o SKU ${sku}.`);
+                    // Novo cadastro
+                    const existingDoc = await docRef.get();
+                    if (existingDoc.exists) {
+                        showCustomAlert('Erro', `Já existe um produto com o SKU ${sku}.`);
                         return;
                     }
-                    await docRef.set(productData);
-                    showCustomAlert('Sucesso', `Produto ${name} (SKU: ${sku}) cadastrado!`);
+                    data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                    await docRef.set(data);
+                    showCustomAlert('Sucesso!', `Produto ${sku} cadastrado com sucesso.`, closeModal);
                 }
-                
-                closeModal();
-                // loadProductsList() - A lista será atualizada automaticamente pelo listener
-
             } catch (error) {
                 console.error("Erro ao salvar produto:", error);
                 showCustomAlert('Erro', 'Não foi possível salvar o produto: ' + error.message);
             }
         }
 
-        /**
-         * Deleta um produto.
-         */
         function deleteProduct(sku, event) {
-            if (event) event.stopPropagation();
-
-            showCustomConfirm(
-                'Confirmação de Exclusão',
-                `Tem certeza que deseja EXCLUIR o produto com SKU ${sku}?`,
-                async () => {
-                    const docRef = getUserCollectionRef('products').doc(sku);
-                    try {
-                        await docRef.delete();
-                        showCustomAlert('Excluído!', `Produto excluído com sucesso.`);
-                    } catch (error) {
-                        console.error("Erro ao excluir produto:", error);
-                        showCustomAlert('Erro', 'Não foi possível excluir o produto: ' + error.message);
-                    }
+            event.stopPropagation();
+            showCustomConfirm('Confirmação de Exclusão', `Tem certeza que deseja EXCLUIR o Produto SKU ${sku} do catálogo?`, async () => {
+                const docRef = getUserCollectionRef('products').doc(sku);
+                try {
+                    // Correção: usando a sintaxe V8 para delete
+                    await docRef.delete(); 
+                    showCustomAlert('Excluído!', `Produto ${sku} excluído com sucesso.`, loadProductsList);
+                } catch (error) {
+                    console.error("Erro ao excluir produto:", error);
+                    showCustomAlert('Erro', 'Não foi possível excluir o produto: ' + error.message);
                 }
-            );
+            });
         }
 
-        /**
-         * Carrega a lista de produtos em tempo real (onSnapshot).
-         */
         function loadProductsList() {
-            if (!db || !userId) {
-                console.log("Aguardando inicialização do Firebase/UserID.");
-                return; 
-            }
-
-            const list = document.getElementById('productList');
-            const productsRef = getUserCollectionRef('products').orderBy('name');
-
-            // Configura o listener em tempo real
-            productsRef.onSnapshot(snapshot => {
-                list.innerHTML = ''; // Limpa a lista
+            const list = document.getElementById('productsList');
+            list.innerHTML = '<li>Carregando...</li>';
+            
+            getUserCollectionRef('products').onSnapshot(snapshot => {
+                list.innerHTML = '';
                 if (snapshot.empty) {
-                    list.innerHTML = '<p>Nenhum produto cadastrado. Use o botão "Novo Produto" para começar.</p>';
+                    list.innerHTML = '<li>Nenhum produto cadastrado.</li>';
                     return;
                 }
 
                 snapshot.forEach(doc => {
                     const product = doc.data();
                     const item = document.createElement('li');
-                    item.className = 'list-item';
                     item.innerHTML = `
-                        <div class="list-item-info">
-                            <strong>${product.name}</strong>
-                            SKU: ${product.sku} <br>
-                            Descrição: ${product.desc} <br>
-                            Preço Padrão: <strong>R$ ${product.price.replace('.', ',')}</strong>
+                        <div class="list-item-details">
+                            <div class="name">${product.name}</div>
+                            SKU: <strong>${product.sku}</strong> | 
+                            Preço Padrão: <strong>R$ ${product.price.replace('.', ',')}</strong> <br>
+                            ${product.desc || 'Sem descrição'}
                         </div>
                         <div class="list-item-actions">
                             <button class="btn-edit" onclick="editProduct('${product.sku}', event)">Editar</button>
@@ -503,55 +447,8 @@
         window.openProductModal = openProductModal;
         window.editProduct = editProduct;
         window.deleteProduct = deleteProduct;
-        window.applyInputFormat = applyInputFormat;
         window.formatPrice = formatPrice;
         window.closeModal = closeModal;
     </script>
-</head>
-<body>
-    <div class="loading-overlay" id="loadingOverlay">Aguarde, carregando dados do sistema...</div>
-    <div class="container" style="display:none;" id="mainContent">
-
-        <div class="top-bar">
-            <div class="user-info">Bem-vindo, <span id="userInfoText">Carregando...</span></div>
-            <button class="logout-btn" onclick="logout()">Sair</button>
-        </div>
-
-        <div class="nav">
-            <a href="index.html">Novo Pedido</a>
-            <a href="rascunhos.html">Rascunhos</a>
-            <a href="historico.html">Histórico</a>
-            <a href="produtos.html" class="active">Catálogo de Produtos</a>
-            <a href="fornecedores.html">Cadastro de Fornecedores</a>
-        </div>
-
-        <div class="header-actions">
-            <h1>Catálogo de Produtos</h1>
-            <button class="btn-new" onclick="openProductModal('new')">+ Novo Produto</button>
-        </div>
-
-        <ul class="product-list" id="productList">
-            <!-- Produtos serão carregados aqui -->
-            <p>Carregando produtos...</p>
-        </ul>
-    </div>
-    
-    <!-- Modal de Cadastro/Edição de Produto -->
-    <div id="productModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
-            <h2 id="modalTitle">Novo Produto</h2>
-            <form id="productForm">
-                <input type="text" id="sku" placeholder="SKU do Produto (Ex: MED001)" required maxlength="20">
-                <input type="text" id="name" placeholder="Nome do Produto" required maxlength="100">
-                <textarea id="desc" placeholder="Descrição Detalhada do Produto"></textarea>
-                <input type="text" id="price" placeholder="Preço Padrão (R$)" required 
-                       oninput="window.applyInputFormat(this, 'price')">
-                <button type="submit" id="saveProductBtn">Salvar Produto</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- O modal de alerta/confirmação customizado será adicionado via setupModal() -->
 </body>
 </html>
