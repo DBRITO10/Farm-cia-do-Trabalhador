@@ -17,450 +17,419 @@
         /* Barra Superior (User/Logout) */
         .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; margin-bottom: 10px; border-bottom: 1px solid #ddd; }
         .user-info { font-weight: bold; color: #004c99; font-size: 14px; }
-        .logout-btn { background-color: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s; }
+        .logout-btn { background-color: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; transition: background-color 0.3s; }
         .logout-btn:hover { background-color: #c82333; }
 
-        .header { text-align: center; margin-bottom: 30px; }
-        .header h1 { color: #004c99; margin: 0; font-size: 24px; }
+        /* Navegação */
+        .nav { display: flex; gap: 15px; margin-bottom: 25px; }
+        .nav a { text-decoration: none; color: #004c99; font-weight: bold; padding: 8px 15px; border-radius: 5px; transition: background-color 0.3s; }
+        .nav a:hover { background-color: #e6f0ff; }
+        .nav a.active { border-bottom: 3px solid #004c99; }
 
-        /* Botão Novo/Adicionar */
-        .action-bar { margin-bottom: 20px; text-align: right; }
-        .btn-new {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
+        /* Título e Ação */
+        .header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #004c99; padding-bottom: 10px; }
+        h1 { color: #333; margin: 0; font-size: 1.5em; }
+        .btn-new { background-color: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: background-color 0.3s; }
         .btn-new:hover { background-color: #218838; }
 
         /* Lista */
-        .supplier-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        .supplier-list { list-style: none; padding: 0; }
+        .list-item { 
+            background-color: #f9f9f9; padding: 15px; border-radius: 6px; margin-bottom: 10px; 
+            border-left: 5px solid #004c99; display: flex; justify-content: space-between; align-items: center;
         }
-        .list-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            border: 1px solid #e0e0e0;
-            border-radius: 6px;
-            background-color: #f9f9f9;
-        }
-        .list-item-details {
-            flex-grow: 1;
-            line-height: 1.5;
-        }
-        .list-item-details strong {
-            color: #004c99;
-        }
-        
-        /* Botões de Ação */
-        .list-item-actions button {
-            margin-left: 10px;
-            padding: 8px 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
+        .list-item-info { flex-grow: 1; text-align: left; }
+        .list-item-info strong { display: block; font-size: 1.1em; color: #004c99; margin-bottom: 5px; }
+        .list-item-actions button { 
+            margin-left: 10px; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; border: none;
         }
         .btn-edit { background-color: #ffc107; color: #333; }
         .delete-btn { background-color: #dc3545; color: white; }
+        .btn-edit:hover { opacity: 0.8; }
+        .delete-btn:hover { background-color: #c82333; }
 
-        /* Modal de Cadastro */
+        /* Modal */
         .modal {
-            display: none; 
-            position: fixed; 
-            z-index: 1000; 
-            left: 0;
-            top: 0;
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
-            background-color: rgba(0,0,0,0.4); 
-            padding-top: 60px;
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto;
+            background-color: rgba(0,0,0,0.4); justify-content: center; align-items: center;
         }
         .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto; 
-            padding: 25px;
-            border: 1px solid #888;
-            width: 80%; 
-            max-width: 500px;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            position: relative;
+            background-color: #fefefe; padding: 20px; border: 1px solid #888; width: 80%; max-width: 400px;
+            border-radius: 8px; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
-        .close-btn { 
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .close-btn:hover,
-        .close-btn:focus {
-            color: #000;
-            text-decoration: none;
-        }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-weight: bold; margin-bottom: 5px; color: #333; }
-        .form-group input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        .btn-submit {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            width: 100%;
-            margin-top: 10px;
-        }
+        .close-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
+        .close-btn:hover, .close-btn:focus { color: #000; text-decoration: none; cursor: pointer; }
+        .modal-content input, .modal-content button { width: 100%; padding: 10px; margin-bottom: 10px; box-sizing: border-box; }
+        .modal-content button { margin-top: 10px; background-color: #004c99; color: white; font-weight: bold; border: none; }
+        .modal-content button:hover { background-color: #003366; }
 
-        /* Modal de Alerta/Confirmação */
-        .modal-alert-content {
-            background-color: #fefefe;
-            margin: 15% auto; 
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%; 
-            max-width: 400px;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            text-align: center;
+        /* Custom Alert/Confirm */
+        .custom-dialog-content { text-align: center; }
+        .custom-dialog-content h2 { color: #004c99; margin-top: 0; }
+        .custom-dialog-actions { margin-top: 20px; display: flex; justify-content: center; gap: 10px; }
+        .dialog-btn { padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; border: none; }
+        .dialog-btn-primary { background-color: #007bff; color: white; }
+        .dialog-btn-secondary { background-color: #6c757d; color: white; }
+
+        .loading-overlay {
+            display: flex; justify-content: center; align-items: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(255, 255, 255, 0.8); z-index: 9999; font-size: 1.5em; color: #004c99;
         }
-        .modal-buttons { margin-top: 20px; }
-        .modal-buttons button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin: 0 5px;
-            font-weight: bold;
-        }
-        .modal-ok-btn { background-color: #007bff; color: white; }
-        .modal-cancel-btn { background-color: #6c757d; color: white; }
-        .modal-confirm-btn { background-color: #28a745; color: white; }
     </style>
-</head>
-<body>
-    <div class="container">
-        <div class="top-bar">
-            <span class="user-info">Carregando Usuário...</span>
-            <button class="logout-btn" onclick="firebase.auth().signOut().then(() => { window.location.href = 'login.html'; });">Sair</button>
-        </div>
-
-        <nav>
-            <a href="index.html">Novo Pedido</a> | 
-            <a href="rascunhos.html">Rascunhos</a> | 
-            <a href="historico.html">Histórico</a> |
-            <a href="produtos.html">Catálogo Produtos</a> | 
-            <a href="fornecedores.html">Cadastro Fornecedores</a>
-        </nav>
-
-        <div class="header">
-            <h1>Cadastro de Fornecedores</h1>
-            <p>Gerencie a lista de fornecedores para pedidos de compra.</p>
-        </div>
-
-        <div class="action-bar">
-            <button class="btn-new" onclick="openSupplierModal()">Novo Fornecedor</button>
-        </div>
-
-        <div id="supplierList" class="supplier-list">
-            <p>Carregando fornecedores...</p>
-        </div>
-    </div>
-
-    <div id="supplierModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal('supplierModal')">&times;</span>
-            <h2 id="modalHeader">Novo Fornecedor</h2>
-            <form id="supplierForm">
-                <input type="hidden" id="isEditing" value="false">
-                <div class="form-group">
-                    <label for="cnpj">CNPJ:</label>
-                    <input type="text" id="cnpj" name="cnpj" required placeholder="Ex: 00.000.000/0000-00" maxlength="18" oninput="applyInputFormat(this, formatCNPJ)">
-                </div>
-                <div class="form-group">
-                    <label for="name">Nome / Razão Social:</label>
-                    <input type="text" id="name" name="name" required placeholder="Ex: Distribuidora Alfa Ltda">
-                </div>
-                <div class="form-group">
-                    <label for="contact">Contato:</label>
-                    <input type="text" id="contact" name="contact" placeholder="Ex: João Silva">
-                </div>
-                <div class="form-group">
-                    <label for="phone">Telefone:</label>
-                    <input type="text" id="phone" name="phone" placeholder="Ex: (00) 00000-0000" maxlength="15" oninput="applyInputFormat(this, formatPhone)">
-                </div>
-                <div class="form-group">
-                    <label for="address">Endereço (Cidade/Estado):</label>
-                    <input type="text" id="address" name="address" placeholder="Ex: São Paulo/SP">
-                </div>
-                <button type="submit" class="btn-submit" id="submitButton">Salvar Fornecedor</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="customModal" class="modal">
-        <div class="modal-alert-content">
-            <h3 id="modalTitle">Título</h3>
-            <p id="modalMessage">Mensagem.</p>
-            <div class="modal-buttons" id="modalButtons">
-                <button class="modal-ok-btn" onclick="closeModal('customModal')">OK</button>
-            </div>
-        </div>
-    </div>
 
     <script>
-        // SEUS DADOS DE CONFIGURAÇÃO FORNECIDOS (Copiei de login.html)
+        // =============================================================
+        // FIREBASE CONFIGURAÇÃO E AUTENTICAÇÃO (BLOCO PADRONIZADO)
+        // =============================================================
+
+        // Variáveis globais para Firebase
+        let app, auth, db, userId;
+
+        // Seus dados de configuração
         const firebaseConfig = {
-            apiKey: "AIzaSyAXKlq9WOs_5_ilfhG13xQwNVwQa6MaBfg",
+            apiKey: "AIzaSyAXKlq9WOs_5_ilfhG13xQwNVwQa6MaFbg",
             authDomain: "farmacia-a6682.firebaseapp.com",
             projectId: "farmacia-a6682",
             storageBucket: "farmacia-a6682.firebasestorage.app",
             messagingSenderId: "144965717217",
             appId: "1:144965717217:web:de43b2316e8b7a25293ba0"
         };
-        
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
 
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-
-        // --- Funções de Utilitários ---
-
-        function setupModal() {
-            window.supplierModal = document.getElementById('supplierModal');
-            window.customModal = document.getElementById('customModal');
-            window.modalTitle = document.getElementById('modalTitle');
-            window.modalMessage = document.getElementById('modalMessage');
-            window.modalButtons = document.getElementById('modalButtons');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        function showCustomAlert(title, message, callback) {
-            window.modalTitle.textContent = title;
-            window.modalMessage.textContent = message;
-            window.modalButtons.innerHTML = `<button class="modal-ok-btn" onclick="closeModal('customModal'); ${callback ? 'window.alertCallback();' : ''}">OK</button>`;
-            if (callback) {
-                window.alertCallback = callback;
-            }
-            window.customModal.style.display = 'block';
-        }
-        
-        function showCustomConfirm(title, message, onConfirm, onCancel) {
-            window.modalTitle.textContent = title;
-            window.modalMessage.textContent = message;
-            window.modalButtons.innerHTML = `
-                <button class="modal-confirm-btn" onclick="closeModal('customModal'); window.confirmCallback(true);">Confirmar</button>
-                <button class="modal-cancel-btn" onclick="closeModal('customModal'); window.confirmCallback(false);">Cancelar</button>
-            `;
-            window.confirmCallback = (isConfirmed) => {
-                if (isConfirmed && onConfirm) {
-                    onConfirm();
-                } else if (!isConfirmed && onCancel) {
-                    onCancel();
-                }
-            };
-            window.customModal.style.display = 'block';
-        }
-
-        function applyInputFormat(input, formatFunction) {
-            const start = input.selectionStart;
-            const end = input.selectionEnd;
-            input.value = formatFunction(input.value);
-            // Tenta manter o cursor na posição correta
-            input.setSelectionRange(start, end);
-        }
-
-        function formatCNPJ(value) {
-            let cleanValue = value.replace(/\D/g, ''); // Remove tudo que não for dígito
-            
-            // 00.000.000/0000-00
-            if (cleanValue.length > 12) {
-                cleanValue = cleanValue.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{0,2}).*/, '$1.$2.$3/$4-$5');
-            } else if (cleanValue.length > 8) {
-                cleanValue = cleanValue.replace(/^(\d{2})(\d{3})(\d{3})(\d{0,4})/, '$1.$2.$3/$4');
-            } else if (cleanValue.length > 5) {
-                cleanValue = cleanValue.replace(/^(\d{2})(\d{3})(\d{0,3})/, '$1.$2.$3');
-            } else if (cleanValue.length > 2) {
-                cleanValue = cleanValue.replace(/^(\d{2})(\d{0,3})/, '$1.$2');
-            }
-            return cleanValue;
-        }
-
-        function formatPhone(value) {
-            let cleanValue = value.replace(/\D/g, ''); // Remove tudo que não for dígito
-            
-            // (00) 00000-0000
-            if (cleanValue.length > 10) {
-                cleanValue = cleanValue.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
-            } else if (cleanValue.length > 5) {
-                cleanValue = cleanValue.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
-            } else if (cleanValue.length > 2) {
-                cleanValue = cleanValue.replace(/^(\d{2})(\d{0,4})/, '($1) $2');
-            } else if (cleanValue.length > 0) {
-                cleanValue = cleanValue.replace(/^(\d{0,2})/, '($1');
-            }
-            return cleanValue;
-        }
-
-        // --- Autenticação Corrigida ---
-
-        function getUserCollectionRef(collectionName) {
-            const user = auth.currentUser;
-            if (!user) {
-                throw new Error("Usuário não autenticado para acessar o Firestore.");
-            }
-            return db.collection('users').doc(user.uid).collection(collectionName);
-        }
-
-        // FUNÇÃO CRÍTICA: CORREÇÃO DO LOOP INFINITO
-        function setupFirebase() {
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    // Usuário logado:
-                    const userInfoElement = document.querySelector('.user-info');
-                    if (userInfoElement) {
-                        userInfoElement.textContent = 'Usuário: ' + user.email;
-                    }
-                    
-                    // Chama a função de carregamento de dados específica desta página
-                    if (window.loadData) {
-                        window.loadData();
-                    }
-
-                } else {
-                    // Usuário NÃO logado: Redireciona para a página de login
-                    window.location.href = 'login.html';
-                }
-            });
-        }
-
-        // --- Funções Específicas da Página ---
-
-        function openSupplierModal(cnpj = null) {
-            const form = document.getElementById('supplierForm');
-            form.reset(); // Limpa o formulário
-            document.getElementById('cnpj').disabled = false;
-            document.getElementById('isEditing').value = 'false';
-
-            if (cnpj) {
-                // Modo Edição
-                document.getElementById('modalHeader').textContent = 'Editar Fornecedor';
-                document.getElementById('isEditing').value = 'true';
-                document.getElementById('cnpj').value = formatCNPJ(cnpj); // Exibe formatado
-                document.getElementById('cnpj').disabled = true; // Não pode mudar o CNPJ
-                loadSupplierData(cnpj);
-            } else {
-                // Modo Novo
-                document.getElementById('modalHeader').textContent = 'Novo Fornecedor';
-            }
-
-            window.supplierModal.style.display = 'block';
-        }
-
-        async function loadSupplierData(cnpj) {
+        /**
+         * Configura o Firebase e tenta autenticar o usuário.
+         * Deve ser chamada no window.onload.
+         */
+        async function setupFirebase() {
             try {
-                const supplierDoc = await getUserCollectionRef('suppliers').doc(cnpj).get();
-                if (supplierDoc.exists) {
-                    const supplier = supplierDoc.data();
-                    document.getElementById('name').value = supplier.name;
-                    document.getElementById('contact').value = supplier.contact || '';
-                    document.getElementById('phone').value = formatPhone(supplier.phone || '');
-                    document.getElementById('address').value = supplier.address || '';
+                // 1. Inicializa o App
+                if (typeof firebase === 'undefined') {
+                    console.error("Firebase SDK não carregado.");
+                    return;
+                }
+                if (!firebase.apps.length) {
+                    app = firebase.initializeApp(firebaseConfig);
                 } else {
-                    showCustomAlert('Erro', 'Fornecedor não encontrado para edição.');
-                    closeModal('supplierModal');
+                    app = firebase.app();
+                }
+
+                // 2. Inicializa os serviços
+                auth = firebase.auth();
+                db = firebase.firestore();
+                db.settings({
+                    timestampsInSnapshots: true
+                });
+                console.log("Firebase services initialized.");
+
+                // 3. Autenticação (usando token customizado ou anônimo)
+                const token = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+                if (token) {
+                    await auth.signInWithCustomToken(token);
+                    console.log("Signed in with custom token.");
+                } else {
+                    await auth.signInAnonymously();
+                    console.log("Signed in anonymously.");
+                }
+                
+                // 4. Define o userId e observa o estado de autenticação
+                auth.onAuthStateChanged(user => {
+                    if (user) {
+                        userId = user.uid;
+                        console.log("User authenticated. UID:", userId);
+                        // Garante que o usuário está logado e carrega os dados
+                        if (window.loadData) {
+                            window.loadData();
+                        }
+                        // Atualiza a informação do usuário na tela
+                        document.getElementById('userInfoText').textContent = user.email || `ID: ${userId}`;
+                        document.getElementById('loadingOverlay').style.display = 'none';
+                        document.getElementById('mainContent').style.display = 'block';
+
+
+                    } else {
+                        console.log("User signed out or failed authentication. Redirecting to login.");
+                        // Redireciona para o login se não houver usuário logado (exceto na própria página de login)
+                        if (window.location.pathname.indexOf('login.html') === -1) {
+                            window.location.href = 'login.html';
+                        }
+                    }
+                });
+
+            } catch (error) {
+                console.error("ERRO FATAL NA CONFIGURAÇÃO DO FIREBASE:", error);
+            }
+        }
+        
+        /**
+         * Constrói a referência para a coleção do usuário.
+         * @param {string} collectionName - Nome da coleção (ex: 'products', 'drafts', 'orders').
+         * @returns {firebase.firestore.CollectionReference}
+         */
+        function getUserCollectionRef(collectionName) {
+            if (!db || !userId) {
+                console.error("Firebase ou userId não estão inicializados. Tentativa de acesso bloqueada.");
+                return;
+            }
+            // Utiliza a estrutura de dados privada do Canvas
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            return db.collection('artifacts').doc(appId).collection('users').doc(userId).collection(collectionName);
+        }
+
+        /**
+         * Lógica de Logout
+         */
+        window.logout = async function() {
+            try {
+                await auth.signOut();
+                console.log("User signed out. Redirecting to login.");
+                window.location.href = 'login.html';
+            } catch (error) {
+                console.error("Erro ao fazer logout:", error);
+            }
+        }
+
+        // =============================================================
+        // FIM DO BLOCO PADRONIZADO
+        // =============================================================
+
+
+        // Variável de controle para o modo de edição (CNPJ atual sendo editado)
+        let currentEditingCnpj = null;
+
+        /**
+         * Inicializa o modal de alerta e confirmação customizado.
+         */
+        function setupModal() {
+            const modalHtml = `
+                <div id="customModal" class="modal">
+                    <div class="modal-content custom-dialog-content">
+                        <span class="close-btn" onclick="closeModal()">&times;</span>
+                        <h2 id="customDialogTitle"></h2>
+                        <p id="customDialogMessage"></p>
+                        <div id="customDialogActions" class="custom-dialog-actions"></div>
+                    </div>
+                </div>
+            `;
+            // Garante que o modal só seja adicionado uma vez
+            if (!document.getElementById('customModal')) {
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+            }
+            window.modal = document.getElementById('customModal');
+            window.modalTitle = document.getElementById('customDialogTitle');
+            window.modalMessage = document.getElementById('customDialogMessage');
+            window.modalActions = document.getElementById('customDialogActions');
+        }
+
+        /** Fecha o modal. */
+        function closeModal() {
+            if (window.modal) {
+                window.modal.style.display = 'none';
+            }
+        }
+
+        /**
+         * Exibe um alerta customizado.
+         */
+        function showCustomAlert(title, message, callback = null) {
+            window.modalTitle.textContent = title;
+            window.modalMessage.innerHTML = message;
+            window.modalActions.innerHTML = '';
+            
+            const okBtn = document.createElement('button');
+            okBtn.className = 'dialog-btn dialog-btn-primary';
+            okBtn.textContent = 'OK';
+            okBtn.onclick = () => {
+                closeModal();
+                if (callback) callback();
+            };
+            window.modalActions.appendChild(okBtn);
+            window.modal.style.display = 'flex';
+        }
+
+        /**
+         * Exibe uma confirmação customizada.
+         */
+        function showCustomConfirm(title, message, onConfirm, onCancel = null) {
+            window.modalTitle.textContent = title;
+            window.modalMessage.innerHTML = message;
+            window.modalActions.innerHTML = '';
+
+            const cancelBtn = document.createElement('button');
+            cancelBtn.className = 'dialog-btn dialog-btn-secondary';
+            cancelBtn.textContent = 'Cancelar';
+            cancelBtn.onclick = () => {
+                closeModal();
+                if (onCancel) onCancel();
+            };
+            window.modalActions.appendChild(cancelBtn);
+
+            const confirmBtn = document.createElement('button');
+            confirmBtn.className = 'dialog-btn dialog-btn-primary';
+            confirmBtn.textContent = 'Confirmar';
+            confirmBtn.onclick = () => {
+                closeModal();
+                onConfirm();
+            };
+            window.modalActions.appendChild(confirmBtn);
+
+            window.modal.style.display = 'flex';
+        }
+
+        /**
+         * Formata o CNPJ: 00.000.000/0000-00
+         */
+        function formatCNPJ(value) {
+            if (!value) return value;
+            value = value.replace(/\D/g, ''); // Remove tudo que não é dígito
+            value = value.replace(/^(\d{2})(\d)/, '$1.$2');
+            value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+            value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
+            value = value.replace(/(\d{4})(\d)/, '$1-$2');
+            return value;
+        }
+
+        /**
+         * Formata o telefone: (00) 00000-0000 ou (00) 0000-0000
+         */
+        function formatPhone(value) {
+            if (!value) return value;
+            value = value.replace(/\D/g, ''); // Remove tudo que não é dígito
+            value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
+            if (value.length > 14) {
+                // Celular (11 digitos após o DDD)
+                value = value.replace(/(\d{5})(\d{4})$/, '$1-$2');
+            } else {
+                // Fixo (10 digitos após o DDD)
+                value = value.replace(/(\d{4})(\d{4})$/, '$1-$2');
+            }
+            return value;
+        }
+
+        /**
+         * Aplica máscara de formatação (CNPJ/Telefone) ao campo de input.
+         */
+        function applyInputFormat(input, formatType) {
+            let value = input.value;
+
+            if (formatType === 'cnpj') {
+                input.value = formatCNPJ(value.substring(0, 18));
+            } else if (formatType === 'phone') {
+                input.value = formatPhone(value.substring(0, 15));
+            }
+        }
+
+        /**
+         * Abre o modal de cadastro/edição de fornecedor.
+         * @param {string} mode - 'new' ou 'edit'.
+         * @param {object} [supplierData] - Dados do fornecedor para edição.
+         */
+        function openSupplierModal(mode = 'new', supplierData = {}) {
+            currentEditingCnpj = null;
+            
+            document.getElementById('modalTitle').textContent = mode === 'new' ? 'Novo Fornecedor' : 'Editar Fornecedor';
+            document.getElementById('cnpj').value = supplierData.cnpj || '';
+            document.getElementById('name').value = supplierData.name || '';
+            document.getElementById('phone').value = supplierData.phone || '';
+            document.getElementById('address').value = supplierData.address || '';
+
+            // Desabilita/habilita CNPJ
+            document.getElementById('cnpj').readOnly = (mode === 'edit');
+
+            if (mode === 'edit') {
+                currentEditingCnpj = supplierData.cnpj;
+            }
+
+            document.getElementById('supplierModal').style.display = 'flex';
+        }
+
+        /**
+         * Função de edição chamada pelo botão na lista.
+         */
+        async function editSupplier(cnpj, event) {
+            if (event) event.stopPropagation();
+            try {
+                const docRef = getUserCollectionRef('suppliers').doc(cnpj);
+                const doc = await docRef.get();
+                if (doc.exists) {
+                    openSupplierModal('edit', doc.data());
+                } else {
+                    showCustomAlert('Erro', 'Fornecedor não encontrado.');
                 }
             } catch (error) {
-                console.error("Erro ao carregar dados do fornecedor:", error);
+                console.error("Erro ao carregar fornecedor para edição:", error);
                 showCustomAlert('Erro', 'Não foi possível carregar os dados do fornecedor.');
-                closeModal('supplierModal');
             }
         }
 
-        async function saveSupplier(event) {
-            event.preventDefault();
+        /**
+         * Salva um novo fornecedor ou atualiza um existente.
+         */
+        async function saveSupplier(e) {
+            e.preventDefault();
 
-            const form = event.target;
-            const isEditing = form.isEditing.value === 'true';
-            
-            // Remove formatação para salvar no banco
-            const cnpj = form.cnpj.value.replace(/\D/g, '').trim(); 
-            const name = form.name.value.trim();
-            const contact = form.contact.value.trim();
-            const phone = form.phone.value.replace(/\D/g, '').trim(); 
-            const address = form.address.value.trim();
+            const form = document.getElementById('supplierForm');
+            const rawCnpj = form.cnpj.value.replace(/\D/g, ''); // CNPJ sem formatação para ID
+            const name = form.name.value;
+            const rawPhone = form.phone.value.replace(/\D/g, ''); // Telefone sem formatação
+            const address = form.address.value;
 
-            if (!cnpj || !name || cnpj.length !== 14) {
-                showCustomAlert('Atenção', 'Por favor, preencha o CNPJ (14 dígitos) e o Nome/Razão Social corretamente.');
+            if (rawCnpj.length !== 14) {
+                showCustomAlert('Atenção', 'O CNPJ deve conter 14 dígitos.');
                 return;
             }
 
             const supplierData = {
-                cnpj: cnpj,
+                cnpj: rawCnpj,
                 name: name,
-                contact: contact,
-                phone: phone,
+                phone: rawPhone,
                 address: address
             };
 
-            const confirmTitle = isEditing ? 'Confirmar Edição' : 'Confirmar Cadastro';
-            const confirmMessage = isEditing 
-                ? `Deseja salvar as alterações no fornecedor ${name}?` 
-                : `Deseja cadastrar o novo fornecedor ${name} (${formatCNPJ(cnpj)})?`;
+            // Determina se é uma edição ou um novo registro
+            const docId = currentEditingCnpj || rawCnpj;
 
-            showCustomConfirm(confirmTitle, confirmMessage, async () => {
-                try {
-                    // Tenta salvar o documento no Firestore, usando o CNPJ (sem formatação) como ID
-                    await getUserCollectionRef('suppliers').doc(cnpj).set(supplierData);
-                    
-                    showCustomAlert('Sucesso!', `Fornecedor ${name} ${isEditing ? 'editado' : 'cadastrado'} com sucesso.`, () => {
-                        closeModal('supplierModal');
-                        loadSuppliersList(); // Recarrega a lista
-                    });
-                } catch (error) {
-                    console.error("Erro ao salvar fornecedor:", error);
-                    showCustomAlert('Erro', 'Não foi possível salvar o fornecedor: ' + error.message);
+            try {
+                const docRef = getUserCollectionRef('suppliers').doc(docId);
+
+                if (currentEditingCnpj) {
+                    // Edição
+                    await docRef.update(supplierData);
+                    showCustomAlert('Sucesso', `Fornecedor ${name} atualizado!`);
+                } else {
+                    // Novo registro
+                    const doc = await docRef.get();
+                    if (doc.exists) {
+                        showCustomAlert('Atenção', `Já existe um fornecedor cadastrado com o CNPJ ${formatCNPJ(rawCnpj)}.`);
+                        return;
+                    }
+                    await docRef.set(supplierData);
+                    showCustomAlert('Sucesso', `Fornecedor ${name} cadastrado!`);
                 }
-            });
-        }
-        
-        function editSupplier(cnpj, event) {
-             if (event) event.stopPropagation();
-             openSupplierModal(cnpj);
+                
+                closeModal();
+                // A lista será atualizada automaticamente pelo listener onSnapshot
+                // loadSuppliersList(); 
+
+            } catch (error) {
+                console.error("Erro ao salvar fornecedor:", error);
+                showCustomAlert('Erro', 'Não foi possível salvar o fornecedor: ' + error.message);
+            }
         }
 
+        /**
+         * Deleta um fornecedor.
+         */
         function deleteSupplier(cnpj, event) {
             if (event) event.stopPropagation();
+
             showCustomConfirm(
                 'Confirmação de Exclusão',
-                `Tem certeza que deseja EXCLUIR o fornecedor CNPJ ${formatCNPJ(cnpj)}? Esta ação não pode ser desfeita.`,
+                `Tem certeza que deseja EXCLUIR o fornecedor com CNPJ ${formatCNPJ(cnpj)}?`,
                 async () => {
                     const docRef = getUserCollectionRef('suppliers').doc(cnpj);
                     try {
                         await docRef.delete();
-                        showCustomAlert('Excluído!', `Fornecedor excluído com sucesso.`, loadSuppliersList); // Recarrega a lista
+                        showCustomAlert('Excluído!', `Fornecedor excluído com sucesso.`);
                     } catch (error) {
                         console.error("Erro ao excluir fornecedor:", error);
                         showCustomAlert('Erro', 'Não foi possível excluir o fornecedor: ' + error.message);
@@ -468,29 +437,36 @@
                 }
             );
         }
-        
-        // Função para carregar a lista de fornecedores (usando listener em tempo real)
+
+        /**
+         * Carrega a lista de fornecedores em tempo real (onSnapshot).
+         */
         function loadSuppliersList() {
+            if (!db || !userId) {
+                console.log("Aguardando inicialização do Firebase/UserID.");
+                return; 
+            }
+
             const list = document.getElementById('supplierList');
-            list.innerHTML = '<p>Carregando fornecedores...</p>';
-            
-            // Listener em tempo real (onSnapshot)
-            getUserCollectionRef('suppliers').orderBy('name').onSnapshot(snapshot => {
+            const suppliersRef = getUserCollectionRef('suppliers').orderBy('name');
+
+            // Configura o listener em tempo real
+            suppliersRef.onSnapshot(snapshot => {
+                list.innerHTML = ''; // Limpa a lista
                 if (snapshot.empty) {
-                    list.innerHTML = '<p>Nenhum fornecedor cadastrado.</p>';
+                    list.innerHTML = '<p>Nenhum fornecedor cadastrado. Use o botão "Novo Fornecedor" para começar.</p>';
                     return;
                 }
 
-                list.innerHTML = ''; // Limpa o "Carregando"
-
                 snapshot.forEach(doc => {
                     const supplier = doc.data();
-                    const item = document.createElement('div');
-                    item.classList.add('list-item');
+                    const item = document.createElement('li');
+                    item.className = 'list-item';
                     item.innerHTML = `
-                        <div class="list-item-details">
-                            <strong>${supplier.name}</strong> (${formatCNPJ(supplier.cnpj || 'N/A')}) <br> 
-                            Contato: ${supplier.contact || 'N/A'} | Tel: ${formatPhone(supplier.phone || 'N/A')} <br>
+                        <div class="list-item-info">
+                            <strong>${supplier.name}</strong>
+                            CNPJ: ${formatCNPJ(supplier.cnpj)} <br>
+                            Telefone: ${formatPhone(supplier.phone || 'N/A')} <br>
                             Endereço: ${supplier.address || 'N/A'}
                         </div>
                         <div class="list-item-actions">
