@@ -17,420 +17,426 @@
         /* Barra Superior (User/Logout) */
         .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; margin-bottom: 10px; border-bottom: 1px solid #ddd; }
         .user-info { font-weight: bold; color: #004c99; font-size: 14px; }
-        .logout-btn { background-color: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s; }
+        .logout-btn { background-color: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; transition: background-color 0.3s; }
         .logout-btn:hover { background-color: #c82333; }
-        
-        .header { text-align: center; margin-bottom: 30px; }
-        .header h1 { color: #004c99; margin: 0; font-size: 24px; }
 
-        /* Botão Novo/Adicionar */
-        .action-bar { margin-bottom: 20px; text-align: right; }
-        .btn-new {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
+        /* Navegação */
+        .nav { display: flex; gap: 15px; margin-bottom: 25px; }
+        .nav a { text-decoration: none; color: #004c99; font-weight: bold; padding: 8px 15px; border-radius: 5px; transition: background-color 0.3s; }
+        .nav a:hover { background-color: #e6f0ff; }
+        .nav a.active { border-bottom: 3px solid #004c99; }
+
+        /* Título e Ação */
+        .header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #004c99; padding-bottom: 10px; }
+        h1 { color: #333; margin: 0; font-size: 1.5em; }
+        .btn-new { background-color: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: background-color 0.3s; }
         .btn-new:hover { background-color: #218838; }
 
         /* Lista */
-        .product-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        .product-list { list-style: none; padding: 0; }
+        .list-item { 
+            background-color: #f9f9f9; padding: 15px; border-radius: 6px; margin-bottom: 10px; 
+            border-left: 5px solid #004c99; display: flex; justify-content: space-between; align-items: center;
         }
-        .list-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            border: 1px solid #e0e0e0;
-            border-radius: 6px;
-            background-color: #f9f9f9;
-        }
-        .list-item-details {
-            flex-grow: 1;
-            line-height: 1.5;
-        }
-        .list-item-details strong {
-            color: #004c99;
-        }
-        
-        /* Botões de Ação */
-        .list-item-actions button {
-            margin-left: 10px;
-            padding: 8px 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
+        .list-item-info { flex-grow: 1; text-align: left; }
+        .list-item-info strong { display: block; font-size: 1.1em; color: #004c99; margin-bottom: 5px; }
+        .list-item-actions button { 
+            margin-left: 10px; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; border: none;
         }
         .btn-edit { background-color: #ffc107; color: #333; }
         .delete-btn { background-color: #dc3545; color: white; }
+        .btn-edit:hover { opacity: 0.8; }
+        .delete-btn:hover { background-color: #c82333; }
 
-        /* Modal de Cadastro */
+        /* Modal */
         .modal {
-            display: none; 
-            position: fixed; 
-            z-index: 1000; 
-            left: 0;
-            top: 0;
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
-            background-color: rgba(0,0,0,0.4); 
-            padding-top: 60px;
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto;
+            background-color: rgba(0,0,0,0.4); justify-content: center; align-items: center;
         }
         .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto; 
-            padding: 25px;
-            border: 1px solid #888;
-            width: 80%; 
-            max-width: 500px;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            position: relative;
+            background-color: #fefefe; padding: 20px; border: 1px solid #888; width: 80%; max-width: 400px;
+            border-radius: 8px; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
-        .close-btn { 
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .close-btn:hover,
-        .close-btn:focus {
-            color: #000;
-            text-decoration: none;
-        }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-weight: bold; margin-bottom: 5px; color: #333; }
-        .form-group input[type="text"],
-        .form-group input[type="number"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        .btn-submit {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            width: 100%;
-            margin-top: 10px;
-        }
+        .close-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
+        .close-btn:hover, .close-btn:focus { color: #000; text-decoration: none; cursor: pointer; }
+        .modal-content input, .modal-content button, .modal-content textarea { width: 100%; padding: 10px; margin-bottom: 10px; box-sizing: border-box; }
+        .modal-content button { margin-top: 10px; background-color: #004c99; color: white; font-weight: bold; border: none; }
+        .modal-content button:hover { background-color: #003366; }
 
-        /* Modal de Alerta/Confirmação */
-        .modal-alert-content {
-            background-color: #fefefe;
-            margin: 15% auto; 
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%; 
-            max-width: 400px;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            text-align: center;
+        /* Custom Alert/Confirm */
+        .custom-dialog-content { text-align: center; }
+        .custom-dialog-content h2 { color: #004c99; margin-top: 0; }
+        .custom-dialog-actions { margin-top: 20px; display: flex; justify-content: center; gap: 10px; }
+        .dialog-btn { padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; border: none; }
+        .dialog-btn-primary { background-color: #007bff; color: white; }
+        .dialog-btn-secondary { background-color: #6c757d; color: white; }
+
+        .loading-overlay {
+            display: flex; justify-content: center; align-items: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(255, 255, 255, 0.8); z-index: 9999; font-size: 1.5em; color: #004c99;
         }
-        .modal-buttons { margin-top: 20px; }
-        .modal-buttons button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin: 0 5px;
-            font-weight: bold;
-        }
-        .modal-ok-btn { background-color: #007bff; color: white; }
-        .modal-cancel-btn { background-color: #6c757d; color: white; }
-        .modal-confirm-btn { background-color: #28a745; color: white; }
     </style>
-</head>
-<body>
-    <div class="container">
-        <div class="top-bar">
-            <span class="user-info">Carregando Usuário...</span>
-            <button class="logout-btn" onclick="firebase.auth().signOut().then(() => { window.location.href = 'login.html'; });">Sair</button>
-        </div>
-
-        <nav>
-            <a href="index.html">Novo Pedido</a> | 
-            <a href="rascunhos.html">Rascunhos</a> | 
-            <a href="historico.html">Histórico</a> |
-            <a href="produtos.html">Catálogo Produtos</a> | 
-            <a href="fornecedores.html">Cadastro Fornecedores</a>
-        </nav>
-
-        <div class="header">
-            <h1>Catálogo de Produtos</h1>
-            <p>Gerencie os SKUs e preços padrão dos produtos.</p>
-        </div>
-
-        <div class="action-bar">
-            <button class="btn-new" onclick="openProductModal()">Novo Produto</button>
-        </div>
-
-        <div id="productList" class="product-list">
-            <p>Carregando catálogo...</p>
-        </div>
-    </div>
-
-    <div id="productModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal('productModal')">&times;</span>
-            <h2 id="modalHeader">Novo Produto</h2>
-            <form id="productForm">
-                <input type="hidden" id="isEditing" value="false">
-                <div class="form-group">
-                    <label for="sku">SKU / Código do Produto:</label>
-                    <input type="text" id="sku" name="sku" required placeholder="Ex: PROD123">
-                </div>
-                <div class="form-group">
-                    <label for="desc">Descrição:</label>
-                    <input type="text" id="desc" name="desc" required placeholder="Ex: Paracetamol 500mg - 20 Comprimidos">
-                </div>
-                <div class="form-group">
-                    <label for="price">Preço Padrão (R$):</label>
-                    <input type="text" id="price" name="price" required placeholder="Ex: 15,50" oninput="applyInputFormat(this, formatPrice)">
-                </div>
-                <button type="submit" class="btn-submit" id="submitButton">Salvar Produto</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="customModal" class="modal">
-        <div class="modal-alert-content">
-            <h3 id="modalTitle">Título</h3>
-            <p id="modalMessage">Mensagem.</p>
-            <div class="modal-buttons" id="modalButtons">
-                <button class="modal-ok-btn" onclick="closeModal('customModal')">OK</button>
-            </div>
-        </div>
-    </div>
 
     <script>
-        // SEUS DADOS DE CONFIGURAÇÃO FORNECIDOS (Copiei de login.html)
+        // =============================================================
+        // FIREBASE CONFIGURAÇÃO E AUTENTICAÇÃO (BLOCO PADRONIZADO)
+        // =============================================================
+
+        // Variáveis globais para Firebase
+        let app, auth, db, userId;
+
+        // Seus dados de configuração
         const firebaseConfig = {
-            apiKey: "AIzaSyAXKlq9WOs_5_ilfhG13xQwNVwQa6MaBfg",
+            apiKey: "AIzaSyAXKlq9WOs_5_ilfhG13xQwNVwQa6MaFbg",
             authDomain: "farmacia-a6682.firebaseapp.com",
             projectId: "farmacia-a6682",
             storageBucket: "farmacia-a6682.firebasestorage.app",
             messagingSenderId: "144965717217",
             appId: "1:144965717217:web:de43b2316e8b7a25293ba0"
         };
-        
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
 
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-
-        // --- Funções de Utilitários ---
-
-        function setupModal() {
-            window.productModal = document.getElementById('productModal');
-            window.customModal = document.getElementById('customModal');
-            window.modalTitle = document.getElementById('modalTitle');
-            window.modalMessage = document.getElementById('modalMessage');
-            window.modalButtons = document.getElementById('modalButtons');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        function showCustomAlert(title, message, callback) {
-            window.modalTitle.textContent = title;
-            window.modalMessage.textContent = message;
-            window.modalButtons.innerHTML = `<button class="modal-ok-btn" onclick="closeModal('customModal'); ${callback ? 'window.alertCallback();' : ''}">OK</button>`;
-            if (callback) {
-                window.alertCallback = callback;
-            }
-            window.customModal.style.display = 'block';
-        }
-        
-        function showCustomConfirm(title, message, onConfirm, onCancel) {
-            window.modalTitle.textContent = title;
-            window.modalMessage.textContent = message;
-            window.modalButtons.innerHTML = `
-                <button class="modal-confirm-btn" onclick="closeModal('customModal'); window.confirmCallback(true);">Confirmar</button>
-                <button class="modal-cancel-btn" onclick="closeModal('customModal'); window.confirmCallback(false);">Cancelar</button>
-            `;
-            window.confirmCallback = (isConfirmed) => {
-                if (isConfirmed && onConfirm) {
-                    onConfirm();
-                } else if (!isConfirmed && onCancel) {
-                    onCancel();
-                }
-            };
-            window.customModal.style.display = 'block';
-        }
-
-        function formatPrice(value) {
-            // Remove tudo que não for dígito, exceto vírgula
-            let cleanValue = value.replace(/[^0-9,]/g, ''); 
-            // Garante que só há uma vírgula
-            let parts = cleanValue.split(',');
-            if (parts.length > 2) {
-                cleanValue = parts[0] + ',' + parts.slice(1).join('');
-            }
-            // Retorna o valor limpo (ex: 12,50)
-            return cleanValue;
-        }
-
-        function applyInputFormat(input, formatFunction) {
-            const start = input.selectionStart;
-            const end = input.selectionEnd;
-            input.value = formatFunction(input.value);
-            // Tenta manter o cursor na posição correta
-            input.setSelectionRange(start, end);
-        }
-
-        // --- Autenticação Corrigida ---
-
-        function getUserCollectionRef(collectionName) {
-            const user = auth.currentUser;
-            if (!user) {
-                throw new Error("Usuário não autenticado para acessar o Firestore.");
-            }
-            return db.collection('users').doc(user.uid).collection(collectionName);
-        }
-
-        // FUNÇÃO CRÍTICA: CORREÇÃO DO LOOP INFINITO
-        function setupFirebase() {
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    // Usuário logado:
-                    const userInfoElement = document.querySelector('.user-info');
-                    if (userInfoElement) {
-                        userInfoElement.textContent = 'Usuário: ' + user.email;
-                    }
-                    
-                    // Chama a função de carregamento de dados específica desta página
-                    if (window.loadData) {
-                        window.loadData();
-                    }
-
-                } else {
-                    // Usuário NÃO logado: Redireciona para a página de login
-                    window.location.href = 'login.html';
-                }
-            });
-        }
-
-        // --- Funções Específicas da Página ---
-
-        function openProductModal(sku = null) {
-            const form = document.getElementById('productForm');
-            form.reset(); // Limpa o formulário
-            document.getElementById('sku').disabled = false;
-            document.getElementById('isEditing').value = 'false';
-
-            if (sku) {
-                // Modo Edição
-                document.getElementById('modalHeader').textContent = 'Editar Produto';
-                document.getElementById('isEditing').value = 'true';
-                document.getElementById('sku').value = sku;
-                document.getElementById('sku').disabled = true; // Não pode mudar o SKU
-                loadProductData(sku);
-            } else {
-                // Modo Novo
-                document.getElementById('modalHeader').textContent = 'Novo Produto';
-            }
-
-            window.productModal.style.display = 'block';
-        }
-        
-        async function loadProductData(sku) {
+        /**
+         * Configura o Firebase e tenta autenticar o usuário.
+         * Deve ser chamada no window.onload.
+         */
+        async function setupFirebase() {
             try {
-                const productDoc = await getUserCollectionRef('products').doc(sku).get();
-                if (productDoc.exists) {
-                    const product = productDoc.data();
-                    document.getElementById('desc').value = product.desc;
-                    document.getElementById('price').value = product.price.replace('.', ','); // Exibe R$X,XX
+                // 1. Inicializa o App
+                if (typeof firebase === 'undefined') {
+                    console.error("Firebase SDK não carregado.");
+                    return;
+                }
+                if (!firebase.apps.length) {
+                    app = firebase.initializeApp(firebaseConfig);
                 } else {
-                    showCustomAlert('Erro', 'Produto não encontrado para edição.');
-                    closeModal('productModal');
+                    app = firebase.app();
+                }
+
+                // 2. Inicializa os serviços
+                auth = firebase.auth();
+                db = firebase.firestore();
+                db.settings({
+                    timestampsInSnapshots: true
+                });
+                console.log("Firebase services initialized.");
+
+                // 3. Autenticação (usando token customizado ou anônimo)
+                const token = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+                if (token) {
+                    await auth.signInWithCustomToken(token);
+                    console.log("Signed in with custom token.");
+                } else {
+                    await auth.signInAnonymously();
+                    console.log("Signed in anonymously.");
+                }
+                
+                // 4. Define o userId e observa o estado de autenticação
+                auth.onAuthStateChanged(user => {
+                    if (user) {
+                        userId = user.uid;
+                        console.log("User authenticated. UID:", userId);
+                        // Garante que o usuário está logado e carrega os dados
+                        if (window.loadData) {
+                            window.loadData();
+                        }
+                        // Atualiza a informação do usuário na tela
+                        document.getElementById('userInfoText').textContent = user.email || `ID: ${userId}`;
+                        document.getElementById('loadingOverlay').style.display = 'none';
+                        document.getElementById('mainContent').style.display = 'block';
+
+                    } else {
+                        console.log("User signed out or failed authentication. Redirecting to login.");
+                        // Redireciona para o login se não houver usuário logado (exceto na própria página de login)
+                        if (window.location.pathname.indexOf('login.html') === -1) {
+                            window.location.href = 'login.html';
+                        }
+                    }
+                });
+
+            } catch (error) {
+                console.error("ERRO FATAL NA CONFIGURAÇÃO DO FIREBASE:", error);
+            }
+        }
+        
+        /**
+         * Constrói a referência para a coleção do usuário.
+         * @param {string} collectionName - Nome da coleção (ex: 'products', 'drafts', 'orders').
+         * @returns {firebase.firestore.CollectionReference}
+         */
+        function getUserCollectionRef(collectionName) {
+            if (!db || !userId) {
+                console.error("Firebase ou userId não estão inicializados. Tentativa de acesso bloqueada.");
+                return;
+            }
+            // Utiliza a estrutura de dados privada do Canvas
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            return db.collection('artifacts').doc(appId).collection('users').doc(userId).collection(collectionName);
+        }
+
+        /**
+         * Lógica de Logout
+         */
+        window.logout = async function() {
+            try {
+                await auth.signOut();
+                console.log("User signed out. Redirecting to login.");
+                window.location.href = 'login.html';
+            } catch (error) {
+                console.error("Erro ao fazer logout:", error);
+            }
+        }
+
+        // =============================================================
+        // FIM DO BLOCO PADRONIZADO
+        // =============================================================
+
+
+        // Variável de controle para o modo de edição (SKU atual sendo editado)
+        let currentEditingSku = null;
+
+        /**
+         * Inicializa o modal de alerta e confirmação customizado.
+         */
+        function setupModal() {
+            const modalHtml = `
+                <div id="customModal" class="modal">
+                    <div class="modal-content custom-dialog-content">
+                        <span class="close-btn" onclick="closeModal()">&times;</span>
+                        <h2 id="customDialogTitle"></h2>
+                        <p id="customDialogMessage"></p>
+                        <div id="customDialogActions" class="custom-dialog-actions"></div>
+                    </div>
+                </div>
+            `;
+            // Garante que o modal só seja adicionado uma vez
+            if (!document.getElementById('customModal')) {
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+            }
+            window.modal = document.getElementById('customModal');
+            window.modalTitle = document.getElementById('customDialogTitle');
+            window.modalMessage = document.getElementById('customDialogMessage');
+            window.modalActions = document.getElementById('customDialogActions');
+        }
+
+        /** Fecha o modal. */
+        function closeModal() {
+            if (window.modal) {
+                window.modal.style.display = 'none';
+            }
+            if (document.getElementById('productModal')) {
+                 document.getElementById('productModal').style.display = 'none';
+            }
+        }
+
+        /**
+         * Exibe um alerta customizado.
+         */
+        function showCustomAlert(title, message, callback = null) {
+            closeModal(); // Fecha outros modais
+            window.modalTitle.textContent = title;
+            window.modalMessage.innerHTML = message;
+            window.modalActions.innerHTML = '';
+            
+            const okBtn = document.createElement('button');
+            okBtn.className = 'dialog-btn dialog-btn-primary';
+            okBtn.textContent = 'OK';
+            okBtn.onclick = () => {
+                closeModal();
+                if (callback) callback();
+            };
+            window.modalActions.appendChild(okBtn);
+            window.modal.style.display = 'flex';
+        }
+
+        /**
+         * Exibe uma confirmação customizada.
+         */
+        function showCustomConfirm(title, message, onConfirm, onCancel = null) {
+            closeModal(); // Fecha outros modais
+            window.modalTitle.textContent = title;
+            window.modalMessage.innerHTML = message;
+            window.modalActions.innerHTML = '';
+
+            const cancelBtn = document.createElement('button');
+            cancelBtn.className = 'dialog-btn dialog-btn-secondary';
+            cancelBtn.textContent = 'Cancelar';
+            cancelBtn.onclick = () => {
+                closeModal();
+                if (onCancel) onCancel();
+            };
+            window.modalActions.appendChild(cancelBtn);
+
+            const confirmBtn = document.createElement('button');
+            confirmBtn.className = 'dialog-btn dialog-btn-primary';
+            confirmBtn.textContent = 'Confirmar';
+            confirmBtn.onclick = () => {
+                closeModal();
+                onConfirm();
+            };
+            window.modalActions.appendChild(confirmBtn);
+
+            window.modal.style.display = 'flex';
+        }
+
+        /**
+         * Formata o preço para o padrão brasileiro (R$ 0.000,00)
+         */
+        function formatPrice(value) {
+            if (!value) return '';
+            
+            // Remove tudo que não é dígito e já existe (ponto de milhares)
+            let rawValue = value.replace(/\D/g, ''); 
+
+            if (rawValue.length > 2) {
+                // Garante pelo menos 0,00
+                rawValue = rawValue.padStart(3, '0');
+                // Insere a vírgula antes dos dois últimos dígitos
+                let integerPart = rawValue.substring(0, rawValue.length - 2);
+                const decimalPart = rawValue.substring(rawValue.length - 2);
+                
+                // Formatação para milhares (pontos)
+                integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                
+                return integerPart + ',' + decimalPart;
+            } else if (rawValue.length > 0) {
+                 // Caso 1 dígito: 0,0x. Caso 2 dígitos: 0,xx
+                return '0,' + rawValue.padStart(2, '0');
+            } else {
+                return '';
+            }
+        }
+
+
+        /**
+         * Aplica máscara de formatação (preço) ao campo de input.
+         */
+        function applyInputFormat(input, formatType) {
+            if (formatType === 'price') {
+                input.value = formatPrice(input.value);
+            }
+        }
+
+
+        /**
+         * Abre o modal de cadastro/edição de produto.
+         * @param {string} mode - 'new' ou 'edit'.
+         * @param {object} [productData] - Dados do produto para edição.
+         */
+        function openProductModal(mode = 'new', productData = {}) {
+            currentEditingSku = null;
+            
+            document.getElementById('modalTitle').textContent = mode === 'new' ? 'Novo Produto' : 'Editar Produto';
+            document.getElementById('sku').value = productData.sku || '';
+            document.getElementById('name').value = productData.name || '';
+            document.getElementById('desc').value = productData.desc || '';
+            // Preço é armazenado como string US (ponto) e deve ser exibido como BR (vírgula)
+            document.getElementById('price').value = productData.price ? productData.price.replace('.', ',') : ''; 
+
+            // Desabilita/habilita SKU
+            document.getElementById('sku').readOnly = (mode === 'edit');
+
+            if (mode === 'edit') {
+                currentEditingSku = productData.sku;
+            }
+
+            document.getElementById('productModal').style.display = 'flex';
+        }
+
+        /**
+         * Função de edição chamada pelo botão na lista.
+         */
+        async function editProduct(sku, event) {
+            if (event) event.stopPropagation();
+            try {
+                const docRef = getUserCollectionRef('products').doc(sku);
+                const doc = await docRef.get();
+                if (doc.exists) {
+                    openProductModal('edit', doc.data());
+                } else {
+                    showCustomAlert('Erro', 'Produto não encontrado.');
                 }
             } catch (error) {
-                console.error("Erro ao carregar dados do produto:", error);
+                console.error("Erro ao carregar produto para edição:", error);
                 showCustomAlert('Erro', 'Não foi possível carregar os dados do produto.');
-                closeModal('productModal');
             }
         }
 
-        async function saveProduct(event) {
-            event.preventDefault();
+        /**
+         * Salva um novo produto ou atualiza um existente.
+         */
+        async function saveProduct(e) {
+            e.preventDefault();
 
-            const form = event.target;
-            const isEditing = form.isEditing.value === 'true';
-            const sku = form.sku.value.toUpperCase().trim();
-            const desc = form.desc.value.trim();
-            const price = form.price.value.replace('.', '').replace(',', '.'); // Salva X.XX
-
-            if (!sku || !desc || isNaN(parseFloat(price))) {
-                showCustomAlert('Atenção', 'Por favor, preencha todos os campos corretamente.');
+            const form = document.getElementById('productForm');
+            const sku = form.sku.value.toUpperCase().trim(); // SKU como ID e maiúsculo
+            const name = form.name.value;
+            const desc = form.desc.value;
+            
+            // Converte preço do formato BR (vírgula) para US (ponto) para salvar
+            const priceBr = form.price.value;
+            const priceUs = priceBr.replace(/\./g, '').replace(',', '.'); // Remove pontos de milhar, troca vírgula por ponto
+            
+            if (!sku || !name || !priceUs) {
+                showCustomAlert('Atenção', 'SKU, Nome e Preço são campos obrigatórios.');
+                return;
+            }
+            if (isNaN(parseFloat(priceUs))) {
+                showCustomAlert('Atenção', 'O preço deve ser um valor numérico válido.');
                 return;
             }
 
             const productData = {
                 sku: sku,
+                name: name,
                 desc: desc,
-                price: parseFloat(price).toFixed(2)
+                price: parseFloat(priceUs).toFixed(2) // Salva como string US com 2 casas
             };
 
-            const confirmTitle = isEditing ? 'Confirmar Edição' : 'Confirmar Cadastro';
-            const confirmMessage = isEditing 
-                ? `Deseja salvar as alterações no produto ${sku}?` 
-                : `Deseja cadastrar o novo produto ${sku}?`;
+            // Determina se é uma edição ou um novo registro
+            const docId = currentEditingSku || sku;
 
-            showCustomConfirm(confirmTitle, confirmMessage, async () => {
-                try {
-                    // Tenta salvar o documento no Firestore
-                    await getUserCollectionRef('products').doc(sku).set(productData);
-                    
-                    showCustomAlert('Sucesso!', `Produto ${sku} ${isEditing ? 'editado' : 'cadastrado'} com sucesso.`, () => {
-                        closeModal('productModal');
-                        loadProductsList(); // Recarrega a lista
-                    });
-                } catch (error) {
-                    console.error("Erro ao salvar produto:", error);
-                    let errorMessage = 'Não foi possível salvar o produto.';
-                    if (!isEditing && error.code === 'permission-denied') {
-                        // Isso pode ser um erro genérico, mas mantemos o alert
-                        errorMessage = 'Erro de permissão ou falha ao conectar ao banco de dados.';
+            try {
+                const docRef = getUserCollectionRef('products').doc(docId);
+
+                if (currentEditingSku) {
+                    // Edição
+                    await docRef.update(productData);
+                    showCustomAlert('Sucesso', `Produto ${name} (SKU: ${sku}) atualizado!`);
+                } else {
+                    // Novo registro
+                    const doc = await docRef.get();
+                    if (doc.exists) {
+                        showCustomAlert('Atenção', `Já existe um produto cadastrado com o SKU ${sku}.`);
+                        return;
                     }
-                    showCustomAlert('Erro', errorMessage);
+                    await docRef.set(productData);
+                    showCustomAlert('Sucesso', `Produto ${name} (SKU: ${sku}) cadastrado!`);
                 }
-            });
-        }
-        
-        function editProduct(sku, event) {
-             if (event) event.stopPropagation();
-             openProductModal(sku);
+                
+                closeModal();
+                // loadProductsList() - A lista será atualizada automaticamente pelo listener
+
+            } catch (error) {
+                console.error("Erro ao salvar produto:", error);
+                showCustomAlert('Erro', 'Não foi possível salvar o produto: ' + error.message);
+            }
         }
 
+        /**
+         * Deleta um produto.
+         */
         function deleteProduct(sku, event) {
             if (event) event.stopPropagation();
+
             showCustomConfirm(
                 'Confirmação de Exclusão',
-                `Tem certeza que deseja EXCLUIR o produto ${sku}? Esta ação não pode ser desfeita.`,
+                `Tem certeza que deseja EXCLUIR o produto com SKU ${sku}?`,
                 async () => {
                     const docRef = getUserCollectionRef('products').doc(sku);
                     try {
                         await docRef.delete();
-                        showCustomAlert('Excluído!', `Produto ${sku} excluído com sucesso.`, loadProductsList); // Recarrega a lista
+                        showCustomAlert('Excluído!', `Produto excluído com sucesso.`);
                     } catch (error) {
                         console.error("Erro ao excluir produto:", error);
                         showCustomAlert('Erro', 'Não foi possível excluir o produto: ' + error.message);
@@ -438,28 +444,36 @@
                 }
             );
         }
-        
-        // Função para carregar a lista de produtos (usando listener em tempo real)
+
+        /**
+         * Carrega a lista de produtos em tempo real (onSnapshot).
+         */
         function loadProductsList() {
+            if (!db || !userId) {
+                console.log("Aguardando inicialização do Firebase/UserID.");
+                return; 
+            }
+
             const list = document.getElementById('productList');
-            list.innerHTML = '<p>Carregando catálogo...</p>';
-            
-            // Listener em tempo real (onSnapshot)
-            getUserCollectionRef('products').orderBy('sku').onSnapshot(snapshot => {
+            const productsRef = getUserCollectionRef('products').orderBy('name');
+
+            // Configura o listener em tempo real
+            productsRef.onSnapshot(snapshot => {
+                list.innerHTML = ''; // Limpa a lista
                 if (snapshot.empty) {
-                    list.innerHTML = '<p>Nenhum produto cadastrado no catálogo.</p>';
+                    list.innerHTML = '<p>Nenhum produto cadastrado. Use o botão "Novo Produto" para começar.</p>';
                     return;
                 }
 
-                list.innerHTML = ''; // Limpa o "Carregando"
-
                 snapshot.forEach(doc => {
                     const product = doc.data();
-                    const item = document.createElement('div');
-                    item.classList.add('list-item');
+                    const item = document.createElement('li');
+                    item.className = 'list-item';
                     item.innerHTML = `
-                        <div class="list-item-details">
-                            <strong>SKU ${product.sku}</strong> - ${product.desc} <br>
+                        <div class="list-item-info">
+                            <strong>${product.name}</strong>
+                            SKU: ${product.sku} <br>
+                            Descrição: ${product.desc} <br>
                             Preço Padrão: <strong>R$ ${product.price.replace('.', ',')}</strong>
                         </div>
                         <div class="list-item-actions">
@@ -493,5 +507,51 @@
         window.formatPrice = formatPrice;
         window.closeModal = closeModal;
     </script>
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay">Aguarde, carregando dados do sistema...</div>
+    <div class="container" style="display:none;" id="mainContent">
+
+        <div class="top-bar">
+            <div class="user-info">Bem-vindo, <span id="userInfoText">Carregando...</span></div>
+            <button class="logout-btn" onclick="logout()">Sair</button>
+        </div>
+
+        <div class="nav">
+            <a href="index.html">Novo Pedido</a>
+            <a href="rascunhos.html">Rascunhos</a>
+            <a href="historico.html">Histórico</a>
+            <a href="produtos.html" class="active">Catálogo de Produtos</a>
+            <a href="fornecedores.html">Cadastro de Fornecedores</a>
+        </div>
+
+        <div class="header-actions">
+            <h1>Catálogo de Produtos</h1>
+            <button class="btn-new" onclick="openProductModal('new')">+ Novo Produto</button>
+        </div>
+
+        <ul class="product-list" id="productList">
+            <!-- Produtos serão carregados aqui -->
+            <p>Carregando produtos...</p>
+        </ul>
+    </div>
+    
+    <!-- Modal de Cadastro/Edição de Produto -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Novo Produto</h2>
+            <form id="productForm">
+                <input type="text" id="sku" placeholder="SKU do Produto (Ex: MED001)" required maxlength="20">
+                <input type="text" id="name" placeholder="Nome do Produto" required maxlength="100">
+                <textarea id="desc" placeholder="Descrição Detalhada do Produto"></textarea>
+                <input type="text" id="price" placeholder="Preço Padrão (R$)" required 
+                       oninput="window.applyInputFormat(this, 'price')">
+                <button type="submit" id="saveProductBtn">Salvar Produto</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- O modal de alerta/confirmação customizado será adicionado via setupModal() -->
 </body>
 </html>
