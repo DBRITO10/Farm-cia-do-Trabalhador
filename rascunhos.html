@@ -17,278 +17,323 @@
         /* Barra Superior (User/Logout) */
         .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; margin-bottom: 10px; border-bottom: 1px solid #ddd; }
         .user-info { font-weight: bold; color: #004c99; font-size: 14px; }
-        .logout-btn { background-color: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s; }
+        .logout-btn { background-color: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; transition: background-color 0.3s; }
         .logout-btn:hover { background-color: #c82333; }
-        
-        .header { text-align: center; margin-bottom: 30px; }
-        .header h1 { color: #004c99; margin: 0; font-size: 24px; }
 
-        /* Lista / Tabela */
-        .drafts-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        /* Navegação */
+        .nav { display: flex; gap: 15px; margin-bottom: 25px; }
+        .nav a { text-decoration: none; color: #004c99; font-weight: bold; padding: 8px 15px; border-radius: 5px; transition: background-color 0.3s; }
+        .nav a:hover { background-color: #e6f0ff; }
+        .nav a.active { border-bottom: 3px solid #004c99; }
+
+        /* Título */
+        h1 { color: #333; border-bottom: 2px solid #004c99; padding-bottom: 10px; margin-bottom: 20px; font-size: 1.5em; }
+
+        /* Lista */
+        .draft-list { list-style: none; padding: 0; }
+        .list-item { 
+            background-color: #fffbe6; /* Fundo amarelo claro para rascunhos */
+            padding: 15px; border-radius: 6px; margin-bottom: 10px; 
+            border-left: 5px solid #ffc107; /* Borda amarela */
+            display: flex; justify-content: space-between; align-items: center;
         }
-        .list-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            border: 1px solid #ffc107; /* Borda amarela para rascunho */
-            border-radius: 6px;
-            background-color: #fffbe6; /* Fundo amarelo claro */
-            transition: background-color 0.2s;
+        .list-item-info { flex-grow: 1; text-align: left; }
+        .list-item-info strong { display: block; font-size: 1.1em; color: #333; margin-bottom: 5px; }
+        .list-item-info .date { font-style: italic; font-size: 0.9em; color: #666; }
+        .list-item-actions { display: flex; align-items: center; }
+        .list-item-actions button { 
+            margin-left: 10px; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; border: none;
         }
-        .list-item:hover {
-            background-color: #fff3cd;
-        }
-        .list-item-details {
-            flex-grow: 1;
-            line-height: 1.5;
-        }
-        .list-item-details strong {
-            color: #ffc107;
-        }
-        
-        /* Botões de Ação */
-        .list-item-actions button {
-            margin-left: 10px;
-            padding: 8px 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .btn-edit { background-color: #007bff; color: white; } /* Azul para Editar/Continuar */
-        .btn-finalize { background-color: #28a745; color: white; } /* Verde para Finalizar */
+        .btn-edit { background-color: #ffc107; color: #333; }
+        .btn-finalize { background-color: #007bff; color: white; }
         .delete-btn { background-color: #dc3545; color: white; }
+        .list-item-actions button:hover { opacity: 0.8; }
 
-        /* Modal de Alerta/Confirmação (Reutiliza os estilos de index.html) */
+        /* Modal */
         .modal {
-            display: none; 
-            position: fixed; 
-            z-index: 1000; 
-            left: 0;
-            top: 0;
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
-            background-color: rgba(0,0,0,0.4); 
-            padding-top: 60px;
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto;
+            background-color: rgba(0,0,0,0.4); justify-content: center; align-items: center;
         }
-        .modal-alert-content {
-            background-color: #fefefe;
-            margin: 15% auto; 
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%; 
-            max-width: 400px;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            text-align: center;
+        .modal-content {
+            background-color: #fefefe; padding: 20px; border: 1px solid #888; width: 80%; max-width: 500px;
+            border-radius: 8px; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
-        .modal-buttons { margin-top: 20px; }
-        .modal-buttons button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin: 0 5px;
-            font-weight: bold;
+        .close-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
+        .close-btn:hover, .close-btn:focus { color: #000; text-decoration: none; cursor: pointer; }
+
+        /* Custom Alert/Confirm */
+        .custom-dialog-content { text-align: center; }
+        .custom-dialog-content h2 { color: #004c99; margin-top: 0; }
+        .custom-dialog-actions { margin-top: 20px; display: flex; justify-content: center; gap: 10px; }
+        .dialog-btn { padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; border: none; }
+        .dialog-btn-primary { background-color: #007bff; color: white; }
+        .dialog-btn-secondary { background-color: #6c757d; color: white; }
+
+        .loading-overlay {
+            display: flex; justify-content: center; align-items: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(255, 255, 255, 0.8); z-index: 9999; font-size: 1.5em; color: #004c99;
         }
-        .modal-ok-btn { background-color: #007bff; color: white; }
-        .modal-cancel-btn { background-color: #6c757d; color: white; }
-        .modal-confirm-btn { background-color: #28a745; color: white; }
     </style>
-</head>
-<body>
-    <div class="container">
-        <div class="top-bar">
-            <span class="user-info">Carregando Usuário...</span>
-            <button class="logout-btn" onclick="firebase.auth().signOut().then(() => { window.location.href = 'login.html'; });">Sair</button>
-        </div>
-
-        <nav>
-            <a href="index.html">Novo Pedido</a> | 
-            <a href="rascunhos.html">Rascunhos</a> | 
-            <a href="historico.html">Histórico</a> |
-            <a href="produtos.html">Catálogo Produtos</a> | 
-            <a href="fornecedores.html">Cadastro Fornecedores</a>
-        </nav>
-
-        <div class="header">
-            <h1>Pedidos Memorizados (Rascunhos)</h1>
-            <p>Pedidos salvos para continuar depois.</p>
-        </div>
-
-        <div id="draftsList" class="drafts-list">
-            <p>Carregando rascunhos...</p>
-        </div>
-    </div>
-
-    <div id="customModal" class="modal">
-        <div class="modal-alert-content">
-            <h3 id="modalTitle">Título</h3>
-            <p id="modalMessage">Mensagem.</p>
-            <div class="modal-buttons" id="modalButtons">
-                <button class="modal-ok-btn" onclick="closeModal('customModal')">OK</button>
-            </div>
-        </div>
-    </div>
 
     <script>
-        // SEUS DADOS DE CONFIGURAÇÃO FORNECIDOS (Copiei de login.html)
+        // =============================================================
+        // FIREBASE CONFIGURAÇÃO E AUTENTICAÇÃO (BLOCO PADRONIZADO)
+        // =============================================================
+
+        // Variáveis globais para Firebase
+        let app, auth, db, userId;
+
+        // Seus dados de configuração
         const firebaseConfig = {
-            apiKey: "AIzaSyAXKlq9WOs_5_ilfhG13xQwNVwQa6MaBfg",
+            apiKey: "AIzaSyAXKlq9WOs_5_ilfhG13xQwNVwQa6MaFbg",
             authDomain: "farmacia-a6682.firebaseapp.com",
             projectId: "farmacia-a6682",
             storageBucket: "farmacia-a6682.firebasestorage.app",
             messagingSenderId: "144965717217",
             appId: "1:144965717217:web:de43b2316e8b7a25293ba0"
         };
-        
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
 
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-
-        // --- Funções de Utilitários ---
-
-        function setupModal() {
-            window.customModal = document.getElementById('customModal');
-            window.modalTitle = document.getElementById('modalTitle');
-            window.modalMessage = document.getElementById('modalMessage');
-            window.modalButtons = document.getElementById('modalButtons');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        function showCustomAlert(title, message, callback) {
-            window.modalTitle.textContent = title;
-            window.modalMessage.textContent = message;
-            window.modalButtons.innerHTML = `<button class="modal-ok-btn" onclick="closeModal('customModal'); ${callback ? 'window.alertCallback();' : ''}">OK</button>`;
-            if (callback) {
-                window.alertCallback = callback;
-            }
-            window.customModal.style.display = 'block';
-        }
-        
-        function showCustomConfirm(title, message, onConfirm, onCancel) {
-            window.modalTitle.textContent = title;
-            window.modalMessage.textContent = message;
-            window.modalButtons.innerHTML = `
-                <button class="modal-confirm-btn" onclick="closeModal('customModal'); window.confirmCallback(true);">Confirmar</button>
-                <button class="modal-cancel-btn" onclick="closeModal('customModal'); window.confirmCallback(false);">Cancelar</button>
-            `;
-            window.confirmCallback = (isConfirmed) => {
-                if (isConfirmed && onConfirm) {
-                    onConfirm();
-                } else if (!isConfirmed && onCancel) {
-                    onCancel();
-                }
-            };
-            window.customModal.style.display = 'block';
-        }
-
-        function formatCurrency(value) {
-            const num = parseFloat(String(value).replace(',', '.'));
-            if (isNaN(num)) return 'R$ 0,00';
-            return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        }
-
-        // --- Autenticação Corrigida ---
-
-        function getUserCollectionRef(collectionName) {
-            const user = auth.currentUser;
-            if (!user) {
-                throw new Error("Usuário não autenticado para acessar o Firestore.");
-            }
-            return db.collection('users').doc(user.uid).collection(collectionName);
-        }
-
-        // FUNÇÃO CRÍTICA: CORREÇÃO DO LOOP INFINITO
-        function setupFirebase() {
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    // Usuário logado:
-                    const userInfoElement = document.querySelector('.user-info');
-                    if (userInfoElement) {
-                        userInfoElement.textContent = 'Usuário: ' + user.email;
-                    }
-                    
-                    // Chama a função de carregamento de dados específica desta página
-                    if (window.loadData) {
-                        window.loadData();
-                    }
-
-                } else {
-                    // Usuário NÃO logado: Redireciona para a página de login
-                    window.location.href = 'login.html';
-                }
-            });
-        }
-
-        // --- Funções Específicas da Página ---
-        
-        async function loadDrafts() {
-            const list = document.getElementById('draftsList');
-            list.innerHTML = '<p>Carregando rascunhos...</p>';
-
+        /**
+         * Configura o Firebase e tenta autenticar o usuário.
+         * Deve ser chamada no window.onload.
+         */
+        async function setupFirebase() {
             try {
-                // Ordena por data de criação (timestamp)
-                const snapshot = await getUserCollectionRef('drafts')
-                    .orderBy('timestamp', 'desc') 
-                    .get();
+                // 1. Inicializa o App
+                if (typeof firebase === 'undefined') {
+                    console.error("Firebase SDK não carregado.");
+                    return;
+                }
+                if (!firebase.apps.length) {
+                    app = firebase.initializeApp(firebaseConfig);
+                } else {
+                    app = firebase.app();
+                }
 
+                // 2. Inicializa os serviços
+                auth = firebase.auth();
+                db = firebase.firestore();
+                db.settings({
+                    timestampsInSnapshots: true
+                });
+                console.log("Firebase services initialized.");
+
+                // 3. Autenticação (usando token customizado ou anônimo)
+                const token = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+                if (token) {
+                    await auth.signInWithCustomToken(token);
+                    console.log("Signed in with custom token.");
+                } else {
+                    await auth.signInAnonymously();
+                    console.log("Signed in anonymously.");
+                }
+                
+                // 4. Define o userId e observa o estado de autenticação
+                auth.onAuthStateChanged(user => {
+                    if (user) {
+                        userId = user.uid;
+                        console.log("User authenticated. UID:", userId);
+                        // Garante que o usuário está logado e carrega os dados
+                        if (window.loadData) {
+                            window.loadData();
+                        }
+                        // Atualiza a informação do usuário na tela
+                        document.getElementById('userInfoText').textContent = user.email || `ID: ${userId}`;
+                        document.getElementById('loadingOverlay').style.display = 'none';
+                        document.getElementById('mainContent').style.display = 'block';
+
+                    } else {
+                        console.log("User signed out or failed authentication. Redirecting to login.");
+                        // Redireciona para o login se não houver usuário logado (exceto na própria página de login)
+                        if (window.location.pathname.indexOf('login.html') === -1) {
+                            window.location.href = 'login.html';
+                        }
+                    }
+                });
+
+            } catch (error) {
+                console.error("ERRO FATAL NA CONFIGURAÇÃO DO FIREBASE:", error);
+            }
+        }
+        
+        /**
+         * Constrói a referência para a coleção do usuário.
+         * @param {string} collectionName - Nome da coleção (ex: 'products', 'drafts', 'orders').
+         * @returns {firebase.firestore.CollectionReference}
+         */
+        function getUserCollectionRef(collectionName) {
+            if (!db || !userId) {
+                console.error("Firebase ou userId não estão inicializados. Tentativa de acesso bloqueada.");
+                return;
+            }
+            // Utiliza a estrutura de dados privada do Canvas
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            return db.collection('artifacts').doc(appId).collection('users').doc(userId).collection(collectionName);
+        }
+
+        /**
+         * Lógica de Logout
+         */
+        window.logout = async function() {
+            try {
+                await auth.signOut();
+                console.log("User signed out. Redirecting to login.");
+                window.location.href = 'login.html';
+            } catch (error) {
+                console.error("Erro ao fazer logout:", error);
+            }
+        }
+
+        // =============================================================
+        // FIM DO BLOCO PADRONIZADO
+        // =============================================================
+
+        
+        /**
+         * Inicializa o modal de alerta e confirmação customizado.
+         */
+        function setupModal() {
+            const modalHtml = `
+                <div id="customModal" class="modal">
+                    <div class="modal-content custom-dialog-content">
+                        <span class="close-btn" onclick="closeModal()">&times;</span>
+                        <h2 id="customDialogTitle"></h2>
+                        <p id="customDialogMessage"></p>
+                        <div id="customDialogActions" class="custom-dialog-actions"></div>
+                    </div>
+                </div>
+            `;
+            // Garante que o modal só seja adicionado uma vez
+            if (!document.getElementById('customModal')) {
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+            }
+            window.modal = document.getElementById('customModal');
+            window.modalTitle = document.getElementById('customDialogTitle');
+            window.modalMessage = document.getElementById('customDialogMessage');
+            window.modalActions = document.getElementById('customDialogActions');
+        }
+
+        /** Fecha o modal. */
+        function closeModal() {
+            if (window.modal) {
+                window.modal.style.display = 'none';
+            }
+        }
+
+        /**
+         * Exibe um alerta customizado.
+         */
+        function showCustomAlert(title, message, callback = null) {
+            closeModal(); // Fecha outros modais
+            window.modalTitle.textContent = title;
+            window.modalMessage.innerHTML = message;
+            window.modalActions.innerHTML = '';
+            
+            const okBtn = document.createElement('button');
+            okBtn.className = 'dialog-btn dialog-btn-primary';
+            okBtn.textContent = 'OK';
+            okBtn.onclick = () => {
+                closeModal();
+                if (callback) callback();
+            };
+            window.modalActions.appendChild(okBtn);
+            window.modal.style.display = 'flex';
+        }
+
+        /**
+         * Exibe uma confirmação customizada.
+         */
+        function showCustomConfirm(title, message, onConfirm, onCancel = null) {
+            closeModal(); // Fecha outros modais
+            window.modalTitle.textContent = title;
+            window.modalMessage.innerHTML = message;
+            window.modalActions.innerHTML = '';
+
+            const cancelBtn = document.createElement('button');
+            cancelBtn.className = 'dialog-btn dialog-btn-secondary';
+            cancelBtn.textContent = 'Cancelar';
+            cancelBtn.onclick = () => {
+                closeModal();
+                if (onCancel) onCancel();
+            };
+            window.modalActions.appendChild(cancelBtn);
+
+            const confirmBtn = document.createElement('button');
+            confirmBtn.className = 'dialog-btn dialog-btn-primary';
+            confirmBtn.textContent = 'Confirmar';
+            confirmBtn.onclick = () => {
+                closeModal();
+                onConfirm();
+            };
+            window.modalActions.appendChild(confirmBtn);
+
+            window.modal.style.display = 'flex';
+        }
+
+        /**
+         * Carrega a lista de rascunhos em tempo real.
+         */
+        function loadDrafts() {
+            if (!db || !userId) {
+                console.log("Aguardando inicialização do Firebase/UserID.");
+                return; 
+            }
+
+            const list = document.getElementById('draftList');
+            // Ordena do mais recente para o mais antigo (updatedAt em ordem decrescente)
+            const draftsRef = getUserCollectionRef('drafts').orderBy('updatedAt', 'desc');
+
+            draftsRef.onSnapshot(snapshot => {
+                list.innerHTML = ''; // Limpa a lista
                 if (snapshot.empty) {
-                    list.innerHTML = '<p>Nenhum pedido memorizado (rascunho).</p>';
+                    list.innerHTML = '<p>Nenhum pedido memorizado (rascunho) encontrado.</p>';
                     return;
                 }
 
-                list.innerHTML = ''; // Limpa o "Carregando"
-
                 snapshot.forEach(doc => {
                     const draft = doc.data();
-                    const item = document.createElement('div');
-                    item.classList.add('list-item');
-                    item.setAttribute('data-po-number', draft.poNumber);
+                    const poNumber = draft.poNumber;
+                    const date = draft.poDate;
+                    const timestamp = draft.updatedAt ? draft.updatedAt.toDate().toLocaleDateString('pt-BR', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : 'N/A';
+                    const total = parseFloat(draft.grandTotal).toFixed(2).replace('.', ',');
 
-                    // Formatação da data do PO ou data de criação do rascunho
-                    const poDate = draft.poDate ? new Date(draft.poDate + 'T00:00:00').toLocaleDateString('pt-BR') : 'N/A';
-                    const draftDate = draft.timestamp ? draft.timestamp.toDate().toLocaleDateString('pt-BR') : 'N/A';
-                    
+                    const item = document.createElement('li');
+                    item.className = 'list-item';
                     item.innerHTML = `
-                        <div class="list-item-details">
-                            <strong>Nº ${draft.poNumber}</strong> - Fornecedor: ${draft.supplier.name} (${draft.supplier.cnpj}) <br>
-                            Data do PO: ${poDate} | Salvo em: ${draftDate} | Valor Total: ${formatCurrency(draft.totalValue)}
+                        <div class="list-item-info">
+                            <strong>Rascunho N° ${poNumber}</strong>
+                            Fornecedor: ${draft.supplierName} <br>
+                            Data PO: ${date} <span class="date">(Última edição: ${timestamp})</span><br>
+                            Total Estimado: R$ ${total}
                         </div>
                         <div class="list-item-actions">
-                            <button class="btn-edit" onclick="editDraft('${draft.poNumber}', event)">Continuar Editando</button>
-                            <button class="btn-finalize" onclick="finalizeDraft('${draft.poNumber}', event)">Finalizar Pedido</button>
-                            <button class="delete-btn" onclick="deleteDraft('${draft.poNumber}', event)">Excluir Rascunho</button>
+                            <button class="btn-edit" onclick="editDraft('${poNumber}', event)">Editar</button>
+                            <button class="btn-finalize" onclick="finalizeDraft('${poNumber}', event)">Finalizar</button>
+                            <button class="delete-btn" onclick="deleteDraft('${poNumber}', event)">Excluir</button>
                         </div>
                     `;
                     list.appendChild(item);
                 });
-
-            } catch (error) {
-                console.error("Erro ao carregar rascunhos:", error);
+            }, (error) => {
+                console.error("Erro no listener de Rascunhos:", error);
                 list.innerHTML = '<p style="color: red;">Erro ao carregar rascunhos.</p>';
-            }
+            });
         }
-        
+
+        /**
+         * Redireciona para a página principal para edição.
+         */
         function editDraft(poNumber, event) {
             if (event) event.stopPropagation();
-            // Redireciona para a página de edição (index.html) passando o parâmetro
-            window.location.href = `index.html?edit_draft=${poNumber}`;
+            window.location.href = `index.html?editDraft=${poNumber}`;
         }
 
+        /**
+         * Deleta um rascunho.
+         */
         function deleteDraft(poNumber, event) {
-            if (event) event.stopPropagation();
+            event.stopPropagation();
             showCustomConfirm(
                 'Confirmação de Exclusão',
                 `Tem certeza que deseja EXCLUIR o Rascunho N° ${poNumber}? Esta ação não pode ser desfeita.`,
@@ -296,7 +341,7 @@
                     const docRef = getUserCollectionRef('drafts').doc(poNumber);
                     try {
                         await docRef.delete();
-                        showCustomAlert('Excluído!', `Rascunho N° ${poNumber} excluído com sucesso.`, loadDrafts); // Recarrega a lista
+                        showCustomAlert('Excluído!', `Rascunho N° ${poNumber} excluído com sucesso.`); // A lista é atualizada pelo listener
                     } catch (error) {
                         console.error("Erro ao excluir rascunho:", error);
                         showCustomAlert('Erro', 'Não foi possível excluir o rascunho: ' + error.message);
@@ -305,43 +350,34 @@
             );
         }
 
-        async function finalizeDraft(poNumber, event) {
-            if (event) event.stopPropagation();
-
+        /**
+         * Finaliza o rascunho (move para histórico).
+         */
+        function finalizeDraft(poNumber, event) {
+            event.stopPropagation();
+            
             showCustomConfirm(
-                'Confirmação Final',
-                `Deseja FINALIZAR o Rascunho N° ${poNumber} e salvá-lo no Histórico de Pedidos?`,
+                'Finalizar Rascunho?',
+                `Confirma a FINALIZAÇÃO do Rascunho N° ${poNumber}? Ele será movido para o Histórico de Pedidos.`,
                 async () => {
-                    const draftRef = getUserCollectionRef('drafts').doc(poNumber);
-                    const historyRef = getUserCollectionRef('orders').doc(poNumber);
-                    
                     try {
-                        // 1. Carrega o rascunho
+                        // 1. Carregar o rascunho
+                        const draftRef = getUserCollectionRef('drafts').doc(poNumber);
                         const draftDoc = await draftRef.get();
+                        
                         if (!draftDoc.exists) {
                             showCustomAlert('Erro', `Rascunho N° ${poNumber} não encontrado.`);
                             return;
                         }
-                        let draft = draftDoc.data();
-                        draft.status = 'Finalizado';
-                        draft.timestamp = firebase.firestore.FieldValue.serverTimestamp(); // Atualiza o timestamp de finalização
                         
-                        // 1.1. Verifica se já existe um PO com esse número no Histórico
-                        const historyDoc = await historyRef.get();
-                        if (historyDoc.exists) {
-                            let confirmed = false;
-                            await new Promise(resolve => {
-                                showCustomConfirm(
-                                    'Atenção',
-                                    `O Pedido N° ${poNumber} já existe no Histórico. Deseja sobrescrevê-lo?`, 
-                                    () => { confirmed = true; resolve(); },
-                                    () => { confirmed = false; resolve(); }
-                                );
-                            });
-                            if (!confirmed) return;
-                        }
+                        const draft = draftDoc.data();
+                        
+                        // Atualiza o status e o timestamp de atualização
+                        draft.status = 'finalized';
+                        draft.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
 
                         // 2. Salvar no Histórico (o rascunho atualizado)
+                        const historyRef = getUserCollectionRef('orders').doc(poNumber);
                         await historyRef.set(draft);
                         
                         // 3. Remover dos rascunhos
@@ -374,5 +410,32 @@
         window.finalizeDraft = finalizeDraft;
         window.closeModal = closeModal;
     </script>
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay">Aguarde, carregando dados do sistema...</div>
+    <div class="container" style="display:none;" id="mainContent">
+
+        <div class="top-bar">
+            <div class="user-info">Bem-vindo, <span id="userInfoText">Carregando...</span></div>
+            <button class="logout-btn" onclick="logout()">Sair</button>
+        </div>
+
+        <div class="nav">
+            <a href="index.html">Novo Pedido</a>
+            <a href="rascunhos.html" class="active">Rascunhos</a>
+            <a href="historico.html">Histórico</a>
+            <a href="produtos.html">Catálogo de Produtos</a>
+            <a href="fornecedores.html">Cadastro de Fornecedores</a>
+        </div>
+
+        <h1>Pedidos Memorizados (Rascunhos)</h1>
+
+        <ul class="draft-list" id="draftList">
+            <!-- Rascunhos serão carregados aqui -->
+            <p>Carregando rascunhos...</p>
+        </ul>
+    </div>
+    
+    <!-- O modal customizado será adicionado via setupModal() -->
 </body>
 </html>
