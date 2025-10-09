@@ -17,407 +17,418 @@
         /* Barra Superior (User/Logout) */
         .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; margin-bottom: 10px; border-bottom: 1px solid #ddd; }
         .user-info { font-weight: bold; color: #004c99; font-size: 14px; }
-        .logout-btn { background-color: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s; }
+        .logout-btn { background-color: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; transition: background-color 0.3s; }
         .logout-btn:hover { background-color: #c82333; }
-        
-        .header { text-align: center; margin-bottom: 30px; }
-        .header h1 { color: #004c99; margin: 0; font-size: 24px; }
 
-        /* Lista / Tabela */
-        .history-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        /* Navegação */
+        .nav { display: flex; gap: 15px; margin-bottom: 25px; }
+        .nav a { text-decoration: none; color: #004c99; font-weight: bold; padding: 8px 15px; border-radius: 5px; transition: background-color 0.3s; }
+        .nav a:hover { background-color: #e6f0ff; }
+        .nav a.active { border-bottom: 3px solid #004c99; }
+
+        /* Título */
+        h1 { color: #333; border-bottom: 2px solid #004c99; padding-bottom: 10px; margin-bottom: 20px; font-size: 1.5em; }
+
+        /* Lista */
+        .history-list { list-style: none; padding: 0; }
+        .list-item { 
+            background-color: #f9f9f9; padding: 15px; border-radius: 6px; margin-bottom: 10px; 
+            border-left: 5px solid #004c99; display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; transition: background-color 0.2s;
         }
-        .list-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            border: 1px solid #e0e0e0;
-            border-radius: 6px;
-            background-color: #f9f9f9;
-            cursor: pointer; /* Indica que é clicável para visualização */
-            transition: background-color 0.2s;
+        .list-item:hover { background-color: #f0f0f0; }
+        .list-item-info { flex-grow: 1; text-align: left; }
+        .list-item-info strong { display: block; font-size: 1.1em; color: #004c99; margin-bottom: 5px; }
+        .list-item-info .date { font-style: italic; font-size: 0.9em; color: #666; }
+        .list-item-actions { display: flex; align-items: center; }
+        .list-item-actions button { 
+            margin-left: 10px; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; border: none;
         }
-        .list-item:hover {
-            background-color: #e6f7ff;
-        }
-        .list-item-details {
-            flex-grow: 1;
-            line-height: 1.5;
-        }
-        .list-item-details strong {
-            color: #004c99;
-        }
-        
-        /* Botões de Ação */
-        .list-item-actions button {
-            margin-left: 10px;
-            padding: 8px 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .btn-view { background-color: #007bff; color: white; }
+        .btn-view, .btn-print, .btn-edit { background-color: #007bff; color: white; }
         .btn-edit { background-color: #ffc107; color: #333; }
         .delete-btn { background-color: #dc3545; color: white; }
-        .print-btn { background-color: #6c757d; color: white; }
+        .list-item-actions button:hover { opacity: 0.8; }
+        .delete-btn { background-color: #dc3545; color: white; }
 
-        /* Estilos do Modal de Visualização */
+        /* Modal de Visualização */
         .modal {
-            display: none; 
-            position: fixed; 
-            z-index: 1000; 
-            left: 0;
-            top: 0;
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
-            background-color: rgba(0,0,0,0.4); 
-            padding-top: 20px;
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto;
+            background-color: rgba(0,0,0,0.4); justify-content: center; align-items: center;
         }
         .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto; 
-            padding: 25px;
-            border: 1px solid #888;
-            width: 90%; 
-            max-width: 700px;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            background-color: #fefefe; padding: 25px; border: 1px solid #888; width: 90%; max-width: 700px;
+            border-radius: 8px; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-        .modal-header h2 { margin: 0; color: #004c99; }
-        .close-btn { 
-            color: #aaa;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .close-btn:hover,
-        .close-btn:focus {
-            color: #000;
-            text-decoration: none;
-        }
-        .modal-details p { margin: 5px 0; }
-        .modal-items-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-        .modal-items-table th, .modal-items-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        .modal-items-table th {
-            background-color: #004c99;
-            color: white;
-            font-weight: normal;
-        }
-        .modal-total {
-            text-align: right;
-            font-size: 1.2em;
-            font-weight: bold;
-            margin-top: 15px;
-            color: #004c99;
-        }
+        .close-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
+        .close-btn:hover, .close-btn:focus { color: #000; text-decoration: none; cursor: pointer; }
+        .modal-body h2 { color: #004c99; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-top: 20px; }
+        .modal-body p { margin: 5px 0; }
+        .modal-body strong { font-weight: bold; }
 
-        /* Modal de Alerta/Confirmação (Reutiliza os estilos de index.html) */
-        .modal-alert-content {
-            background-color: #fefefe;
-            margin: 15% auto; 
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%; 
-            max-width: 400px;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            text-align: center;
+        .items-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .items-table th, .items-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        .items-table th { background-color: #f2f2f2; color: #333; font-weight: bold; }
+        .total-row td { font-weight: bold; background-color: #e6f0ff; border-top: 2px solid #004c99; }
+
+        /* Custom Alert/Confirm */
+        .custom-dialog-content { text-align: center; }
+        .custom-dialog-content h2 { color: #004c99; margin-top: 0; }
+        .custom-dialog-actions { margin-top: 20px; display: flex; justify-content: center; gap: 10px; }
+        .dialog-btn { padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; border: none; }
+        .dialog-btn-primary { background-color: #007bff; color: white; }
+        .dialog-btn-secondary { background-color: #6c757d; color: white; }
+
+        .loading-overlay {
+            display: flex; justify-content: center; align-items: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(255, 255, 255, 0.8); z-index: 9999; font-size: 1.5em; color: #004c99;
         }
-        .modal-buttons button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin: 0 5px;
-            font-weight: bold;
-        }
-        .modal-ok-btn { background-color: #007bff; color: white; }
-        .modal-cancel-btn { background-color: #6c757d; color: white; }
-        .modal-confirm-btn { background-color: #28a745; color: white; }
     </style>
-</head>
-<body>
-    <div class="container">
-        <div class="top-bar">
-            <span class="user-info">Carregando Usuário...</span>
-            <button class="logout-btn" onclick="firebase.auth().signOut().then(() => { window.location.href = 'login.html'; });">Sair</button>
-        </div>
-
-        <nav>
-            <a href="index.html">Novo Pedido</a> | 
-            <a href="rascunhos.html">Rascunhos</a> | 
-            <a href="historico.html">Histórico</a> |
-            <a href="produtos.html">Catálogo Produtos</a> | 
-            <a href="fornecedores.html">Cadastro Fornecedores</a>
-        </nav>
-
-        <div class="header">
-            <h1>Histórico de Pedidos Finalizados</h1>
-            <p>Clique em um pedido para visualizar os detalhes.</p>
-        </div>
-
-        <div id="historyList" class="history-list">
-            <p>Carregando histórico...</p>
-        </div>
-    </div>
-
-    <div id="viewModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="viewPoNumber">Pedido N° 000000</h2>
-                <span class="close-btn" onclick="closeModal('viewModal')">&times;</span>
-            </div>
-            <div class="modal-details">
-                <p>Data: <span id="viewPoDate"></span></p>
-                <p>Fornecedor: <span id="viewSupplierName"></span> (<span id="viewSupplierCnpj"></span>)</p>
-                <p>Descrição: <span id="viewDescription"></span></p>
-            </div>
-            
-            <h3>Itens do Pedido</h3>
-            <table class="modal-items-table">
-                <thead>
-                    <tr>
-                        <th>Nº</th>
-                        <th>Produto (SKU)</th>
-                        <th>Qtd.</th>
-                        <th>Valor Un.</th>
-                        <th>Subtotal</th>
-                    </tr>
-                </thead>
-                <tbody id="viewItemsBody">
-                    </tbody>
-            </table>
-            
-            <div class="modal-total">
-                Total: <span id="viewPoTotal">R$ 0,00</span>
-            </div>
-            
-            <div class="modal-buttons" style="text-align: right; margin-top: 20px;">
-                <button class="print-btn" id="printButton" onclick="printPo(this.dataset.poNumber)">Imprimir PO</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="customModal" class="modal">
-        <div class="modal-alert-content">
-            <h3 id="modalTitle">Título</h3>
-            <p id="modalMessage">Mensagem.</p>
-            <div class="modal-buttons" id="modalButtons">
-                <button class="modal-ok-btn" onclick="closeModal('customModal')">OK</button>
-            </div>
-        </div>
-    </div>
 
     <script>
-        // SEUS DADOS DE CONFIGURAÇÃO FORNECIDOS (Copiei de login.html)
+        // =============================================================
+        // FIREBASE CONFIGURAÇÃO E AUTENTICAÇÃO (BLOCO PADRONIZADO)
+        // =============================================================
+
+        // Variáveis globais para Firebase
+        let app, auth, db, userId;
+
+        // Seus dados de configuração
         const firebaseConfig = {
-            apiKey: "AIzaSyAXKlq9WOs_5_ilfhG13xQwNVwQa6MaBfg",
+            apiKey: "AIzaSyAXKlq9WOs_5_ilfhG13xQwNVwQa6MaFbg",
             authDomain: "farmacia-a6682.firebaseapp.com",
             projectId: "farmacia-a6682",
             storageBucket: "farmacia-a6682.firebasestorage.app",
             messagingSenderId: "144965717217",
             appId: "1:144965717217:web:de43b2316e8b7a25293ba0"
         };
-        
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
 
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-
-        // --- Funções de Utilitários ---
-
-        function setupModal() {
-            window.viewModal = document.getElementById('viewModal');
-            window.customModal = document.getElementById('customModal');
-            window.modalTitle = document.getElementById('modalTitle');
-            window.modalMessage = document.getElementById('modalMessage');
-            window.modalButtons = document.getElementById('modalButtons');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        function showCustomAlert(title, message, callback) {
-            window.modalTitle.textContent = title;
-            window.modalMessage.textContent = message;
-            window.modalButtons.innerHTML = `<button class="modal-ok-btn" onclick="closeModal('customModal'); ${callback ? 'window.alertCallback();' : ''}">OK</button>`;
-            if (callback) {
-                window.alertCallback = callback;
-            }
-            window.customModal.style.display = 'block';
-        }
-        
-        function showCustomConfirm(title, message, onConfirm, onCancel) {
-            window.modalTitle.textContent = title;
-            window.modalMessage.textContent = message;
-            window.modalButtons.innerHTML = `
-                <button class="modal-confirm-btn" onclick="closeModal('customModal'); window.confirmCallback(true);">Confirmar</button>
-                <button class="modal-cancel-btn" onclick="closeModal('customModal'); window.confirmCallback(false);">Cancelar</button>
-            `;
-            window.confirmCallback = (isConfirmed) => {
-                if (isConfirmed && onConfirm) {
-                    onConfirm();
-                } else if (!isConfirmed && onCancel) {
-                    onCancel();
-                }
-            };
-            window.customModal.style.display = 'block';
-        }
-        
-        function formatCurrency(value) {
-            const num = parseFloat(String(value).replace(',', '.'));
-            if (isNaN(num)) return 'R$ 0,00';
-            return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        }
-
-        // --- Autenticação Corrigida ---
-
-        function getUserCollectionRef(collectionName) {
-            const user = auth.currentUser;
-            if (!user) {
-                throw new Error("Usuário não autenticado para acessar o Firestore.");
-            }
-            return db.collection('users').doc(user.uid).collection(collectionName);
-        }
-
-        // FUNÇÃO CRÍTICA: CORREÇÃO DO LOOP INFINITO
-        function setupFirebase() {
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    // Usuário logado:
-                    const userInfoElement = document.querySelector('.user-info');
-                    if (userInfoElement) {
-                        userInfoElement.textContent = 'Usuário: ' + user.email;
-                    }
-                    
-                    // Chama a função de carregamento de dados específica desta página
-                    if (window.loadData) {
-                        window.loadData();
-                    }
-
-                } else {
-                    // Usuário NÃO logado: Redireciona para a página de login
-                    window.location.href = 'login.html';
-                }
-            });
-        }
-
-        // --- Funções Específicas da Página ---
-        
-        async function loadHistory() {
-            const list = document.getElementById('historyList');
-            list.innerHTML = '<p>Carregando pedidos...</p>';
-
+        /**
+         * Configura o Firebase e tenta autenticar o usuário.
+         * Deve ser chamada no window.onload.
+         */
+        async function setupFirebase() {
             try {
-                // Ordena por data de finalização (timestamp) ou número do pedido
-                const snapshot = await getUserCollectionRef('orders')
-                    .orderBy('poNumber', 'desc') // Mais recente no topo
-                    .get();
+                // 1. Inicializa o App
+                if (typeof firebase === 'undefined') {
+                    console.error("Firebase SDK não carregado.");
+                    return;
+                }
+                if (!firebase.apps.length) {
+                    app = firebase.initializeApp(firebaseConfig);
+                } else {
+                    app = firebase.app();
+                }
 
+                // 2. Inicializa os serviços
+                auth = firebase.auth();
+                db = firebase.firestore();
+                db.settings({
+                    timestampsInSnapshots: true
+                });
+                console.log("Firebase services initialized.");
+
+                // 3. Autenticação (usando token customizado ou anônimo)
+                const token = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+                if (token) {
+                    await auth.signInWithCustomToken(token);
+                    console.log("Signed in with custom token.");
+                } else {
+                    await auth.signInAnonymously();
+                    console.log("Signed in anonymously.");
+                }
+                
+                // 4. Define o userId e observa o estado de autenticação
+                auth.onAuthStateChanged(user => {
+                    if (user) {
+                        userId = user.uid;
+                        console.log("User authenticated. UID:", userId);
+                        // Garante que o usuário está logado e carrega os dados
+                        if (window.loadData) {
+                            window.loadData();
+                        }
+                        // Atualiza a informação do usuário na tela
+                        document.getElementById('userInfoText').textContent = user.email || `ID: ${userId}`;
+                        document.getElementById('loadingOverlay').style.display = 'none';
+                        document.getElementById('mainContent').style.display = 'block';
+
+                    } else {
+                        console.log("User signed out or failed authentication. Redirecting to login.");
+                        // Redireciona para o login se não houver usuário logado (exceto na própria página de login)
+                        if (window.location.pathname.indexOf('login.html') === -1) {
+                            window.location.href = 'login.html';
+                        }
+                    }
+                });
+
+            } catch (error) {
+                console.error("ERRO FATAL NA CONFIGURAÇÃO DO FIREBASE:", error);
+            }
+        }
+        
+        /**
+         * Constrói a referência para a coleção do usuário.
+         * @param {string} collectionName - Nome da coleção (ex: 'products', 'drafts', 'orders').
+         * @returns {firebase.firestore.CollectionReference}
+         */
+        function getUserCollectionRef(collectionName) {
+            if (!db || !userId) {
+                console.error("Firebase ou userId não estão inicializados. Tentativa de acesso bloqueada.");
+                return;
+            }
+            // Utiliza a estrutura de dados privada do Canvas
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            return db.collection('artifacts').doc(appId).collection('users').doc(userId).collection(collectionName);
+        }
+
+        /**
+         * Lógica de Logout
+         */
+        window.logout = async function() {
+            try {
+                await auth.signOut();
+                console.log("User signed out. Redirecting to login.");
+                window.location.href = 'login.html';
+            } catch (error) {
+                console.error("Erro ao fazer logout:", error);
+            }
+        }
+
+        // =============================================================
+        // FIM DO BLOCO PADRONIZADO
+        // =============================================================
+
+        
+        /**
+         * Inicializa o modal de alerta e confirmação customizado.
+         */
+        function setupModal() {
+            const modalHtml = `
+                <div id="customModal" class="modal">
+                    <div class="modal-content custom-dialog-content">
+                        <span class="close-btn" onclick="closeModal()">&times;</span>
+                        <h2 id="customDialogTitle"></h2>
+                        <p id="customDialogMessage"></p>
+                        <div id="customDialogActions" class="custom-dialog-actions"></div>
+                    </div>
+                </div>
+
+                <!-- Modal de Visualização (PO) -->
+                <div id="poViewModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close-btn" onclick="closeModal()">&times;</span>
+                        <div id="poViewBody" class="modal-body">
+                            <!-- Conteúdo do PO é injetado aqui -->
+                        </div>
+                    </div>
+                </div>
+            `;
+            // Garante que o modal só seja adicionado uma vez
+            if (!document.getElementById('customModal')) {
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+            }
+            window.modal = document.getElementById('customModal');
+            window.modalTitle = document.getElementById('customDialogTitle');
+            window.modalMessage = document.getElementById('customDialogMessage');
+            window.modalActions = document.getElementById('customDialogActions');
+            window.poViewModal = document.getElementById('poViewModal');
+            window.poViewBody = document.getElementById('poViewBody');
+        }
+
+        /** Fecha o modal. */
+        function closeModal() {
+            if (window.modal) {
+                window.modal.style.display = 'none';
+            }
+            if (window.poViewModal) {
+                window.poViewModal.style.display = 'none';
+            }
+        }
+
+        /**
+         * Exibe um alerta customizado.
+         */
+        function showCustomAlert(title, message, callback = null) {
+            closeModal(); // Fecha outros modais
+            window.modalTitle.textContent = title;
+            window.modalMessage.innerHTML = message;
+            window.modalActions.innerHTML = '';
+            
+            const okBtn = document.createElement('button');
+            okBtn.className = 'dialog-btn dialog-btn-primary';
+            okBtn.textContent = 'OK';
+            okBtn.onclick = () => {
+                closeModal();
+                if (callback) callback();
+            };
+            window.modalActions.appendChild(okBtn);
+            window.modal.style.display = 'flex';
+        }
+
+        /**
+         * Exibe uma confirmação customizada.
+         */
+        function showCustomConfirm(title, message, onConfirm, onCancel = null) {
+            closeModal(); // Fecha outros modais
+            window.modalTitle.textContent = title;
+            window.modalMessage.innerHTML = message;
+            window.modalActions.innerHTML = '';
+
+            const cancelBtn = document.createElement('button');
+            cancelBtn.className = 'dialog-btn dialog-btn-secondary';
+            cancelBtn.textContent = 'Cancelar';
+            cancelBtn.onclick = () => {
+                closeModal();
+                if (onCancel) onCancel();
+            };
+            window.modalActions.appendChild(cancelBtn);
+
+            const confirmBtn = document.createElement('button');
+            confirmBtn.className = 'dialog-btn dialog-btn-primary';
+            confirmBtn.textContent = 'Confirmar';
+            confirmBtn.onclick = () => {
+                closeModal();
+                onConfirm();
+            };
+            window.modalActions.appendChild(confirmBtn);
+
+            window.modal.style.display = 'flex';
+        }
+
+        /**
+         * Carrega e exibe o histórico de pedidos em tempo real.
+         */
+        function loadHistory() {
+            if (!db || !userId) {
+                console.log("Aguardando inicialização do Firebase/UserID.");
+                return; 
+            }
+
+            const list = document.getElementById('historyList');
+            // Ordena do mais novo para o mais antigo (createdAt em ordem decrescente)
+            const ordersRef = getUserCollectionRef('orders').orderBy('createdAt', 'desc');
+
+            ordersRef.onSnapshot(snapshot => {
+                list.innerHTML = ''; // Limpa a lista
                 if (snapshot.empty) {
-                    list.innerHTML = '<p>Nenhum pedido finalizado no histórico.</p>';
+                    list.innerHTML = '<p>Nenhum pedido finalizado no Histórico.</p>';
                     return;
                 }
 
-                list.innerHTML = ''; // Limpa o "Carregando"
-
                 snapshot.forEach(doc => {
-                    const po = doc.data();
-                    const item = document.createElement('div');
-                    item.classList.add('list-item');
-                    item.setAttribute('data-po-number', po.poNumber);
+                    const order = doc.data();
+                    const poNumber = order.poNumber;
+                    const date = order.poDate;
+                    const timestamp = order.createdAt ? order.createdAt.toDate().toLocaleDateString('pt-BR', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : 'N/A';
+                    const total = parseFloat(order.grandTotal).toFixed(2).replace('.', ',');
 
-                    // Formatação da data
-                    const poDate = po.poDate ? new Date(po.poDate + 'T00:00:00').toLocaleDateString('pt-BR') : 'N/A';
-                    
+                    const item = document.createElement('li');
+                    item.className = 'list-item';
+                    item.onclick = (e) => viewPo(poNumber, e); // Permite clicar na linha para visualizar
                     item.innerHTML = `
-                        <div class="list-item-details" onclick="viewPo('${po.poNumber}')">
-                            <strong>Nº ${po.poNumber}</strong> - Fornecedor: ${po.supplier.name} (${po.supplier.cnpj}) <br>
-                            Data: ${poDate} | Valor Total: ${formatCurrency(po.totalValue)}
+                        <div class="list-item-info">
+                            <strong>Pedido N° ${poNumber}</strong>
+                            Fornecedor: ${order.supplierName} <br>
+                            Data PO: ${date} <span class="date">(Salvo em: ${timestamp})</span><br>
+                            Total: R$ ${total}
                         </div>
                         <div class="list-item-actions">
-                            <button class="print-btn" onclick="printPo('${po.poNumber}', event)">Imprimir</button>
-                            <button class="delete-btn" onclick="deletePo('${po.poNumber}', event)">Excluir</button>
+                            <button class="btn-edit" onclick="window.location.href='index.html?editPo=${poNumber}'; event.stopPropagation();">Editar</button>
+                            <button class="btn-print" onclick="printPo('${poNumber}', event)">Imprimir</button>
+                            <button class="delete-btn" onclick="deletePo('${poNumber}', event)">Excluir</button>
                         </div>
                     `;
                     list.appendChild(item);
                 });
-
-            } catch (error) {
-                console.error("Erro ao carregar histórico:", error);
-                list.innerHTML = '<p style="color: red;">Erro ao carregar histórico de pedidos.</p>';
-            }
+            }, (error) => {
+                console.error("Erro no listener do Histórico:", error);
+                list.innerHTML = '<p style="color: red;">Erro ao carregar histórico.</p>';
+            });
         }
-        
-        async function viewPo(poNumber) {
+
+        /**
+         * Visualiza os detalhes de um pedido.
+         */
+        async function viewPo(poNumber, event) {
+            if (event) event.stopPropagation();
+            
+            const docRef = getUserCollectionRef('orders').doc(poNumber);
             try {
-                const poDoc = await getUserCollectionRef('orders').doc(poNumber).get();
-                if (!poDoc.exists) {
-                    showCustomAlert('Erro', `Pedido N° ${poNumber} não encontrado no Histórico.`);
+                const doc = await docRef.get();
+                if (!doc.exists) {
+                    showCustomAlert('Erro', `Pedido N° ${poNumber} não encontrado.`);
                     return;
                 }
-                const poData = poDoc.data();
+                const order = doc.data();
+
+                let itemsHtml = order.items.map((item, index) => {
+                    const total = parseFloat(item.total).toFixed(2).replace('.', ',');
+                    const unitPrice = parseFloat(item.unitPrice).toFixed(2).replace('.', ',');
+                    return `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${item.sku}</td>
+                            <td>${item.desc}</td>
+                            <td>${item.qty}</td>
+                            <td>R$ ${unitPrice}</td>
+                            <td>R$ ${total}</td>
+                        </tr>
+                    `;
+                }).join('');
+
+                const grandTotal = parseFloat(order.grandTotal).toFixed(2).replace('.', ',');
                 
-                // Preenche o Modal
-                document.getElementById('viewPoNumber').textContent = `Pedido N° ${poData.poNumber}`;
-                document.getElementById('viewPoDate').textContent = poData.poDate ? new Date(poData.poDate + 'T00:00:00').toLocaleDateString('pt-BR') : 'N/A';
-                document.getElementById('viewSupplierName').textContent = poData.supplier.name;
-                document.getElementById('viewSupplierCnpj').textContent = poData.supplier.cnpj;
-                document.getElementById('viewDescription').textContent = poData.poDescription || 'Nenhuma';
-                document.getElementById('viewPoTotal').textContent = formatCurrency(poData.totalValue);
-                document.getElementById('printButton').dataset.poNumber = poData.poNumber; // Define o número do PO para impressão
+                window.poViewBody.innerHTML = `
+                    <h2>Detalhes do Pedido de Compra N° ${order.poNumber}</h2>
+                    <p><strong>Fornecedor:</strong> ${order.supplierName}</p>
+                    <p><strong>CNPJ:</strong> ${order.supplierCnpj}</p>
+                    <p><strong>Data do Pedido:</strong> ${order.poDate}</p>
+                    <p><strong>Total Geral:</strong> R$ ${grandTotal}</p>
 
-                const itemsBody = document.getElementById('viewItemsBody');
-                itemsBody.innerHTML = ''; // Limpa itens anteriores
+                    <h2>Itens</h2>
+                    <table class="items-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>SKU</th>
+                                <th>Descrição</th>
+                                <th style="width: 80px;">Qtde</th>
+                                <th style="width: 120px;">Preço Unit.</th>
+                                <th style="width: 120px;">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${itemsHtml}
+                        </tbody>
+                        <tfoot>
+                            <tr class="total-row">
+                                <td colspan="5" style="text-align: right;">TOTAL GERAL</td>
+                                <td>R$ ${grandTotal}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                `;
 
-                poData.items.forEach(item => {
-                    const row = itemsBody.insertRow();
-                    row.insertCell().textContent = item.num;
-                    row.insertCell().textContent = `${item.desc} (SKU: ${item.sku})`;
-                    row.insertCell().textContent = item.qty;
-                    row.insertCell().textContent = formatCurrency(item.unitPrice);
-                    row.insertCell().textContent = formatCurrency(item.subTotal);
-                });
-
-                window.viewModal.style.display = 'block';
+                window.poViewModal.style.display = 'flex';
 
             } catch (error) {
-                console.error("Erro ao carregar PO para visualização:", error);
-                showCustomAlert('Erro', 'Não foi possível visualizar o pedido: ' + error.message);
+                console.error("Erro ao visualizar PO:", error);
+                showCustomAlert('Erro', 'Não foi possível carregar os detalhes do pedido: ' + error.message);
             }
         }
 
-        // Função de Imprimir (Simulada)
+        /**
+         * Simula a impressão do pedido.
+         */
         function printPo(poNumber, event) {
-            if (event) event.stopPropagation(); // Evita que o evento de clique da linha seja disparado
-            showCustomAlert('Imprimindo...', `Simulando impressão do Pedido N° ${poNumber}. Na realidade, você chamaria uma função de impressão aqui.`);
+            if (event) event.stopPropagation();
+            showCustomAlert('Imprimir', `Simulando impressão do Pedido N° ${poNumber}. A implementação real de impressão deve ser feita aqui.`);
             // Implementação real exigiria gerar um PDF ou abrir uma nova janela com CSS de impressão
         }
 
+        /**
+         * Deleta um pedido do histórico.
+         */
         function deletePo(poNumber, event) {
             event.stopPropagation();
             showCustomConfirm(
@@ -426,7 +437,8 @@
                 async () => {
                     const docRef = getUserCollectionRef('orders').doc(poNumber);
                     try {
-                        await doc(docRef).delete();
+                        // CORREÇÃO: Usar docRef.delete() diretamente (doc() não é mais necessário aqui)
+                        await docRef.delete();
                         showCustomAlert('Excluído!', `Pedido N° ${poNumber} excluído com sucesso do Histórico.`, loadHistory); // Recarrega a lista
                     } catch (error) {
                         console.error("Erro ao excluir PO:", error);
