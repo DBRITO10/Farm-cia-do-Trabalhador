@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerador de Pedido de Compra - Farmácia do Trabalhador</title>
+    <title>Gerador de Pedido de Compra - Farmácia</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
@@ -13,876 +13,967 @@
         /* Estilos Base */
         body { font-family: Arial, sans-serif; margin: 0; background-color: #f4f7f6; padding: 20px; }
         .container { max-width: 900px; margin: 0 auto; background-color: #ffffff; padding: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 8px; }
-
+        
         /* Barra Superior (User/Logout) */
         .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; margin-bottom: 10px; border-bottom: 1px solid #ddd; }
-        .user-info { font-weight: bold; color: #004c99; font-size: 1.1em; }
-        .logout-btn { background-color: #f44336; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; transition: background-color 0.3s; font-size: 0.9em; }
-        .logout-btn:hover { background-color: #d32f2f; }
+        .user-info { font-weight: bold; color: #004c99; font-size: 14px; }
+        .logout-btn { background-color: #d9534f; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; transition: background-color 0.3s; }
+        .logout-btn:hover { background-color: #c9302c; }
 
         /* Menu de Navegação */
-        .nav-menu { margin-bottom: 25px; display: flex; flex-wrap: wrap; gap: 10px; border-bottom: 2px solid #004c99; padding-bottom: 10px; }
-        .nav-menu a {
-            text-decoration: none;
-            color: #004c99;
-            background-color: #e6f0ff;
-            padding: 10px 15px;
+        .nav-menu { display: flex; justify-content: space-around; margin-bottom: 30px; padding: 10px 0; border-bottom: 2px solid #004c99; }
+        .nav-menu a { text-decoration: none; color: #004c99; font-weight: bold; padding: 8px 15px; border-radius: 5px; transition: background-color 0.3s; }
+        .nav-menu a.active, .nav-menu a:hover { background-color: #e6f0ff; }
+        
+        /* Cabeçalho do Pedido */
+        h1 { color: #004c99; text-align: center; margin-bottom: 30px; }
+        
+        /* Detalhes do Pedido e Farmácia */
+        .header-details, .delivery-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            background-color: #f9f9f9;
+        }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        
+        /* Itens do Pedido */
+        h2 { color: #333; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 15px; }
+        .order-item {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
             border-radius: 5px;
+        }
+
+        .order-item-number {
             font-weight: bold;
-            transition: background-color 0.3s, color 0.3s;
-            border: 1px solid #004c99;
-        }
-        .nav-menu a:hover {
-            background-color: #004c99;
-            color: white;
-        }
-        .nav-menu .active {
-            background-color: #004c99;
-            color: white;
+            font-size: 1.2em;
+            color: #004c99;
+            padding-right: 10px;
+            min-width: 25px;
+            text-align: center;
+            padding-top: 10px;
         }
         
-        /* Estilos do Formulário */
-        h1 { color: #004c99; margin-top: 0; }
-        hr { border: 0; border-top: 2px solid #004c99; margin-bottom: 20px; }
-
-        .form-header, .form-item {
+        .item-details {
+            flex: 1;
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr 0.5fr; /* Item, Qtd, Preço, Total, Ação */
+            grid-template-columns: 2fr 1fr 1fr 1fr; /* Produto | Qtd | Preço | Total */
             gap: 15px;
-            margin-bottom: 10px;
             align-items: center;
         }
         
-        .form-header {
-            font-weight: bold;
-            padding-bottom: 5px;
-            border-bottom: 1px solid #ccc;
-            margin-bottom: 15px;
+        .product-select-container {
+            grid-column: 1 / span 1;
         }
 
-        /* Estilo dos campos de cabeçalho (data, fornecedor, etc) */
-        .info-fields {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr; 
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        
-        label {
+        .product-description-text {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #333;
-        }
-        
-        input[type="text"], input[type="number"], input[type="date"], select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-            font-size: 1em;
-        }
-        
-        /* Estilos dos botões */
-        .action-buttons {
-            margin-top: 30px;
-            display: flex;
-            justify-content: flex-end;
-            gap: 15px;
+            margin-top: 5px;
+            font-size: 0.9em;
+            color: #666;
+            font-style: italic;
+            padding: 2px 0;
+            grid-column: 1 / span 4; /* Ocupa a linha toda abaixo do select */
         }
 
-        .btn-primary, .btn-secondary, .btn-danger, .add-item-btn {
-            padding: 12px 20px;
+        .item-details input {
+            text-align: right;
+        }
+        
+        .remove-item-btn {
+            background-color: #d9534f;
+            color: white;
             border: none;
+            padding: 8px 12px;
             border-radius: 5px;
             cursor: pointer;
-            font-weight: bold;
             transition: background-color 0.3s;
-            font-size: 1em;
+            align-self: flex-start;
+            margin-top: 5px;
+        }
+        .remove-item-btn:hover { background-color: #c9302c; }
+
+        /* Rodapé e Totais */
+        .total-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+            border-top: 2px solid #004c99;
+            padding-top: 15px;
+        }
+        .total-box {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #004c99;
+            padding: 10px 20px;
+            background-color: #e6f0ff;
+            border-radius: 5px;
         }
 
-        .btn-primary { 
-            background-color: #004c99; 
-            color: white; 
-        }
-        .btn-primary:hover { 
-            background-color: #003366; 
-        }
-
-        .btn-secondary { 
-            background-color: #f0ad4e; 
-            color: white; 
-        }
-        .btn-secondary:hover { 
-            background-color: #ec971f; 
-        }
-
-        .btn-danger { 
-            background-color: #d9534f; 
-            color: white; 
-        }
-        .btn-danger:hover { 
-            background-color: #c9302c; 
-        }
-        
         .add-item-btn {
             background-color: #5cb85c;
             color: white;
-            margin-top: 15px;
-            width: auto;
-            align-self: flex-start;
-        }
-        .add-item-btn:hover {
-            background-color: #4cae4c;
-        }
-
-        /* Estilos da Linha de Total */
-        .total-line {
-            text-align: right;
-            font-size: 1.5em;
-            font-weight: bold;
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 2px dashed #ccc;
-            color: #004c99;
-        }
-
-        /* Estilo do botão de remover item */
-        .remove-item-btn {
-            background-color: #ccc;
-            color: #333;
-            padding: 8px 10px;
-            border-radius: 5px;
-            font-size: 0.8em;
-            transition: background-color 0.3s;
-        }
-        .remove-item-btn:hover {
-            background-color: #d9534f; 
-            color: white;
-        }
-
-        /* Estilos do Modal (Mensagens/Confirmações) */
-        .modal {
-            display: none; 
-            position: fixed; 
-            z-index: 10; 
-            left: 0;
-            top: 0;
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
-            background-color: rgba(0,0,0,0.4); 
-            padding-top: 60px;
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto; 
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%; 
-            max-width: 500px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            text-align: center;
-        }
-
-        .modal-content h2 {
-            color: #004c99;
-            margin-top: 0;
-        }
-
-        .modal-content p {
-            margin: 20px 0;
-        }
-
-        .modal-footer button {
+            border: none;
             padding: 10px 20px;
-            margin: 0 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        .add-item-btn:hover { background-color: #4cae4c; }
+
+        /* Botões de Ação (Bottom) */
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ccc;
+        }
+
+        .action-buttons button {
+            padding: 12px 25px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
+            transition: background-color 0.3s;
         }
-        .modal-footer .confirm-btn { background-color: #5cb85c; color: white; }
-        .modal-footer .confirm-btn:hover { background-color: #4cae4c; }
-        .modal-footer .cancel-btn { background-color: #ccc; color: #333; }
-        .modal-footer .cancel-btn:hover { background-color: #bbb; }
+
+        .btn-secondary { background-color: #f0ad4e; color: white; } /* Laranja - Rascunho */
+        .btn-secondary:hover { background-color: #ec971f; }
+        
+        .btn-info { background-color: #004c99; color: white; } /* Azul Escuro - Visualizar */
+        .btn-info:hover { background-color: #003366; }
+        
+        .btn-primary { background-color: #5cb85c; color: white; } /* Verde - Salvar Definitivo */
+        .btn-primary:hover { background-color: #4cae4c; }
+        
+        /* Estilos do Modal (Alerta) */
+        .custom-modal-backdrop {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); z-index: 1000;
+            display: none; justify-content: center; align-items: center;
+        }
+        .custom-modal-content {
+            background-color: white; padding: 25px; border-radius: 8px;
+            width: 90%; max-width: 400px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            animation: fadeIn 0.3s;
+        }
+        .custom-modal-content h3 { color: #004c99; margin-top: 0; }
+        .custom-modal-actions { text-align: right; margin-top: 20px; }
+        .custom-modal-actions button {
+            padding: 10px 20px; margin: 5px; border: none; border-radius: 5px;
+            cursor: pointer; background-color: #004c99; color: white;
+            transition: background-color 0.3s;
+        }
+        .custom-modal-actions button:hover { background-color: #003366; }
+
+        @media (max-width: 768px) {
+            .order-item { flex-direction: column; }
+            .item-details { grid-template-columns: 1fr; gap: 10px; }
+            .remove-item-btn { align-self: flex-end; }
+            .action-buttons { flex-direction: column; }
+            .action-buttons button { width: 100%; }
+        }
     </style>
 </head>
 <body>
-
     <div class="container">
         <div class="top-bar">
-            <div class="user-info">Usuário: <span id="currentUserEmail">Carregando...</span></div>
+            <span class="user-info">Carregando usuário...</span>
             <button class="logout-btn" onclick="logout()">Sair</button>
         </div>
 
         <div class="nav-menu">
             <a href="index.html" class="active">Novo Pedido</a>
-            <a href="rascunhos.html">Rascunhos</a>
             <a href="historico.html">Histórico</a>
-            <a href="produtos.html">Produtos</a>
+            <a href="rascunhos.html">Rascunhos</a>
+            <a href="produtos.html">Catálogo</a>
             <a href="fornecedores.html">Fornecedores</a>
         </div>
-        
-        <h1>Gerador de Pedido de Compra</h1>
-        <hr>
 
-        <form id="purchaseOrderForm">
-            <div class="info-fields">
-                <div>
-                    <label for="poNumber">Nº do Pedido:</label>
+        <h1>Gerar Novo Pedido de Compra</h1>
+
+        <form id="purchaseOrderForm" onsubmit="return false;"> 
+            <input type="hidden" id="poIdHidden"> 
+            
+            <h2>Detalhes do Pedido</h2>
+            <div class="header-details">
+                <div class="form-group">
+                    <label for="poNumber">Número do Pedido</label>
                     <input type="text" id="poNumber" required readonly>
                 </div>
-                <div>
-                    <label for="poDate">Data:</label>
-                    <input type="date" id="poDate" required>
+                <div class="form-group">
+                    <label for="poDate">Data de Emissão</label>
+                    <input type="date" id="poDate" required readonly>
                 </div>
-                <div>
-                    <label for="supplierSelect">Fornecedor:</label>
-                    <select id="supplierSelect" required>
-                        <option value="">Selecione o Fornecedor</option>
-                        </select>
+                <div class="form-group">
+                    <label for="supplierSelect">Fornecedor</label>
+                    <select id="supplierSelect" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="poDueDate">Prazo de Vencimento</label>
+                    <input type="date" id="poDueDate" required>
                 </div>
             </div>
+
+            <h2>Dados da Farmácia (Receptor)</h2>
+            <div class="delivery-details">
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label for="pharmacyName">Nome da Farmácia</label>
+                    <input type="text" id="pharmacyName" value="Farmácia do Trabalhador" required>
+                </div>
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label for="deliveryAddress">Endereço de Entrega Completo</label>
+                    <input type="text" id="deliveryAddress" value="Rua Exemplo, 123, Centro - Cidade/Estado" required>
+                </div>
+                <div class="form-group">
+                    <label for="deliveryDate">Data de Entrega Solicitada</label>
+                    <input type="date" id="deliveryDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="contactPhone">Telefone de Contato</label>
+                    <input type="text" id="contactPhone" oninput="formatPhone(this)" maxlength="15" value="(99) 99999-9999">
+                </div>
+            </div>
+
+            <h2>Itens Solicitados</h2>
+            <div id="orderItemsContainer">
+                </div>
             
-            <div class="form-header">
-                <span>Item</span>
-                <span>Qtd</span>
-                <span>Preço Unit. (R$)</span>
-                <span>Total (R$)</span>
-                <span>Ação</span>
-            </div>
-
-            <div id="itemsContainer">
-                </div>
-
             <button type="button" class="add-item-btn" onclick="addItem()">+ Adicionar Item</button>
 
-            <div class="total-line">
-                Total do Pedido: <span id="poTotalDisplay">R$ 0,00</span>
-                <input type="hidden" id="poTotal" value="0.00">
+            <div class="total-section">
+                <div class="total-box">Total Geral: <span id="grandTotal">R$ 0,00</span></div>
             </div>
 
             <div class="action-buttons">
-                <button type="button" class="btn-secondary" onclick="saveAsDraft(event)">Salvar Rascunho</button> 
-                <button type="submit" class="btn-primary">Finalizar e Gerar PDF</button>
+                <button type="button" class="btn-secondary" onclick="saveAsDraft(event)">Salvar em Rascunho</button>
+                <button type="button" class="btn-info" onclick="viewPo(event)">Visualizar Pedido de Compra</button>
+                <button type="button" class="btn-primary" onclick="saveOrderAsFinal(event)">Salvar Definitivo</button>
             </div>
         </form>
-
     </div>
-    
-    <div id="customModal" class="modal">
-        <div class="modal-content">
-            <h2 id="modalTitle"></h2>
-            <p id="modalMessage"></p>
-            <div id="modalFooter" class="modal-footer">
-                </div>
+
+    <div id="customModal" class="custom-modal-backdrop">
+        <div id="alertContent" class="custom-modal-content">
+            <h3 id="alertTitle">Título</h3>
+            <p id="alertMessage">Mensagem</p>
+            <div id="modalActions" class="custom-modal-actions">
+                <button class="alert-ok" onclick="closeModal()">OK</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // Variáveis globais para Firebase e contexto
         let db;
         let auth;
-        let productList = {}; // Armazena produtos para lookup rápido
-        let supplierList = {}; // Armazena fornecedores para lookup rápido
-        const urlParams = new URLSearchParams(window.location.search);
-        const poToEdit = urlParams.get('editPo'); // Para editar um pedido finalizado
-        const draftToEdit = urlParams.get('editDraft'); // Para editar um rascunho
+        let suppliersList = []; // Lista de fornecedores para o <select>
+        let productsList = [];  // Lista de produtos para o <select>
+        let isEditing = false;
+        let editingFromDraft = false;
 
-        // Configuração do Firebase, autenticação e redirecionamento (Pode ser movido para um arquivo 'common.js' no futuro)
-        function setupFirebase() {
-            // Se o Firebase ainda não foi inicializado, inicialize aqui (use suas credenciais)
-            if (typeof firebase.apps.length === 'undefined' || firebase.apps.length === 0) {
-         const firebaseConfig = {
-          apiKey: "AIzaSyAXKlq9WOs_5_ilfhG13xQwNVwQa6MaBfg",
-          authDomain: "farmacia-a6682.firebaseapp.com",
-          projectId: "farmacia-a6682",
-          storageBucket: "farmacia-a6682.firebasestorage.app",
-          messagingSenderId: "144965717217",
-          appId: "1:144965717217:web:de43b2316e8b7a25293ba0"
+        // CONFIGURAÇÃO DO FIREBASE COM SUA CHAVE
+        const firebaseConfig = {
+            apiKey: "AIzaSyAXKlq9WOs_5_ilfhG13xQwNVwQa6MaBfg",
+            authDomain: "farmacia-a6682.firebaseapp.com",
+            projectId: "farmacia-a6682",
+            storageBucket: "farmacia-a6682.firebasestorage.app",
+            messagingSenderId: "144965717217",
+            appId: "1:144965717217:web:de43b2316e8b7a25293ba0"
         };
+        
+        /* --------------------------------------------------
+        * FUNÇÕES DE UTILIDADE E FIREBASE 
+        * -------------------------------------------------- */
+
+        function setupFirebase() {
+            if (!firebase.apps.length) {
                 firebase.initializeApp(firebaseConfig);
             }
 
-            db = firebase.firestore();
             auth = firebase.auth();
-            
+            db = firebase.firestore();
+
             auth.onAuthStateChanged(user => {
                 if (user) {
-                    // Usuário logado: Carrega o e-mail e inicia o carregamento de dados
-                    document.getElementById('currentUserEmail').textContent = user.email;
-                    loadData();
+                    document.querySelector('.user-info').textContent = 'Usuário: ' + (user.email || 'Admin');
+                    // Tenta carregar os dados. O redirecionamento é feito em login.html
+                    if (typeof window.loadData === 'function') {
+                        window.loadData();
+                    }
                 } else {
-                    // Usuário deslogado: Redireciona para o login
-                    window.location.href = 'login.html';
+                    if (window.location.pathname.indexOf('login.html') === -1) {
+                        window.location.href = 'login.html';
+                    }
                 }
             });
         }
-        
+
         function logout() {
             auth.signOut().then(() => {
-                // Redirecionamento já acontece no onAuthStateChanged
-            }).catch((error) => {
-                showCustomAlert('Erro ao Sair', 'Não foi possível fazer logout: ' + error.message);
+                window.location.href = 'login.html';
+            }).catch(error => {
+                console.error("Erro ao fazer logout:", error);
             });
         }
 
-        // Retorna a referência da coleção específica do usuário logado
         function getUserCollectionRef(collectionName) {
-            const userId = auth.currentUser.uid;
-            return db.collection('users').doc(userId).collection(collectionName);
+            const user = auth.currentUser;
+            if (!user) {
+                // Se cair aqui, é porque a verificação auth.onAuthStateChanged falhou ou está lenta.
+                // Redireciona para garantir a segurança.
+                window.location.href = 'login.html';
+                throw new Error("Usuário não autenticado.");
+            }
+            return db.collection('users').doc(user.uid).collection(collectionName);
         }
 
-        // Funções de Modal
-        let currentModalCallback;
-
+        // Funções de Modal (Alerta/Confirmação)
         function setupModal() {
             const modal = document.getElementById('customModal');
-            window.onclick = function(event) {
-                if (event.target == modal) {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
                     closeModal();
                 }
-            }
+            });
         }
         
+        function showCustomAlert(title, message, callback) {
+            document.getElementById('alertTitle').textContent = title;
+            document.getElementById('alertMessage').innerHTML = message;
+            
+            const okButton = document.getElementById('modalActions').querySelector('.alert-ok');
+            if (callback) {
+                okButton.onclick = () => { closeModal(); callback(); };
+            } else {
+                okButton.onclick = closeModal;
+            }
+
+            document.getElementById('customModal').style.display = 'flex';
+        }
+
+        function showCustomConfirm(title, message, onYes) {
+            document.getElementById('alertTitle').textContent = title;
+            document.getElementById('alertMessage').innerHTML = message;
+            
+            const actions = document.getElementById('modalActions');
+            actions.innerHTML = `
+                <button class="btn-primary" id="modalConfirmYes">Sim</button>
+                <button class="btn-secondary" onclick="closeModal()">Não</button>
+            `;
+
+            document.getElementById('modalConfirmYes').onclick = () => {
+                closeModal();
+                onYes();
+            };
+
+            document.getElementById('customModal').style.display = 'flex';
+        }
+
         function closeModal() {
             document.getElementById('customModal').style.display = 'none';
+            // Restaura o botão OK padrão para o caso de ter sido um confirm
+            document.getElementById('modalActions').innerHTML = `<button class="alert-ok" onclick="closeModal()">OK</button>`;
         }
-
-        function showCustomAlert(title, message, callback) {
-            const modal = document.getElementById('customModal');
-            document.getElementById('modalTitle').textContent = title;
-            document.getElementById('modalMessage').innerHTML = message;
-            
-            const footer = document.getElementById('modalFooter');
-            footer.innerHTML = ''; // Limpa botões anteriores
-            
-            const okBtn = document.createElement('button');
-            okBtn.className = 'confirm-btn';
-            okBtn.textContent = 'OK';
-            okBtn.onclick = () => {
-                closeModal();
-                if (callback) callback();
-            };
-            footer.appendChild(okBtn);
-            
-            modal.style.display = 'block';
+        
+        // Formatação de Telefone (padrão)
+        function formatPhone(input) {
+            let value = input.value.replace(/\D/g, ''); 
+            value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
+            value = value.replace(/(\d)(\d{4})$/, '$1-$2');
+            input.value = value;
         }
+        window.formatPhone = formatPhone; // Exporta para o HTML
 
-        function showCustomConfirm(title, message, confirmCallback, cancelCallback) {
-            const modal = document.getElementById('customModal');
-            document.getElementById('modalTitle').textContent = title;
-            document.getElementById('modalMessage').innerHTML = message;
-            
-            const footer = document.getElementById('modalFooter');
-            footer.innerHTML = ''; // Limpa botões anteriores
-
-            const cancelBtn = document.createElement('button');
-            cancelBtn.className = 'cancel-btn';
-            cancelBtn.textContent = 'Não';
-            cancelBtn.onclick = () => {
-                closeModal();
-                if (cancelCallback) cancelCallback();
-            };
-            
-            const confirmBtn = document.createElement('button');
-            confirmBtn.className = 'confirm-btn';
-            confirmBtn.textContent = 'Sim';
-            confirmBtn.onclick = () => {
-                closeModal();
-                confirmCallback();
-            };
-            
-            footer.appendChild(cancelBtn);
-            footer.appendChild(confirmBtn);
-            
-            modal.style.display = 'block';
-        }
-
-        // Geração do próximo número de PO
-        async function getNextPoNumber() {
-            const counterRef = getUserCollectionRef('metadata').doc('poCounter');
-            
-            // Tenta obter e incrementar o contador
-            const poCounter = await db.runTransaction(async (transaction) => {
-                const doc = await transaction.get(counterRef);
-                let newPoNumber = 1;
-
-                if (doc.exists) {
-                    newPoNumber = doc.data().lastPoNumber + 1;
-                }
-                
-                // Salva o novo valor
-                transaction.set(counterRef, { lastPoNumber: newPoNumber });
-                return newPoNumber;
-
-            }).catch(error => {
-                console.error("Erro na transação de PO Number:", error);
-                showCustomAlert('Erro Crítico', 'Não foi possível gerar um número de pedido. Recarregue a página.');
-                return null;
-            });
-
-            // Formata com 6 dígitos (ex: 000001)
-            if (poCounter) {
-                return String(poCounter).padStart(6, '0');
-            }
-            return 'ERRO';
-        }
-
-        // Carregar Fornecedores para o Select
+        /* --------------------------------------------------
+        * FUNÇÕES DE CARREGAMENTO DE DADOS (SUPPLIERS, PRODUCTS)
+        * -------------------------------------------------- */
+        
+        // Carrega Fornecedores para o Select
         async function loadSupplierSelect() {
             const select = document.getElementById('supplierSelect');
             select.innerHTML = '<option value="">Carregando...</option>';
-            supplierList = {}; // Limpa a lista
 
             try {
-                const snapshot = await getUserCollectionRef('suppliers').get();
-                
-                select.innerHTML = '<option value="">Selecione o Fornecedor</option>';
+                const snapshot = await getUserCollectionRef('suppliers').orderBy('name').get();
+                suppliersList = []; // Limpa a lista local
+                select.innerHTML = '<option value="" disabled selected>Selecione um Fornecedor</option>';
 
                 snapshot.forEach(doc => {
                     const supplier = doc.data();
-                    supplierList[supplier.cnpj] = supplier; // Armazena para lookup
+                    suppliersList.push(supplier);
                     const option = document.createElement('option');
-                    option.value = supplier.cnpj;
-                    option.textContent = supplier.name;
+                    // Usa o CNPJ (só dígitos) como value
+                    option.value = supplier.cnpj; 
+                    option.textContent = supplier.name + ' (' + supplier.cnpj + ')';
                     select.appendChild(option);
                 });
-                
-                if (snapshot.empty) {
-                    showCustomAlert('Atenção', 'Nenhum fornecedor cadastrado. Cadastre um na página "Fornecedores" antes de criar um pedido.');
-                }
-                
+
             } catch (error) {
                 console.error("Erro ao carregar fornecedores:", error);
-                select.innerHTML = '<option value="">ERRO ao carregar</option>';
+                select.innerHTML = '<option value="" disabled selected>Erro ao carregar fornecedores</option>';
             }
         }
-        
-        // Carregar Produtos para o Select
+
+        // Carrega Produtos para o Select
         async function loadProductSelect() {
-            productList = {}; // Limpa a lista
             try {
-                const snapshot = await getUserCollectionRef('products').get();
-                
+                const snapshot = await getUserCollectionRef('products').orderBy('name').get();
+                productsList = []; // Limpa a lista local
+
                 snapshot.forEach(doc => {
                     const product = doc.data();
-                    productList[product.sku] = product; // Armazena para lookup
+                    productsList.push(product);
                 });
-                
-                if (snapshot.empty) {
-                    console.warn('Nenhum produto cadastrado.');
-                }
-                
+
+                // Recarrega todos os selects de produto existentes
+                const selects = document.querySelectorAll('.product-select');
+                selects.forEach(select => {
+                    const selectedSku = select.value; // Guarda o valor selecionado
+                    select.innerHTML = '<option value="" disabled selected>Selecione o Produto (SKU)</option>';
+                    productsList.forEach(product => {
+                        const option = document.createElement('option');
+                        option.value = product.sku;
+                        // Exibe Nome e SKU
+                        option.textContent = `${product.name} (${product.sku})`;
+                        if (product.sku === selectedSku) {
+                            option.selected = true;
+                        }
+                        select.appendChild(option);
+                    });
+                    // Atualiza a descrição e recalcula (importante ao recarregar um rascunho)
+                    updateItemDescription(select); 
+                });
+
             } catch (error) {
                 console.error("Erro ao carregar produtos:", error);
+                // Não há um único select, então apenas loga o erro
             }
         }
 
-        // Funções de Item
-        let itemIndex = 0;
 
-        function resequenceItems() {
-            const items = document.querySelectorAll('.form-item');
-            items.forEach((item, index) => {
-                // Atualiza o ID interno (não é o índice global)
-                item.setAttribute('data-index', index + 1); 
-            });
-        }
-        
-        function addItem(productData = null) {
-            itemIndex++;
-            const container = document.getElementById('itemsContainer');
-            const item = document.createElement('div');
-            item.className = 'form-item';
-            item.setAttribute('data-index', itemIndex); // Usa o index global para facilitar a identificação
-            
-            const sku = productData ? productData.sku : '';
-            const desc = productData ? productData.desc : '';
-            const price = productData ? productData.price : '';
-            const qty = productData ? productData.qty : '1';
-            
-            // Cria o campo Select/Input para o Item/Descrição
-            let itemInputHtml = '';
-            if (Object.keys(productList).length > 0) {
-                // Se houver produtos, usa um select
-                itemInputHtml = `
-                    <select class="item-select" data-type="sku" onchange="updateItemDescription(this)" required>
-                        <option value="">Selecione o Produto</option>
-                        ${Object.values(productList).map(p => 
-                            `<option value="${p.sku}" data-price="${p.price}" ${sku === p.sku ? 'selected' : ''}>${p.sku} - ${p.name}</option>`
-                        ).join('')}
-                    </select>
-                    <input type="hidden" class="item-description" value="${desc}" required> 
-                `;
-            } else {
-                // Se não houver produtos, usa um campo de texto livre
-                itemInputHtml = `
-                    <input type="text" class="item-description" placeholder="Descrição do Item" value="${desc}" required>
-                    <input type="hidden" class="item-select" value="${sku}">
-                `;
-            }
-            
-            item.innerHTML = `
-                <div>
-                    ${itemInputHtml}
-                </div>
-                <div>
-                    <input type="number" class="item-qty" value="${qty}" min="1" step="1" oninput="calculateTotal(this)" required>
-                </div>
-                <div>
-                    <input type="text" class="item-price" value="${price.replace('.', ',')}" oninput="formatPrice(this); calculateTotal(this);" required>
-                </div>
-                <div class="item-subtotal">R$ 0,00</div>
-                <div>
-                    <button type="button" class="remove-item-btn" onclick="removeItem(this)">Remover</button>
+        /* --------------------------------------------------
+        * FUNÇÕES DE ITENS DO PEDIDO
+        * -------------------------------------------------- */
+
+        function addItem(productData = {}) {
+            const container = document.getElementById('orderItemsContainer');
+            const count = container.children.length + 1; // ID para a nova linha
+
+            const itemHTML = `
+                <div class="order-item" data-id="${count}">
+                    <div class="order-item-number">${count}.</div>
+                    <div class="item-details">
+                        <div class="form-group product-select-container">
+                            <label>Produto</label>
+                            <select 
+                                class="product-select" 
+                                onchange="updateItemDescription(this)"
+                                required
+                            >
+                                <option value="" disabled selected>Selecione o Produto (SKU)</option>
+                                ${productsList.map(p => `
+                                    <option value="${p.sku}" ${productData.sku === p.sku ? 'selected' : ''}>
+                                        ${p.name} (${p.sku})
+                                    </option>
+                                `).join('')}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Quantidade</label>
+                            <input 
+                                type="number" 
+                                class="item-qty" 
+                                value="${productData.qty || 1}" 
+                                min="1" 
+                                oninput="calculateTotal()" 
+                                required
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label>Preço Unitário</label>
+                            <input 
+                                type="text" 
+                                class="item-price" 
+                                value="${productData.price ? productData.price.replace('.', ',') : '0,00'}" 
+                                oninput="formatPrice(this); calculateTotal()" 
+                                required
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label>Total</label>
+                            <input 
+                                type="text" 
+                                class="item-total" 
+                                value="R$ 0,00" 
+                                readonly 
+                                disabled
+                            >
+                        </div>
+                        
+                        <span id="desc-${count}" class="product-description-text">${productData.desc || (productData.sku ? 'Carregando descrição...' : '')}</span>
+                    </div>
+                    
+                    <button type="button" class="remove-item-btn" onclick="removeItem(this)">X</button>
                 </div>
             `;
+            container.insertAdjacentHTML('beforeend', itemHTML);
+            calculateTotal();
             
-            container.appendChild(item);
-            
-            // Recalcula o total logo após adicionar/popular (se necessário)
-            if (productData) {
-                calculateTotal(item.querySelector('.item-qty'));
+            // Se dados foram fornecidos (ao carregar um rascunho), atualiza a descrição após a inserção
+            if (productData.sku) {
+                const newSelect = container.lastElementChild.querySelector('.product-select');
+                updateItemDescription(newSelect);
             }
-            
-            // Garante que pelo menos um item tem foco para o usuário começar a preencher
-            if (!productData) {
-                 // Foca no primeiro campo de descrição/select
-                 item.querySelector('.item-select') ? item.querySelector('.item-select').focus() : item.querySelector('.item-description').focus();
-            }
-            
+        }
+
+        function removeItem(button) {
+            const item = button.closest('.order-item');
+            item.remove();
+            calculateTotal();
             resequenceItems();
         }
 
-        // Funções Auxiliares
-        function formatPrice(input) {
-            // Remove tudo que não for número e a vírgula/ponto
-            let value = input.value.replace(/[^\d,.]/g, '');
-            
-            // Substitui vírgula por ponto para cálculo JS
-            value = value.replace(',', '.');
-            
-            // Garante que só há um ponto decimal
-            let parts = value.split('.');
-            if (parts.length > 2) {
-                value = parts.shift() + '.' + parts.join('');
-            }
-            
-            // Formata o valor de volta para o padrão BRL (vírgula)
-            let displayValue = value.replace('.', ',');
-            
-            input.value = displayValue;
-        }
-
-        function calculateTotal(element) {
-            const item = element.closest('.form-item');
-            const qtyInput = item.querySelector('.item-qty');
-            const priceInput = item.querySelector('.item-price');
-            const subtotalDisplay = item.querySelector('.item-subtotal');
-            
-            let qty = parseFloat(qtyInput.value) || 0;
-            // Converte para padrão americano para cálculo
-            let price = parseFloat(priceInput.value.replace(',', '.')) || 0;
-            
-            const subtotal = qty * price;
-            subtotalDisplay.textContent = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
-            
-            // Recalcula o total geral
-            let grandTotal = 0;
-            document.querySelectorAll('.item-subtotal').forEach(sub => {
-                // Remove R$ e substitui vírgula por ponto para somar
-                const subValue = parseFloat(sub.textContent.replace('R$', '').replace(',', '.').trim()) || 0;
-                grandTotal += subValue;
-            });
-            
-            document.getElementById('poTotalDisplay').textContent = `R$ ${grandTotal.toFixed(2).replace('.', ',')}`;
-            document.getElementById('poTotal').value = grandTotal.toFixed(2); // Valor para salvar no banco
-        }
-        
-        function removeItem(button) {
-            const item = button.closest('.form-item');
-            item.remove();
-            calculateTotal(document.getElementById('poTotal')); // Recalcula total
-            resequenceItems(); // Reorganiza os data-index
-        }
-        
-        function updateItemDescription(select) {
-            const item = select.closest('.form-item');
-            const selectedOption = select.options[select.selectedIndex];
-            const priceInput = item.querySelector('.item-price');
-            const descInput = item.querySelector('.item-description');
-            
-            if (selectedOption.value) {
-                // Atualiza o preço com o valor do data-price do produto selecionado
-                priceInput.value = selectedOption.getAttribute('data-price').replace('.', ',');
-                
-                // Pega o nome do produto e usa como descrição
-                const sku = selectedOption.value;
-                const product = productList[sku];
-                if(product) {
-                     descInput.value = `${product.name} (SKU: ${product.sku})`;
+        function resequenceItems() {
+            const items = document.querySelectorAll('.order-item');
+            items.forEach((item, index) => {
+                const numberDiv = item.querySelector('.order-item-number');
+                if (numberDiv) {
+                    numberDiv.textContent = `${index + 1}.`;
+                    item.setAttribute('data-id', index + 1);
                 }
-                
-                // Coloca o foco na quantidade
-                item.querySelector('.item-qty').focus();
+            });
+        }
+        
+        // **NOVA FUNÇÃO:** Atualiza a descrição do produto ao ser selecionado
+        function updateItemDescription(selectElement) {
+            const row = selectElement.closest('.order-item');
+            const sku = selectElement.value;
+            
+            const product = productsList.find(p => p.sku === sku);
+            const priceInput = row.querySelector('.item-price');
+            const descElement = row.querySelector('.product-description-text');
+            
+            if (product) {
+                // Atualiza a descrição
+                descElement.textContent = product.desc || 'Sem descrição cadastrada.';
+
+                // Atualiza o preço com o preço padrão (se a linha estiver zerada)
+                let currentPrice = priceInput.value.replace('.', '').replace(',', '.');
+                if (parseFloat(currentPrice) === 0 || priceInput.value.trim() === '') {
+                    priceInput.value = product.price.replace('.', ',');
+                }
             } else {
-                // Limpa os campos se nada for selecionado
-                priceInput.value = '';
-                descInput.value = '';
+                descElement.textContent = '';
+                // Se nenhum produto selecionado, zera o preço
+                priceInput.value = '0,00';
             }
             
-            calculateTotal(item.querySelector('.item-qty'));
+            calculateTotal();
+            resequenceItems();
         }
 
-        // Funções de Salvar/Finalizar
-        async function buildPoObject() {
-            // Validação de campos principais
-            const form = document.getElementById('purchaseOrderForm');
-            if (!form.checkValidity()) {
-                showCustomAlert('Atenção', 'Por favor, preencha todos os campos obrigatórios (cabeçalho e itens).');
-                form.reportValidity(); // Mostra as mensagens de erro nativas
-                return null;
+        // Formatação de Preço (R$,##)
+        function formatPrice(input) {
+            let value = input.value.replace(/\D/g, ''); 
+            if (value.length > 2) {
+                value = value.replace(/(\d{2})$/, ',$1'); 
+            } else if (value.length === 1) {
+                value = '0,0' + value;
+            } else if (value.length === 2) {
+                value = '0,' + value;
             }
-            
-            const poNumber = document.getElementById('poNumber').value;
+            input.value = value;
+        }
+
+        function calculateTotal() {
+            let grandTotal = 0;
+            const items = document.querySelectorAll('.order-item');
+
+            items.forEach(item => {
+                const qtyInput = item.querySelector('.item-qty');
+                const priceInput = item.querySelector('.item-price');
+                const totalInput = item.querySelector('.item-total');
+
+                const qty = parseInt(qtyInput.value) || 0;
+                // Converte preço de R$,## para R$.##
+                const price = parseFloat(priceInput.value.replace('.', '').replace(',', '.')) || 0;
+                
+                const itemTotal = qty * price;
+                grandTotal += itemTotal;
+
+                // Formata o total da linha para R$ X.XXX,XX
+                totalInput.value = 'R$ ' + itemTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            });
+
+            // Formata o total geral para R$ X.XXX,XX
+            document.getElementById('grandTotal').textContent = 'R$ ' + grandTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        /* --------------------------------------------------
+        * FUNÇÕES DE SALVAMENTO E FINALIZAÇÃO (BOTÕES)
+        * -------------------------------------------------- */
+        
+        // 1. Função para extrair os dados do formulário
+        function getFormData() {
+            const poNumber = document.getElementById('poNumber').value.trim();
             const poDate = document.getElementById('poDate').value;
             const supplierCnpj = document.getElementById('supplierSelect').value;
-            const poTotal = document.getElementById('poTotal').value;
+            const supplier = suppliersList.find(s => s.cnpj === supplierCnpj);
             
-            // Verifica se o fornecedor existe na lista
-            const supplier = supplierList[supplierCnpj];
-            if (!supplier) {
-                showCustomAlert('Erro', 'Fornecedor selecionado inválido. Recarregue a página.');
-                return null;
-            }
-            
-            const poItems = [];
-            let allItemsValid = true;
+            // NOVO CAMPO
+            const poDueDate = document.getElementById('poDueDate').value; 
 
-            document.querySelectorAll('#itemsContainer .form-item').forEach(item => {
-                const qty = item.querySelector('.item-qty').value;
-                const price = item.querySelector('.item-price').value.replace(',', '.');
-                const sku = item.querySelector('.item-select') ? item.querySelector('.item-select').value : '';
-                const description = item.querySelector('.item-description').value;
+            // CAMPOS DA FARMÁCIA (Confirmados)
+            const pharmacyName = document.getElementById('pharmacyName').value.trim();
+            const deliveryAddress = document.getElementById('deliveryAddress').value.trim();
+            const deliveryDate = document.getElementById('deliveryDate').value;
+            const contactPhone = document.getElementById('contactPhone').value.trim();
+
+            const items = [];
+            let isValid = true;
+            let total = 0;
+
+            document.querySelectorAll('.order-item').forEach(item => {
+                const sku = item.querySelector('.product-select').value;
+                const qty = parseInt(item.querySelector('.item-qty').value) || 0;
+                const price = parseFloat(item.querySelector('.item-price').value.replace('.', '').replace(',', '.')) || 0;
                 
-                // Validação mínima de item
-                if (parseFloat(qty) <= 0 || parseFloat(price) <= 0 || !description.trim()) {
-                    allItemsValid = false;
-                    return;
+                if (!sku || qty <= 0 || price <= 0) {
+                    isValid = false;
+                    return; 
                 }
-                
-                poItems.push({
+
+                const product = productsList.find(p => p.sku === sku);
+                const itemName = product ? product.name : 'Produto Desconhecido';
+                const itemDesc = product ? (product.desc || 'Sem descrição cadastrada.') : '';
+
+                items.push({
                     sku: sku,
-                    description: description,
-                    qty: parseFloat(qty).toFixed(0),
-                    price: parseFloat(price).toFixed(2),
-                    subtotal: (parseFloat(qty) * parseFloat(price)).toFixed(2)
+                    name: itemName,
+                    desc: itemDesc, // Incluindo a descrição
+                    qty: qty,
+                    price: price.toFixed(2), // Salva em formato US para cálculo
+                    total: (qty * price).toFixed(2)
                 });
+                total += qty * price;
             });
 
-            if (!allItemsValid) {
-                showCustomAlert('Atenção', 'Verifique se todos os itens possuem Quantidade, Preço e Descrição válidos (> 0).');
+            if (!isValid) {
+                showCustomAlert('Atenção', 'Todos os itens devem ter um Produto, Quantidade (>0) e Preço (>0).');
                 return null;
             }
 
-            if (poItems.length === 0) {
-                 showCustomAlert('Atenção', 'O pedido deve ter pelo menos um item.');
-                 return null;
+            if (!poNumber || !poDate || !supplierCnpj || !poDueDate || !pharmacyName || !deliveryAddress || !deliveryDate || !contactPhone) {
+                showCustomAlert('Atenção', 'Por favor, preencha todos os campos obrigatórios (Número do Pedido, Data de Emissão, Fornecedor, Prazo de Vencimento, e Dados da Farmácia).');
+                return null;
             }
             
+            if (items.length === 0) {
+                showCustomAlert('Atenção', 'O pedido deve conter pelo menos um item.');
+                return null;
+            }
+
+
             return {
                 poNumber: poNumber,
                 poDate: poDate,
                 supplierCnpj: supplierCnpj,
-                supplierName: supplier.name,
-                supplierAddress: supplier.address,
-                supplierPhone: supplier.phone,
-                poTotal: poTotal,
-                items: poItems,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                supplierName: supplier ? supplier.name : 'N/A',
+                poDueDate: poDueDate, // NOVO CAMPO
+                
+                // DADOS DA FARMÁCIA
+                pharmacyName: pharmacyName,
+                deliveryAddress: deliveryAddress,
+                deliveryDate: deliveryDate,
+                contactPhone: contactPhone,
+
+                items: items,
+                grandTotal: total.toFixed(2),
+                status: '', // Será definido pela função chamadora
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             };
         }
 
-        async function saveAsDraft(event) {
-            event.preventDefault(); // Não submete o formulário
+        // 2. Função de salvamento Core
+        async function saveOrder(event, targetCollection, status) {
+            event.preventDefault();
             
-            const poData = await buildPoObject();
-            if (!poData) return;
+            const poData = getFormData();
+            if (!poData) return; // Se a validação falhar, sai
 
-            // Usa o número do PO como ID do rascunho
-            const draftId = poData.poNumber;
+            poData.status = status;
+            
+            // Se estiver editando um rascunho, o ID é o mesmo
+            const poId = document.getElementById('poNumber').value;
+            const docRef = getUserCollectionRef(targetCollection).doc(poId);
 
             try {
-                await getUserCollectionRef('drafts').doc(draftId).set(poData);
-                showCustomAlert('Rascunho Salvo!', `Rascunho N° ${draftId} salvo com sucesso! Você pode continuar editando na página 'Rascunhos'.`, () => {
-                    // Limpa o formulário e inicia um novo pedido
-                    window.location.href = 'index.html'; 
+                if (!isEditing || !poData.createdAt) { // Se for novo, ou rascunho sem data
+                    poData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                }
+
+                await docRef.set(poData);
+
+                // Se salvou no histórico, remove dos rascunhos (caso estivesse editando um rascunho)
+                if (targetCollection === 'orders' && editingFromDraft) {
+                     await getUserCollectionRef('drafts').doc(poId).delete();
+                }
+
+                let successMessage = '';
+                if (status === 'Rascunho') {
+                    successMessage = `Pedido N° ${poId} salvo como **RASCUNHO** com sucesso!`;
+                } else {
+                    successMessage = `Pedido N° ${poId} salvo no **HISTÓRICO** com sucesso!`;
+                }
+
+                showCustomAlert('Sucesso!', successMessage, () => {
+                    if (status === 'Finalizado') {
+                        window.location.href = 'historico.html';
+                    } else {
+                        // Reseta a página para um novo pedido (mantendo o ID, se for a mesma sessão)
+                        window.location.href = 'index.html?po=' + poId; 
+                    }
                 });
-                
+
             } catch (error) {
-                console.error("Erro ao salvar rascunho:", error);
-                showCustomAlert('Erro', 'Não foi possível salvar o rascunho: ' + error.message);
+                console.error(`Erro ao salvar pedido como ${status}:`, error);
+                showCustomAlert('Erro', `Não foi possível salvar o pedido como ${status}: ` + error.message);
             }
         }
 
-        async function saveAndFinalize(event) {
-            event.preventDefault(); 
-            
-            const poData = await buildPoObject();
-            if (!poData) return;
+        // 3. Funções chamadas pelos Botões
 
-            const poNumber = poData.poNumber;
+        // Salvar em Rascunho
+        function saveAsDraft(event) {
+            saveOrder(event, 'drafts', 'Rascunho');
+        }
 
-            try {
-                // 1. Salva na coleção 'orders'
-                await getUserCollectionRef('orders').doc(poNumber).set(poData);
-                
-                // 2. Se for uma finalização de rascunho, remove o rascunho original
-                if (draftToEdit) {
-                    await getUserCollectionRef('drafts').doc(draftToEdit).delete();
-                }
-                
-                showCustomAlert('Pedido Finalizado!', `Pedido N° ${poNumber} salvo no Histórico.`, () => {
-                     // 3. Gera e exibe o PDF (Abre em nova aba)
-                    printPo(poData);
-                });
-                
-            } catch (error) {
-                console.error("Erro ao finalizar pedido:", error);
-                showCustomAlert('Erro', 'Não foi possível finalizar o pedido: ' + error.message);
-            }
+        // Salvar Definitivo (Finalizar)
+        function saveOrderAsFinal(event) {
+            showCustomConfirm('Finalizar Pedido', 'Tem certeza que deseja SALVAR este pedido como Finalizado e enviá-lo ao Histórico?', () => {
+                saveOrder(event, 'orders', 'Finalizado');
+            });
         }
         
-        // Simulação de Geração/Impressão de PO
-        function printPo(poData) {
-            let htmlContent = `
-                <style>
-                    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; font-size: 10pt; }
-                    .header h1 { color: #004c99; font-size: 18pt; margin: 0 0 10px 0; border-bottom: 2px solid #004c99; padding-bottom: 5px;}
-                    .header h2 { font-size: 12pt; margin: 0 0 15px 0; color: #333; }
-                    .details, .supplier-info { margin-bottom: 20px; border: 1px solid #ccc; padding: 10px; border-radius: 5px; }
-                    .details div { margin-bottom: 5px; }
-                    .supplier-info strong, .details strong { color: #004c99; }
-                    .supplier-info { margin-top: 15px; }
-
-                    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-                    th { background-color: #e6f0ff; color: #004c99; }
-                    .total-row td { font-weight: bold; background-color: #f4f7f6; font-size: 12pt; text-align: right; }
-                    .text-right { text-align: right; }
-
-                    @media print {
-                        .no-print { display: none; }
-                    }
-                </style>
-                <div class="header">
-                    <h1>PEDIDO DE COMPRA N° ${poData.poNumber}</h1>
-                    <h2>Data de Emissão: ${poData.poDate}</h2>
-                </div>
-                
-                <div class="supplier-info">
-                    <strong>FORNECEDOR: ${poData.supplierName}</strong><br>
-                    CNPJ: ${poData.supplierCnpj} | Telefone: ${poData.supplierPhone || 'N/A'}<br>
-                    Endereço: ${poData.supplierAddress || 'N/A'}
-                </div>
-
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Qtd</th>
-                            <th>Descrição do Item</th>
-                            <th>Preço Unit.</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${poData.items.map(item => `
-                            <tr>
-                                <td>${item.qty}</td>
-                                <td>${item.description}</td>
-                                <td class="text-right">R$ ${item.price.replace('.', ',')}</td>
-                                <td class="text-right">R$ ${item.subtotal.replace('.', ',')}</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                    <tfoot>
-                        <tr class="total-row">
-                            <td colspan="3" class="text-right">TOTAL GERAL:</td>
-                            <td>R$ ${poData.poTotal.replace('.', ',')}</td>
-                        </tr>
-                    </tfoot>
-                </table>
-            `;
-
-            // Abre uma nova janela para impressão/visualização
-            const printWindow = window.open('', '_blank', 'height=600,width=800');
-            printWindow.document.write('<html><head><title>Pedido N° ' + poData.poNumber + '</title></head><body>');
-            printWindow.document.write(htmlContent);
-            printWindow.document.write('</body></html>');
-            printWindow.document.close();
+        // Visualizar Pedido de Compra (Prévia de Impressão)
+        function viewPo(event) {
+            event.preventDefault();
+            const poData = getFormData();
+            if (!poData) return;
             
-            // Adiciona um pequeno atraso para garantir que o conteúdo foi carregado antes de imprimir
-            printWindow.onload = () => {
-                 printWindow.focus(); // Foca na nova janela
-                 printWindow.print(); // Abre a caixa de diálogo de impressão
-            };
+            let printWindow = window.open('', '_blank');
+            printWindow.document.write(generatePrintContent(poData));
+            printWindow.document.close();
+            printWindow.focus();
+            setTimeout(() => {
+                printWindow.print();
+            }, 500);
         }
 
+        // Função auxiliar para gerar o conteúdo HTML para impressão
+        function generatePrintContent(order) {
+            const itemsHtml = order.items.map((item, index) => `
+                <tr>
+                    <td class="item-index">${index + 1}</td>
+                    <td class="item-sku">${item.sku}</td>
+                    <td class="item-name">
+                        ${item.name}<br>
+                        <small>Descrição: ${item.desc}</small>
+                    </td>
+                    <td class="item-qty">${item.qty}</td>
+                    <td class="item-price">R$ ${parseFloat(item.price).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td class="item-total">R$ ${parseFloat(item.total).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                </tr>
+            `).join('');
 
-        // Carregar Pedido para Edição (usado por rascunhos.html e historico.html)
+            return `
+                <html>
+                <head>
+                    <title>Pedido de Compra N° ${order.poNumber}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; font-size: 10pt; }
+                        .po-container { max-width: 800px; margin: 0 auto; border: 1px solid #000; padding: 20px; }
+                        h1 { text-align: center; color: #004c99; margin-bottom: 20px; font-size: 16pt; border-bottom: 2px solid #004c99; padding-bottom: 5px; }
+                        h2 { font-size: 12pt; color: #333; margin-top: 15px; margin-bottom: 5px; border-bottom: 1px solid #ccc; padding-bottom: 2px; }
+                        .details { display: flex; flex-wrap: wrap; margin-bottom: 10px; }
+                        .detail-item { flex: 1 1 50%; min-width: 300px; margin-bottom: 5px; }
+                        .detail-item strong { font-weight: bold; }
+
+                        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        th { background-color: #f2f2f2; color: #333; font-weight: bold; }
+                        .item-qty, .item-price, .item-total { text-align: right; }
+                        .item-index { text-align: center; width: 30px; }
+
+                        .po-total { text-align: right; margin-top: 20px; font-size: 14pt; font-weight: bold; color: #004c99; }
+                        
+                        @media print {
+                            body { margin: 0; }
+                            .po-container { border: none; padding: 0; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="po-container">
+                        <h1>PEDIDO DE COMPRA N° ${order.poNumber}</h1>
+                        
+                        <h2>Dados Gerais</h2>
+                        <div class="details">
+                            <div class="detail-item"><strong>Fornecedor:</strong> ${order.supplierName}</div>
+                            <div class="detail-item"><strong>Emissão:</strong> ${new Date(order.poDate + 'T00:00:00').toLocaleDateString('pt-BR')}</div>
+                            <div class="detail-item"><strong>Prazo Vencimento:</strong> ${new Date(order.poDueDate + 'T00:00:00').toLocaleDateString('pt-BR')}</div>
+                        </div>
+
+                        <h2>Dados da Farmácia (Entrega)</h2>
+                        <div class="details">
+                            <div class="detail-item"><strong>Farmácia:</strong> ${order.pharmacyName}</div>
+                            <div class="detail-item"><strong>Endereço:</strong> ${order.deliveryAddress}</div>
+                            <div class="detail-item"><strong>Data de Entrega Solicitada:</strong> ${new Date(order.deliveryDate + 'T00:00:00').toLocaleDateString('pt-BR')}</div>
+                            <div class="detail-item"><strong>Telefone:</strong> ${order.contactPhone}</div>
+                        </div>
+
+                        <h2>Itens do Pedido</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="item-index">#</th>
+                                    <th>SKU</th>
+                                    <th>Produto / Descrição</th>
+                                    <th class="item-qty">Qtd</th>
+                                    <th class="item-price">Unitário</th>
+                                    <th class="item-total">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${itemsHtml}
+                            </tbody>
+                        </table>
+                        
+                        <div class="po-total">
+                            Total Geral: R$ ${parseFloat(order.grandTotal).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </div>
+                        
+                        <div style="text-align: center; margin-top: 50px; padding-top: 20px; border-top: 1px dashed #ccc;">
+                            Assinatura do Responsável
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `;
+        }
+        
+        /* --------------------------------------------------
+        * FUNÇÕES DE CARREGAMENTO DE PEDIDO (AO EDITAR)
+        * -------------------------------------------------- */
+        
+        // Gera um ID sequencial para novos pedidos
+        async function getNextPoNumber() {
+            const counterRef = db.collection('metadata').doc('poCounter');
+            const userCounterRef = getUserCollectionRef('counter').doc('poCounter');
+            
+            // Tenta obter o contador específico do usuário
+            let doc = await userCounterRef.get();
+            if (!doc.exists) {
+                 // Se não existir, inicializa em 1.000.001
+                 await userCounterRef.set({ lastPoNumber: 1000000, currentYear: new Date().getFullYear() });
+                 doc = await userCounterRef.get(); // Re-fetch
+            }
+
+            // Aumenta o contador (simples incremento, sem garantia de atomicidade no client side, mas funcional)
+            const lastNumber = doc.data().lastPoNumber || 1000000;
+            const newNumber = lastNumber + 1;
+            
+            // Salva o novo valor do contador
+            await userCounterRef.update({ lastPoNumber: newNumber }); 
+
+            // Formato: 2025-1000001
+            return `${new Date().getFullYear()}-${newNumber}`;
+        }
+        
+        // Carrega um pedido (rascunho ou histórico) para edição
         async function loadOrderForEditing(poNumber, collectionName) {
-            document.getElementById('itemsContainer').innerHTML = ''; // Limpa itens existentes
-            itemIndex = 0; // Reseta o index
+            isEditing = true;
+            editingFromDraft = (collectionName === 'drafts');
+            
+            document.getElementById('poNumber').value = poNumber;
             
             try {
                 const doc = await getUserCollectionRef(collectionName).doc(poNumber).get();
+
                 if (!doc.exists) {
-                    showCustomAlert('Erro', `O Pedido/Rascunho N° ${poNumber} não foi encontrado.`);
+                    showCustomAlert('Erro', 'Pedido não encontrado para edição.', () => {
+                        window.location.href = 'index.html'; // Redireciona para novo pedido
+                    });
                     return;
                 }
-                
-                const po = doc.data();
 
-                // 1. Preenche Cabeçalho
-                document.getElementById('poNumber').value = po.poNumber;
-                document.getElementById('poDate').value = po.poDate;
+                const poData = doc.data();
                 
-                // Espera o carregamento do select e depois define o valor
-                const selectElement = document.getElementById('supplierSelect');
-                let interval = setInterval(() => {
-                    if (selectElement.options.length > 1) { // Verifica se as opções foram carregadas
-                        selectElement.value = po.supplierCnpj;
-                        clearInterval(interval);
-                    }
-                }, 100);
+                // Preenche os campos principais
+                document.getElementById('poIdHidden').value = poNumber;
+                document.getElementById('poDate').value = poData.poDate;
+                document.getElementById('supplierSelect').value = poData.supplierCnpj;
                 
-                // 2. Preenche Itens
-                po.items.forEach(item => {
-                    addItem({
+                // NOVO CAMPO
+                document.getElementById('poDueDate').value = poData.poDueDate || ''; 
+                
+                // CAMPOS DA FARMÁCIA
+                document.getElementById('pharmacyName').value = poData.pharmacyName || '';
+                document.getElementById('deliveryAddress').value = poData.deliveryAddress || '';
+                document.getElementById('deliveryDate').value = poData.deliveryDate || '';
+                document.getElementById('contactPhone').value = poData.contactPhone || '';
+                formatPhone(document.getElementById('contactPhone'));
+
+                // Limpa os itens atuais e carrega os novos
+                document.getElementById('orderItemsContainer').innerHTML = '';
+                poData.items.forEach(item => {
+                    // Item com preço formatado corretamente para o input
+                    const itemData = {
                         sku: item.sku,
-                        desc: item.description,
                         qty: item.qty,
-                        price: item.price
-                    });
+                        price: parseFloat(item.price).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+                        desc: item.desc // Passa a descrição para ser exibida
+                    };
+                    addItem(itemData);
                 });
                 
-                // 3. Atualiza total (será feito dentro do addItem, mas chama novamente para garantir)
-                calculateTotal(document.getElementById('poTotal')); 
+                // Garante que o total seja calculado
+                calculateTotal();
+
+                if (collectionName === 'orders') {
+                    showCustomAlert('Atenção', `Você está **EDITANDO** um pedido Finalizado (N° ${poNumber}). Se salvar, ele será atualizado no Histórico.`, null);
+                } else {
+                    showCustomAlert('Atenção', `Você está **EDITANDO** um Rascunho (N° ${poNumber}).`, null);
+                }
 
             } catch (error) {
                 console.error("Erro ao carregar pedido para edição:", error);
-                showCustomAlert('Erro', 'Não foi possível carregar o pedido/rascunho para edição.');
+                showCustomAlert('Erro', 'Falha ao carregar pedido para edição.');
             }
         }
-
-
-        // Função principal que orquestra o carregamento de dados
+        
+        // Função principal de inicialização
         async function init() {
+            // Verifica se há um ID de PO/Rascunho na URL para edição
+            const urlParams = new URLSearchParams(window.location.search);
+            const poToEdit = urlParams.get('po');
+            const draftToEdit = urlParams.get('draft');
+
+            // Carrega listas antes de tudo
             await loadSupplierSelect();
             await loadProductSelect();
             
@@ -894,7 +985,12 @@
             } else {
                 // Novo pedido: Define data e número
                 document.getElementById('poDate').value = new Date().toISOString().slice(0, 10);
+                document.getElementById('poDueDate').value = new Date(new Date().setDate(new Date().getDate() + 7)).toISOString().slice(0, 10); // Sugere 7 dias
+                
+                // Obtém e define o próximo número de PO
+                document.getElementById('poNumber').value = 'Carregando...'; // Placeholder
                 document.getElementById('poNumber').value = await getNextPoNumber();
+                
                 addItem(); // Adiciona um item inicial vazio
             }
         }
@@ -904,9 +1000,7 @@
 
         window.onload = () => {
             setupModal();
-            // CHAMA A FUNÇÃO CORRIGIDA
             setupFirebase(); 
-            document.getElementById('purchaseOrderForm').addEventListener('submit', saveAndFinalize);
         };
 
         // Exporta funções para uso global (onchange/onclick no HTML)
@@ -915,7 +1009,8 @@
         window.calculateTotal = calculateTotal;
         window.updateItemDescription = updateItemDescription;
         window.saveAsDraft = saveAsDraft;
-        window.saveAndFinalize = saveAndFinalize;
+        window.saveOrderAsFinal = saveOrderAsFinal;
+        window.viewPo = viewPo; 
         window.resequenceItems = resequenceItems; 
         window.closeModal = closeModal; 
         window.logout = logout;
