@@ -233,11 +233,11 @@
             <div class="delivery-details">
                 <div class="form-group" style="grid-column: 1 / -1;">
                     <label for="pharmacyName">Nome da Farmácia</label>
-                    <input type="text" id="pharmacyName" value="Farmácia do Trabalhador" required>
+                    <input type="text" id="pharmacyName" value="FARMACIA DO TRABALHADOR E APOSENTADOS DE PINHEIROS LTDA - ME" required>
                 </div>
                 <div class="form-group" style="grid-column: 1 / -1;">
                     <label for="deliveryAddress">Endereço de Entrega Completo</label>
-                    <input type="text" id="deliveryAddress" value="Rua Exemplo, 123, Centro - Cidade/Estado" required>
+                    <input type="text" id="deliveryAddress" value="PRAC BAIANA 75-B ANEXO B, Centro - Pinheiros/ES - CEP 29980-000" required>
                 </div>
                 <div class="form-group">
                     <label for="deliveryDate">Data de Entrega Solicitada</label>
@@ -245,7 +245,7 @@
                 </div>
                 <div class="form-group">
                     <label for="contactPhone">Telefone de Contato</label>
-                    <input type="text" id="contactPhone" oninput="formatPhone(this)" maxlength="15" value="(99) 99999-9999">
+                    <input type="text" id="contactPhone" oninput="formatPhone(this)" maxlength="15" value="(27) 99981-8349">
                 </div>
             </div>
 
@@ -310,7 +310,6 @@
             auth.onAuthStateChanged(user => {
                 if (user) {
                     document.querySelector('.user-info').textContent = 'Usuário: ' + (user.email || 'Admin');
-                    // Tenta carregar os dados. O redirecionamento é feito em login.html
                     if (typeof window.loadData === 'function') {
                         window.loadData();
                     }
@@ -333,8 +332,6 @@
         function getUserCollectionRef(collectionName) {
             const user = auth.currentUser;
             if (!user) {
-                // Se cair aqui, é porque a verificação auth.onAuthStateChanged falhou ou está lenta.
-                // Redireciona para garantir a segurança.
                 window.location.href = 'login.html';
                 throw new Error("Usuário não autenticado.");
             }
@@ -558,7 +555,7 @@
             });
         }
         
-        // **NOVA FUNÇÃO:** Atualiza a descrição do produto ao ser selecionado
+        // **FUNÇÃO:** Atualiza a descrição do produto ao ser selecionado
         function updateItemDescription(selectElement) {
             const row = selectElement.closest('.order-item');
             const sku = selectElement.value;
@@ -634,10 +631,9 @@
             const supplierCnpj = document.getElementById('supplierSelect').value;
             const supplier = suppliersList.find(s => s.cnpj === supplierCnpj);
             
-            // NOVO CAMPO
             const poDueDate = document.getElementById('poDueDate').value; 
 
-            // CAMPOS DA FARMÁCIA (Confirmados)
+            // CAMPOS DA FARMÁCIA (Atualizados)
             const pharmacyName = document.getElementById('pharmacyName').value.trim();
             const deliveryAddress = document.getElementById('deliveryAddress').value.trim();
             const deliveryDate = document.getElementById('deliveryDate').value;
@@ -664,9 +660,9 @@
                 items.push({
                     sku: sku,
                     name: itemName,
-                    desc: itemDesc, // Incluindo a descrição
+                    desc: itemDesc, 
                     qty: qty,
-                    price: price.toFixed(2), // Salva em formato US para cálculo
+                    price: price.toFixed(2), 
                     total: (qty * price).toFixed(2)
                 });
                 total += qty * price;
@@ -678,7 +674,7 @@
             }
 
             if (!poNumber || !poDate || !supplierCnpj || !poDueDate || !pharmacyName || !deliveryAddress || !deliveryDate || !contactPhone) {
-                showCustomAlert('Atenção', 'Por favor, preencha todos os campos obrigatórios (Número do Pedido, Data de Emissão, Fornecedor, Prazo de Vencimento, e Dados da Farmácia).');
+                showCustomAlert('Atenção', 'Por favor, preencha todos os campos obrigatórios.');
                 return null;
             }
             
@@ -693,7 +689,7 @@
                 poDate: poDate,
                 supplierCnpj: supplierCnpj,
                 supplierName: supplier ? supplier.name : 'N/A',
-                poDueDate: poDueDate, // NOVO CAMPO
+                poDueDate: poDueDate, 
                 
                 // DADOS DA FARMÁCIA
                 pharmacyName: pharmacyName,
@@ -717,12 +713,11 @@
 
             poData.status = status;
             
-            // Se estiver editando um rascunho, o ID é o mesmo
             const poId = document.getElementById('poNumber').value;
             const docRef = getUserCollectionRef(targetCollection).doc(poId);
 
             try {
-                if (!isEditing || !poData.createdAt) { // Se for novo, ou rascunho sem data
+                if (!isEditing || !poData.createdAt) {
                     poData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
                 }
 
@@ -928,14 +923,15 @@
                 document.getElementById('poDate').value = poData.poDate;
                 document.getElementById('supplierSelect').value = poData.supplierCnpj;
                 
-                // NOVO CAMPO
+                // Prazo de Vencimento
                 document.getElementById('poDueDate').value = poData.poDueDate || ''; 
                 
-                // CAMPOS DA FARMÁCIA
-                document.getElementById('pharmacyName').value = poData.pharmacyName || '';
-                document.getElementById('deliveryAddress').value = poData.deliveryAddress || '';
+                // CAMPOS DA FARMÁCIA (Mantém os valores salvos, se existirem)
+                // Se o rascunho/pedido tiver dados, eles têm prioridade sobre os defaults do HTML.
+                document.getElementById('pharmacyName').value = poData.pharmacyName || document.getElementById('pharmacyName').defaultValue;
+                document.getElementById('deliveryAddress').value = poData.deliveryAddress || document.getElementById('deliveryAddress').defaultValue;
                 document.getElementById('deliveryDate').value = poData.deliveryDate || '';
-                document.getElementById('contactPhone').value = poData.contactPhone || '';
+                document.getElementById('contactPhone').value = poData.contactPhone || document.getElementById('contactPhone').defaultValue;
                 formatPhone(document.getElementById('contactPhone'));
 
                 // Limpa os itens atuais e carrega os novos
@@ -992,6 +988,7 @@
                 document.getElementById('poNumber').value = await getNextPoNumber();
                 
                 addItem(); // Adiciona um item inicial vazio
+                formatPhone(document.getElementById('contactPhone')); // Garante formatação inicial
             }
         }
 
