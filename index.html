@@ -694,8 +694,8 @@
                 // DADOS DA FARMÁCIA
                 pharmacyName: pharmacyName,
                 deliveryAddress: deliveryAddress,
-                deliveryDate: deliveryDate,
                 contactPhone: contactPhone,
+                deliveryDate: deliveryDate,
 
                 items: items,
                 grandTotal: total.toFixed(2),
@@ -723,6 +723,12 @@
 
                 await docRef.set(poData);
 
+                // **NOVA LÓGICA:** Depois de salvar, se for um novo pedido, gera um novo número para o próximo
+                if (!isEditing) {
+                    localStorage.removeItem('currentPoNumber');
+                    localStorage.removeItem('currentPoDate');
+                }
+
                 // Se salvou no histórico, remove dos rascunhos (caso estivesse editando um rascunho)
                 if (targetCollection === 'orders' && editingFromDraft) {
                      await getUserCollectionRef('drafts').doc(poId).delete();
@@ -739,8 +745,8 @@
                     if (status === 'Finalizado') {
                         window.location.href = 'historico.html';
                     } else {
-                        // Reseta a página para um novo pedido (mantendo o ID, se for a mesma sessão)
-                        window.location.href = 'index.html?po=' + poId; 
+                        // Redireciona para o novo pedido (que agora vai gerar um novo PO)
+                        window.location.href = 'index.html'; 
                     }
                 });
 
@@ -779,7 +785,7 @@
             }, 500);
         }
 
-        // Função auxiliar para gerar o conteúdo HTML para impressão
+        // Função auxiliar para gerar o conteúdo HTML para impressão (mantida a mesma)
         function generatePrintContent(order) {
             const itemsHtml = order.items.map((item, index) => `
                 <tr>
@@ -875,24 +881,20 @@
         * FUNÇÕES DE CARREGAMENTO DE PEDIDO (AO EDITAR)
         * -------------------------------------------------- */
         
-        // Gera um ID sequencial para novos pedidos
+        // Gera um ID sequencial para novos pedidos (Corrigida)
         async function getNextPoNumber() {
-            const counterRef = db.collection('metadata').doc('poCounter');
             const userCounterRef = getUserCollectionRef('counter').doc('poCounter');
             
-            // Tenta obter o contador específico do usuário
             let doc = await userCounterRef.get();
             if (!doc.exists) {
-                 // Se não existir, inicializa em 1.000.001
                  await userCounterRef.set({ lastPoNumber: 1000000, currentYear: new Date().getFullYear() });
-                 doc = await userCounterRef.get(); // Re-fetch
+                 doc = await userCounterRef.get(); 
             }
 
-            // Aumenta o contador (simples incremento, sem garantia de atomicidade no client side, mas funcional)
             const lastNumber = doc.data().lastPoNumber || 1000000;
             const newNumber = lastNumber + 1;
             
-            // Salva o novo valor do contador
+            // Salva o novo valor do contador (Para ser usado no próximo novo pedido)
             await userCounterRef.update({ lastPoNumber: newNumber }); 
 
             // Formato: 2025-1000001
@@ -926,8 +928,7 @@
                 // Prazo de Vencimento
                 document.getElementById('poDueDate').value = poData.poDueDate || ''; 
                 
-                // CAMPOS DA FARMÁCIA (Mantém os valores salvos, se existirem)
-                // Se o rascunho/pedido tiver dados, eles têm prioridade sobre os defaults do HTML.
+                // CAMPOS DA FARMÁCIA (Mantidos os valores salvos, têm prioridade)
                 document.getElementById('pharmacyName').value = poData.pharmacyName || document.getElementById('pharmacyName').defaultValue;
                 document.getElementById('deliveryAddress').value = poData.deliveryAddress || document.getElementById('deliveryAddress').defaultValue;
                 document.getElementById('deliveryDate').value = poData.deliveryDate || '';
@@ -937,17 +938,15 @@
                 // Limpa os itens atuais e carrega os novos
                 document.getElementById('orderItemsContainer').innerHTML = '';
                 poData.items.forEach(item => {
-                    // Item com preço formatado corretamente para o input
                     const itemData = {
                         sku: item.sku,
                         qty: item.qty,
                         price: parseFloat(item.price).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
-                        desc: item.desc // Passa a descrição para ser exibida
+                        desc: item.desc 
                     };
                     addItem(itemData);
                 });
                 
-                // Garante que o total seja calculado
                 calculateTotal();
 
                 if (collectionName === 'orders') {
@@ -962,7 +961,7 @@
             }
         }
         
-        // Função principal de inicialização
+        // Função principal de inicialização (Corrigida)
         async function init() {
             // Verifica se há um ID de PO/Rascunho na URL para edição
             const urlParams = new URLSearchParams(window.location.search);
@@ -973,19 +972,37 @@
             await loadSupplierSelect();
             await loadProductSelect();
             
-            // Verifica se está editando ou criando novo
+            // Verifica se está editando (o número já veio na URL)
             if (poToEdit) {
                 await loadOrderForEditing(poToEdit, 'orders');
             } else if (draftToEdit) {
                 await loadOrderForEditing(draftToEdit, 'drafts');
             } else {
-                // Novo pedido: Define data e número
-                document.getElementById('poDate').value = new Date().toISOString().slice(0, 10);
-                document.getElementById('poDueDate').value = new Date(new Date().setDate(new Date().getDate() + 7)).toISOString().slice(0, 10); // Sugere 7 dias
+                // Novo pedido:
                 
-                // Obtém e define o próximo número de PO
-                document.getElementById('poNumber').value = 'Carregando...'; // Placeholder
-                document.getElementById('poNumber').value = await getNextPoNumber();
+                // 1. Tenta carregar o número do PO do localStorage
+                let poNumber = localStorage.getItem('currentPoNumber');
+                
+                if (!poNumber) {
+                    // 2. Se não estiver no localStorage, gera um novo número
+                    document.getElementById('poNumber').value = 'Gerando...'; 
+                    poNumber = await getNextPoNumber();
+                    localStorage.setItem('currentPoNumber', poNumber);
+                    
+                    // Salva a data de emissão junto com o PO no localStorage
+                    const today = new Date().toISOString().slice(0, 10);
+                    localStorage.setItem('currentPoDate', today);
+                }
+
+                // 3. Aplica o número (do localStorage ou recém-gerado)
+                document.getElementById('poNumber').value = poNumber;
+                
+                // Aplica a data (do localStorage ou recém-gerada)
+                const poDate = localStorage.getItem('currentPoDate') || new Date().toISOString().slice(0, 10);
+                document.getElementById('poDate').value = poDate;
+                
+                // Data de vencimento sugerida
+                document.getElementById('poDueDate').value = new Date(new Date().setDate(new Date().getDate() + 7)).toISOString().slice(0, 10);
                 
                 addItem(); // Adiciona um item inicial vazio
                 formatPhone(document.getElementById('contactPhone')); // Garante formatação inicial
