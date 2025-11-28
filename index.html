@@ -17,388 +17,996 @@
         /* Barra Superior (User/Logout) */
         .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; margin-bottom: 10px; border-bottom: 1px solid #ddd; }
         .user-info { font-weight: bold; color: #004c99; font-size: 14px; }
-        .logout-btn { background-color: #dc3545; color: white; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+        .logout-btn { background-color: #d9534f; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; transition: background-color 0.3s; }
+        .logout-btn:hover { background-color: #c9302c; }
 
-        /* Navegação */
-        nav { margin-bottom: 20px; }
-        .nav-link { color: #004c99; text-decoration: none; padding: 5px 10px; border-radius: 4px; }
-        .nav-link.active { font-weight: bold; background-color: #e6f0ff; }
+        /* Menu de Navegação */
+        .nav-menu { display: flex; justify-content: space-around; margin-bottom: 30px; padding: 10px 0; border-bottom: 2px solid #004c99; }
+        .nav-menu a { text-decoration: none; color: #004c99; font-weight: bold; padding: 8px 15px; border-radius: 5px; transition: background-color 0.3s; }
+        .nav-menu a.active, .nav-menu a:hover { background-color: #e6f0ff; }
         
-        /* Formulário */
-        h1 { color: #333; margin-top: 0; border-bottom: 2px solid #004c99; padding-bottom: 10px; }
-        .form-section { margin-bottom: 25px; padding: 15px; border: 1px solid #e0e0e0; border-radius: 6px; }
-        .form-section h2 { color: #004c99; margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-bottom: 15px; font-size: 18px; }
-        .form-row { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 15px; }
-        .form-group { flex: 1; min-width: 250px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
-        input[type="text"], input[type="email"], input[type="date"], select {
-            width: 100%;
+        /* Cabeçalho do Pedido */
+        h1 { color: #004c99; text-align: center; margin-bottom: 30px; }
+        
+        /* Detalhes do Pedido e Farmácia */
+        .header-details, .delivery-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            background-color: #f9f9f9;
+        }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        
+        /* Itens do Pedido */
+        h2 { color: #333; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 15px; }
+        .order-item {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            margin-bottom: 15px;
             padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box; /* Garante que padding não afete a largura total */
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .order-item-number {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #004c99;
+            padding-right: 10px;
+            min-width: 25px;
+            text-align: center;
+            padding-top: 10px;
         }
         
-        /* Tabela de Itens */
-        .item-list { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        .item-list th, .item-list td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-        .item-list th { background-color: #f2f2f2; color: #333; }
-        .item-list td input { border: none; padding: 5px; width: calc(100% - 10px); }
-        .item-list .qty-input, .item-list .price-input { width: 80px; text-align: right; }
-        .item-list .total-column { text-align: right; font-weight: bold; }
+        .item-details {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr; /* Produto | Qtd | Preço | Total */
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .product-select-container {
+            grid-column: 1 / span 1;
+        }
 
-        .add-item-btn { 
-            background-color: #28a745; 
-            color: white; 
-            padding: 8px 15px; 
-            border: none; 
-            border-radius: 4px; 
-            cursor: pointer; 
-            margin-top: 10px; 
+        .product-description-text {
+            display: block;
+            margin-top: 5px;
+            font-size: 0.9em;
+            color: #666;
+            font-style: italic;
+            padding: 2px 0;
+            grid-column: 1 / span 4; /* Ocupa a linha toda abaixo do select */
         }
-        .remove-item-btn { 
-            background-color: #dc3545; 
-            color: white; 
-            padding: 5px 10px; 
-            border: none; 
-            border-radius: 4px; 
-            cursor: pointer; 
-            font-size: 12px;
+
+        .item-details input {
+            text-align: right;
         }
+        
+        .remove-item-btn {
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            align-self: flex-start;
+            margin-top: 5px;
+        }
+        .remove-item-btn:hover { background-color: #c9302c; }
 
         /* Rodapé e Totais */
-        .order-summary { 
-            text-align: right; 
-            margin-top: 20px; 
-            font-size: 18px; 
+        .total-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+            border-top: 2px solid #004c99;
+            padding-top: 15px;
+        }
+        .total-box {
+            font-size: 1.4em;
             font-weight: bold;
-        }
-        .form-actions { 
-            display: flex; 
-            justify-content: flex-end; 
-            margin-top: 30px; 
-            padding-top: 20px; 
-            border-top: 1px solid #eee; 
-        }
-        .form-actions button {
+            color: #004c99;
             padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-left: 10px;
-            transition: background-color 0.3s ease;
+            background-color: #e6f0ff;
+            border-radius: 5px;
         }
-        .btn-draft { background-color: #ffc107; color: #333; }
-        .btn-draft:hover { background-color: #e0a800; }
-        .btn-primary { background-color: #004c99; color: white; }
-        .btn-primary:hover { background-color: #003366; }
-        
-        /* ******* NOVO ESTILO: BOTÃO CANCELAR ******* */
-        .btn-cancel {
-            background-color: #f0ad4e;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-right: 10px; /* Adiciona espaço à direita */
-            transition: background-color 0.3s ease;
-        }
-        .btn-cancel:hover {
-            background-color: #ec971f;
-        }
-        /* FIM DO NOVO ESTILO */
 
-        /* Estilos para Modal e Alertas (Os mesmos que nos outros arquivos) */
-        .modal { /* ... (continua com os estilos de modal, alerta e confirmação) */
-            display: none; 
-            position: fixed; 
-            z-index: 1000; 
-            left: 0; 
-            top: 0; 
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
-            background-color: rgba(0,0,0,0.4); 
-            padding-top: 60px;
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto; 
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 700px;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-        .close-btn {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-        .close-btn:hover, .close-btn:focus {
-            color: #000;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        
-        .custom-alert-box {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #fff;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            z-index: 2000;
-            text-align: center;
-            display: none;
-        }
-        .custom-alert-box h3 { margin-top: 0; color: #004c99; }
-        .custom-alert-box p { margin-bottom: 20px; }
-        .custom-alert-box button {
-            padding: 10px 20px;
-            background-color: #004c99;
+        .add-item-btn {
+            background-color: #5cb85c;
             color: white;
             border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        
-        .custom-confirm-box { 
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #fff;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            z-index: 2000;
-            text-align: center;
-            display: none; 
-        }
-        .custom-confirm-box h3 { margin-top: 0; color: #dc3545; }
-        .custom-confirm-box p { margin-bottom: 20px; }
-        .confirm-actions button {
             padding: 10px 20px;
-            margin: 0 10px;
-            border: none;
-            border-radius: 4px;
+            border-radius: 5px;
             cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
         }
-        .confirm-actions .btn-yes { background-color: #dc3545; color: white; }
-        .confirm-actions .btn-no { background-color: #ccc; color: #333; }
+        .add-item-btn:hover { background-color: #4cae4c; }
 
+        /* Botões de Ação (Bottom) */
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ccc;
+        }
+
+        .action-buttons button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .btn-secondary { background-color: #f0ad4e; color: white; } /* Laranja - Rascunho */
+        .btn-secondary:hover { background-color: #ec971f; }
+        
+        .btn-info { background-color: #004c99; color: white; } /* Azul Escuro - Visualizar */
+        .btn-info:hover { background-color: #003366; }
+        
+        .btn-primary { background-color: #5cb85c; color: white; } /* Verde - Salvar Definitivo */
+        .btn-primary:hover { background-color: #4cae4c; }
+        
+        /* Estilos do Modal (Alerta) */
+        .custom-modal-backdrop {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); z-index: 1000;
+            display: none; justify-content: center; align-items: center;
+        }
+        .custom-modal-content {
+            background-color: white; padding: 25px; border-radius: 8px;
+            width: 90%; max-width: 400px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            animation: fadeIn 0.3s;
+        }
+        .custom-modal-content h3 { color: #004c99; margin-top: 0; }
+        .custom-modal-actions { text-align: right; margin-top: 20px; }
+        .custom-modal-actions button {
+            padding: 10px 20px; margin: 5px; border: none; border-radius: 5px;
+            cursor: pointer; background-color: #004c99; color: white;
+            transition: background-color 0.3s;
+        }
+        .custom-modal-actions button:hover { background-color: #003366; }
+
+        @media (max-width: 768px) {
+            .order-item { flex-direction: column; }
+            .item-details { grid-template-columns: 1fr; gap: 10px; }
+            .remove-item-btn { align-self: flex-end; }
+            .action-buttons { flex-direction: column; }
+            .action-buttons button { width: 100%; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="top-bar">
-            <span class="user-info" id="userInfo">Carregando usuário...</span>
+            <span class="user-info">Carregando usuário...</span>
             <button class="logout-btn" onclick="logout()">Sair</button>
         </div>
 
-        <nav>
-            <span class="nav-link active">Novo Pedido</span> |
-            <a href="rascunhos.html" class="nav-link">Rascunhos</a> |
-            <a href="historico.html" class="nav-link">Histórico</a> |
-            <a href="produtos.html" class="nav-link">Produtos</a> |
-            <a href="fornecedores.html" class="nav-link">Fornecedores</a>
-        </nav>
+        <div class="nav-menu">
+            <a href="index.html" class="active">Novo Pedido</a>
+            <a href="historico.html">Histórico</a>
+            <a href="rascunhos.html">Rascunhos</a>
+            <a href="produtos.html">Catálogo</a>
+            <a href="fornecedores.html">Fornecedores</a>
+        </div>
 
-        <h1>Gerador de Pedido de Compra</h1>
+        <h1>Gerar Novo Pedido de Compra</h1>
 
-        <form id="poForm">
-            <input type="hidden" id="poNumber"> <div class="form-section">
-                <h2>Informações do Pedido</h2>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="poDate">Data do Pedido</label>
-                        <input type="date" id="poDate" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="poDueDate">Data de Vencimento</label>
-                        <input type="date" id="poDueDate" required>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-section">
-                <h2>Informações do Fornecedor</h2>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="supplierSelect">Fornecedor</label>
-                        <select id="supplierSelect" onchange="loadSupplierDetails()" required>
-                            <option value="">Selecione um Fornecedor</option>
-                            </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="contactName">Pessoa de Contato</label>
-                        <input type="text" id="contactName" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="contactPhone">Telefone</label>
-                        <input type="text" id="contactPhone" oninput="formatPhone(this)" placeholder="(00) 00000-0000" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="contactEmail">E-mail</label>
-                        <input type="email" id="contactEmail" required>
-                    </div>
+        <form id="purchaseOrderForm" onsubmit="return false;"> 
+            <input type="hidden" id="poIdHidden"> 
+            
+            <h2>Detalhes do Pedido</h2>
+            <div class="header-details">
+                <div class="form-group">
+                    <label for="poNumber">Número do Pedido</label>
+                    <input type="text" id="poNumber" required readonly>
                 </div>
                 <div class="form-group">
-                    <label for="deliveryAddress">Endereço de Entrega</label>
-                    <input type="text" id="deliveryAddress" required>
+                    <label for="poDate">Data de Emissão</label>
+                    <input type="date" id="poDate" required readonly>
+                </div>
+                <div class="form-group">
+                    <label for="supplierSelect">Fornecedor</label>
+                    <select id="supplierSelect" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="poDueDate">Prazo de Vencimento</label>
+                    <input type="date" id="poDueDate" required>
                 </div>
             </div>
 
-            <div class="form-section">
-                <h2>Itens do Pedido</h2>
-                <table class="item-list">
-                    <thead>
-                        <tr>
-                            <th style="width: 5%;">N°</th>
-                            <th style="width: 45%;">Descrição do Produto</th>
-                            <th style="width: 15%; text-align: center;">Qtd</th>
-                            <th style="width: 15%; text-align: right;">Preço Unit.</th>
-                            <th style="width: 15%;" class="total-column">Total</th>
-                            <th style="width: 5%;"></th>
-                        </tr>
-                    </thead>
-                    <tbody id="itemTableBody">
-                        </tbody>
-                </table>
-                <button type="button" class="add-item-btn" onclick="addItem()">Adicionar Item</button>
+            <h2>Dados da Farmácia (Receptor)</h2>
+            <div class="delivery-details">
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label for="pharmacyName">Nome da Farmácia</label>
+                    <input type="text" id="pharmacyName" value="FARMACIA DO TRABALHADOR E APOSENTADOS DE PINHEIROS LTDA - ME" required>
+                </div>
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label for="deliveryAddress">Endereço de Entrega Completo</label>
+                    <input type="text" id="deliveryAddress" value="PRAC BAIANA 75-B ANEXO B, Centro - Pinheiros/ES - CEP 29980-000" required>
+                </div>
+                <div class="form-group">
+                    <label for="deliveryDate">Data de Entrega Solicitada</label>
+                    <input type="date" id="deliveryDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="contactPhone">Telefone de Contato</label>
+                    <input type="text" id="contactPhone" oninput="formatPhone(this)" maxlength="15" value="(27) 99981-8349">
+                </div>
             </div>
 
-            <div class="order-summary" id="orderTotal">
-                Total do Pedido: R$ 0,00
+            <h2>Itens Solicitados</h2>
+            <div id="orderItemsContainer">
+                </div>
+            
+            <button type="button" class="add-item-btn" onclick="addItem()">+ Adicionar Item</button>
+
+            <div class="total-section">
+                <div class="total-box">Total Geral: <span id="grandTotal">R$ 0,00</span></div>
             </div>
 
-            <div class="form-actions">
-                <button type="button" class="btn-cancel" onclick="cancelEditing()">Cancelar</button>
-                <button type="button" class="btn-draft" onclick="saveAsDraft()">Salvar como Rascunho</button>
-                <button type="button" class="btn-primary" onclick="saveOrderAsFinal()">Finalizar Pedido</button>
+            <div class="action-buttons">
+                <button type="button" class="btn-secondary" onclick="saveAsDraft(event)">Salvar em Rascunho</button>
+                <button type="button" class="btn-info" onclick="viewPo(event)">Visualizar Pedido de Compra</button>
+                <button type="button" class="btn-primary" onclick="saveOrderAsFinal(event)">Salvar Definitivo</button>
             </div>
         </form>
     </div>
 
-    <div id="poModal" class="modal">
+    <div id="customModal" class="custom-modal-backdrop">
+        <div id="alertContent" class="custom-modal-content">
+            <h3 id="alertTitle">Título</h3>
+            <p id="alertMessage">Mensagem</p>
+            <div id="modalActions" class="custom-modal-actions">
+                <button class="alert-ok" onclick="closeModal()">OK</button>
+            </div>
         </div>
-    
-    <div id="customAlert" class="custom-alert-box">
-        </div>
+    </div>
 
-    <div id="customConfirm" class="custom-confirm-box">
-        </div>
-
-    <script src="js/firebase-common.js"></script>
     <script>
-        // Variável global para armazenar a lista de produtos
-        let productsList = [];
-        let suppliersList = [];
-        let poCounterRef; // Referência ao contador de POs no Firestore
+        let db;
+        let auth;
+        let suppliersList = []; // Lista de fornecedores para o <select>
+        let productsList = [];  // Lista de produtos para o <select>
+        let isEditing = false;
+        let editingFromDraft = false;
 
-        // ... (Funções de formatação: formatPhone, formatPrice)
-
-        // ... (Funções de UI: setupModal, closeModal, showCustomAlert, showCustomConfirm, viewPo, updateItemDescription)
-
-        // ... (Funções de itens: addItem, removeItem, resequenceItems, calculateTotal)
+        // CONFIGURAÇÃO DO FIREBASE COM SUA CHAVE
+        const firebaseConfig = {
+            apiKey: "AIzaSyAXKlq9WOs_5_ilfhG13xQwNVwQa6MaBfg",
+            authDomain: "farmacia-a6682.firebaseapp.com",
+            projectId: "farmacia-a6682",
+            storageBucket: "farmacia-a6682.firebasestorage.app",
+            messagingSenderId: "144965717217",
+            appId: "1:144965717217:web:de43b2316e8b7a25293ba0"
+        };
         
-        // ... (Função getFormData, loadSupplierDetails, loadProductSuggestions)
+        /* --------------------------------------------------
+        * FUNÇÕES DE UTILIDADE E FIREBASE 
+        * -------------------------------------------------- */
 
-        /**
-         * NOVO CÓDIGO: Cancela a edição, limpa as flags do localStorage 
-         * e redireciona para a origem (Histórico ou Rascunhos).
-         */
-        function cancelEditing() {
-            // Limpa os dados de edição do localStorage
-            localStorage.removeItem('editingPo');
-            localStorage.removeItem('currentPoDate');
-            localStorage.removeItem('isEditingHistory'); // Limpa a flag de histórico
+        function setupFirebase() {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
+
+            auth = firebase.auth();
+            db = firebase.firestore();
+
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    document.querySelector('.user-info').textContent = 'Usuário: ' + (user.email || 'Admin');
+                    if (typeof window.loadData === 'function') {
+                        window.loadData();
+                    }
+                } else {
+                    if (window.location.pathname.indexOf('login.html') === -1) {
+                        window.location.href = 'login.html';
+                    }
+                }
+            });
+        }
+
+        function logout() {
+            auth.signOut().then(() => {
+                window.location.href = 'login.html';
+            }).catch(error => {
+                console.error("Erro ao fazer logout:", error);
+            });
+        }
+
+        function getUserCollectionRef(collectionName) {
+            const user = auth.currentUser;
+            if (!user) {
+                window.location.href = 'login.html';
+                throw new Error("Usuário não autenticado.");
+            }
+            return db.collection('users').doc(user.uid).collection(collectionName);
+        }
+
+        // Funções de Modal (Alerta/Confirmação)
+        function setupModal() {
+            const modal = document.getElementById('customModal');
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        }
+        
+        function showCustomAlert(title, message, callback) {
+            document.getElementById('alertTitle').textContent = title;
+            document.getElementById('alertMessage').innerHTML = message;
             
-            // Redireciona para a página de rascunhos ou histórico se for a origem, senão vai para o índice
-            const referer = document.referrer;
-            if (referer.includes('historico.html')) {
-                window.location.href = 'historico.html';
-            } else if (referer.includes('rascunhos.html')) {
-                window.location.href = 'rascunhos.html';
+            const okButton = document.getElementById('modalActions').querySelector('.alert-ok');
+            if (callback) {
+                okButton.onclick = () => { closeModal(); callback(); };
             } else {
-                // Se for um novo pedido, apenas recarrega para limpar o form
-                window.location.reload(); 
+                okButton.onclick = closeModal;
+            }
+
+            document.getElementById('customModal').style.display = 'flex';
+        }
+
+        function showCustomConfirm(title, message, onYes) {
+            document.getElementById('alertTitle').textContent = title;
+            document.getElementById('alertMessage').innerHTML = message;
+            
+            const actions = document.getElementById('modalActions');
+            actions.innerHTML = `
+                <button class="btn-primary" id="modalConfirmYes">Sim</button>
+                <button class="btn-secondary" onclick="closeModal()">Não</button>
+            `;
+
+            document.getElementById('modalConfirmYes').onclick = () => {
+                closeModal();
+                onYes();
+            };
+
+            document.getElementById('customModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('customModal').style.display = 'none';
+            // Restaura o botão OK padrão para o caso de ter sido um confirm
+            document.getElementById('modalActions').innerHTML = `<button class="alert-ok" onclick="closeModal()">OK</button>`;
+        }
+        
+        // Formatação de Telefone (padrão)
+        function formatPhone(input) {
+            let value = input.value.replace(/\D/g, ''); 
+            value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
+            value = value.replace(/(\d)(\d{4})$/, '$1-$2');
+            input.value = value;
+        }
+        window.formatPhone = formatPhone; // Exporta para o HTML
+
+        /* --------------------------------------------------
+        * FUNÇÕES DE CARREGAMENTO DE DADOS (SUPPLIERS, PRODUCTS)
+        * -------------------------------------------------- */
+        
+        // Carrega Fornecedores para o Select
+        async function loadSupplierSelect() {
+            const select = document.getElementById('supplierSelect');
+            select.innerHTML = '<option value="">Carregando...</option>';
+
+            try {
+                const snapshot = await getUserCollectionRef('suppliers').orderBy('name').get();
+                suppliersList = []; // Limpa a lista local
+                select.innerHTML = '<option value="" disabled selected>Selecione um Fornecedor</option>';
+
+                snapshot.forEach(doc => {
+                    const supplier = doc.data();
+                    suppliersList.push(supplier);
+                    const option = document.createElement('option');
+                    // Usa o CNPJ (só dígitos) como value
+                    option.value = supplier.cnpj; 
+                    option.textContent = supplier.name + ' (' + supplier.cnpj + ')';
+                    select.appendChild(option);
+                });
+
+            } catch (error) {
+                console.error("Erro ao carregar fornecedores:", error);
+                select.innerHTML = '<option value="" disabled selected>Erro ao carregar fornecedores</option>';
             }
         }
 
-        /**
-         * FUNÇÃO ATUALIZADA: Salva o pedido como rascunho.
-         * Se estiver editando um item do Histórico, o item é MOVIDO (excluído do histórico)
-         */
-        async function saveAsDraft() {
-            const form = document.getElementById('poForm');
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return;
+        // Carrega Produtos para o Select
+        async function loadProductSelect() {
+            try {
+                const snapshot = await getUserCollectionRef('products').orderBy('name').get();
+                productsList = []; // Limpa a lista local
+
+                snapshot.forEach(doc => {
+                    const product = doc.data();
+                    productsList.push(product);
+                });
+
+                // Recarrega todos os selects de produto existentes
+                const selects = document.querySelectorAll('.product-select');
+                selects.forEach(select => {
+                    const selectedSku = select.value; // Guarda o valor selecionado
+                    select.innerHTML = '<option value="" disabled selected>Selecione o Produto (SKU)</option>';
+                    productsList.forEach(product => {
+                        const option = document.createElement('option');
+                        option.value = product.sku;
+                        // Exibe Nome e SKU
+                        option.textContent = `${product.name} (${product.sku})`;
+                        if (product.sku === selectedSku) {
+                            option.selected = true;
+                        }
+                        select.appendChild(option);
+                    });
+                    // Atualiza a descrição e recalcula (importante ao recarregar um rascunho)
+                    updateItemDescription(select); 
+                });
+
+            } catch (error) {
+                console.error("Erro ao carregar produtos:", error);
+                // Não há um único select, então apenas loga o erro
+            }
+        }
+
+
+        /* --------------------------------------------------
+        * FUNÇÕES DE ITENS DO PEDIDO
+        * -------------------------------------------------- */
+
+        function addItem(productData = {}) {
+            const container = document.getElementById('orderItemsContainer');
+            const count = container.children.length + 1; // ID para a nova linha
+
+            const itemHTML = `
+                <div class="order-item" data-id="${count}">
+                    <div class="order-item-number">${count}.</div>
+                    <div class="item-details">
+                        <div class="form-group product-select-container">
+                            <label>Produto</label>
+                            <select 
+                                class="product-select" 
+                                onchange="updateItemDescription(this)"
+                                required
+                            >
+                                <option value="" disabled selected>Selecione o Produto (SKU)</option>
+                                ${productsList.map(p => `
+                                    <option value="${p.sku}" ${productData.sku === p.sku ? 'selected' : ''}>
+                                        ${p.name} (${p.sku})
+                                    </option>
+                                `).join('')}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Quantidade</label>
+                            <input 
+                                type="number" 
+                                class="item-qty" 
+                                value="${productData.qty || 1}" 
+                                min="1" 
+                                oninput="calculateTotal()" 
+                                required
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label>Preço Unitário</label>
+                            <input 
+                                type="text" 
+                                class="item-price" 
+                                value="${productData.price ? productData.price.replace('.', ',') : '0,00'}" 
+                                oninput="formatPrice(this); calculateTotal()" 
+                                required
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label>Total</label>
+                            <input 
+                                type="text" 
+                                class="item-total" 
+                                value="R$ 0,00" 
+                                readonly 
+                                disabled
+                            >
+                        </div>
+                        
+                        <span id="desc-${count}" class="product-description-text">${productData.desc || (productData.sku ? 'Carregando descrição...' : '')}</span>
+                    </div>
+                    
+                    <button type="button" class="remove-item-btn" onclick="removeItem(this)">X</button>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', itemHTML);
+            calculateTotal();
+            
+            // Se dados foram fornecidos (ao carregar um rascunho), atualiza a descrição após a inserção
+            if (productData.sku) {
+                const newSelect = container.lastElementChild.querySelector('.product-select');
+                updateItemDescription(newSelect);
+            }
+        }
+
+        function removeItem(button) {
+            const item = button.closest('.order-item');
+            item.remove();
+            calculateTotal();
+            resequenceItems();
+        }
+
+        function resequenceItems() {
+            const items = document.querySelectorAll('.order-item');
+            items.forEach((item, index) => {
+                const numberDiv = item.querySelector('.order-item-number');
+                if (numberDiv) {
+                    numberDiv.textContent = `${index + 1}.`;
+                    item.setAttribute('data-id', index + 1);
+                }
+            });
+        }
+        
+        // **FUNÇÃO:** Atualiza a descrição do produto ao ser selecionado
+        function updateItemDescription(selectElement) {
+            const row = selectElement.closest('.order-item');
+            const sku = selectElement.value;
+            
+            const product = productsList.find(p => p.sku === sku);
+            const priceInput = row.querySelector('.item-price');
+            const descElement = row.querySelector('.product-description-text');
+            
+            if (product) {
+                // Atualiza a descrição
+                descElement.textContent = product.desc || 'Sem descrição cadastrada.';
+
+                // Atualiza o preço com o preço padrão (se a linha estiver zerada)
+                let currentPrice = priceInput.value.replace('.', '').replace(',', '.');
+                if (parseFloat(currentPrice) === 0 || priceInput.value.trim() === '') {
+                    priceInput.value = product.price.replace('.', ',');
+                }
+            } else {
+                descElement.textContent = '';
+                // Se nenhum produto selecionado, zera o preço
+                priceInput.value = '0,00';
+            }
+            
+            calculateTotal();
+            resequenceItems();
+        }
+
+        // Formatação de Preço (R$,##)
+        function formatPrice(input) {
+            let value = input.value.replace(/\D/g, ''); 
+            if (value.length > 2) {
+                value = value.replace(/(\d{2})$/, ',$1'); 
+            } else if (value.length === 1) {
+                value = '0,0' + value;
+            } else if (value.length === 2) {
+                value = '0,' + value;
+            }
+            input.value = value;
+        }
+
+        function calculateTotal() {
+            let grandTotal = 0;
+            const items = document.querySelectorAll('.order-item');
+
+            items.forEach(item => {
+                const qtyInput = item.querySelector('.item-qty');
+                const priceInput = item.querySelector('.item-price');
+                const totalInput = item.querySelector('.item-total');
+
+                const qty = parseInt(qtyInput.value) || 0;
+                // Converte preço de R$,## para R$.##
+                const price = parseFloat(priceInput.value.replace('.', '').replace(',', '.')) || 0;
+                
+                const itemTotal = qty * price;
+                grandTotal += itemTotal;
+
+                // Formata o total da linha para R$ X.XXX,XX
+                totalInput.value = 'R$ ' + itemTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            });
+
+            // Formata o total geral para R$ X.XXX,XX
+            document.getElementById('grandTotal').textContent = 'R$ ' + grandTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        /* --------------------------------------------------
+        * FUNÇÕES DE SALVAMENTO E FINALIZAÇÃO (BOTÕES)
+        * -------------------------------------------------- */
+        
+        // 1. Função para extrair os dados do formulário
+        function getFormData() {
+            const poNumber = document.getElementById('poNumber').value.trim();
+            const poDate = document.getElementById('poDate').value;
+            const supplierCnpj = document.getElementById('supplierSelect').value;
+            const supplier = suppliersList.find(s => s.cnpj === supplierCnpj);
+            
+            const poDueDate = document.getElementById('poDueDate').value; 
+
+            // CAMPOS DA FARMÁCIA (Atualizados)
+            const pharmacyName = document.getElementById('pharmacyName').value.trim();
+            const deliveryAddress = document.getElementById('deliveryAddress').value.trim();
+            const deliveryDate = document.getElementById('deliveryDate').value;
+            const contactPhone = document.getElementById('contactPhone').value.trim();
+
+            const items = [];
+            let isValid = true;
+            let total = 0;
+
+            document.querySelectorAll('.order-item').forEach(item => {
+                const sku = item.querySelector('.product-select').value;
+                const qty = parseInt(item.querySelector('.item-qty').value) || 0;
+                const price = parseFloat(item.querySelector('.item-price').value.replace('.', '').replace(',', '.')) || 0;
+                
+                if (!sku || qty <= 0 || price <= 0) {
+                    isValid = false;
+                    return; 
+                }
+
+                const product = productsList.find(p => p.sku === sku);
+                const itemName = product ? product.name : 'Produto Desconhecido';
+                const itemDesc = product ? (product.desc || 'Sem descrição cadastrada.') : '';
+
+                items.push({
+                    sku: sku,
+                    name: itemName,
+                    desc: itemDesc, 
+                    qty: qty,
+                    price: price.toFixed(2), 
+                    total: (qty * price).toFixed(2)
+                });
+                total += qty * price;
+            });
+
+            if (!isValid) {
+                showCustomAlert('Atenção', 'Todos os itens devem ter um Produto, Quantidade (>0) e Preço (>0).');
+                return null;
             }
 
-            const poNumber = document.getElementById('poNumber').value;
-            const draft = getFormData(poNumber, 'Rascunho');
+            if (!poNumber || !poDate || !supplierCnpj || !poDueDate || !pharmacyName || !deliveryAddress || !deliveryDate || !contactPhone) {
+                showCustomAlert('Atenção', 'Por favor, preencha todos os campos obrigatórios.');
+                return null;
+            }
             
-            // VERIFICA SE ESTAMOS EDITANDO UM ITEM DO HISTÓRICO (SETADO em historico.html)
-            const isEditingHistory = localStorage.getItem('isEditingHistory') === 'true';
+            if (items.length === 0) {
+                showCustomAlert('Atenção', 'O pedido deve conter pelo menos um item.');
+                return null;
+            }
+
+
+            return {
+                poNumber: poNumber,
+                poDate: poDate,
+                supplierCnpj: supplierCnpj,
+                supplierName: supplier ? supplier.name : 'N/A',
+                poDueDate: poDueDate, 
+                
+                // DADOS DA FARMÁCIA
+                pharmacyName: pharmacyName,
+                deliveryAddress: deliveryAddress,
+                contactPhone: contactPhone,
+                deliveryDate: deliveryDate,
+
+                items: items,
+                grandTotal: total.toFixed(2),
+                status: '', // Será definido pela função chamadora
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+        }
+
+        // 2. Função de salvamento Core
+        async function saveOrder(event, targetCollection, status) {
+            event.preventDefault();
+            
+            const poData = getFormData();
+            if (!poData) return; // Se a validação falhar, sai
+
+            poData.status = status;
+            
+            const poId = document.getElementById('poNumber').value;
+            const docRef = getUserCollectionRef(targetCollection).doc(poId);
+
+            try {
+                if (!isEditing || !poData.createdAt) {
+                    poData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                }
+
+                await docRef.set(poData);
+
+                // **NOVA LÓGICA:** Depois de salvar, se for um novo pedido, gera um novo número para o próximo
+                if (!isEditing) {
+                    localStorage.removeItem('currentPoNumber');
+                    localStorage.removeItem('currentPoDate');
+                }
+
+                // Se salvou no histórico, remove dos rascunhos (caso estivesse editando um rascunho)
+                if (targetCollection === 'orders' && editingFromDraft) {
+                     await getUserCollectionRef('drafts').doc(poId).delete();
+                }
+
+                let successMessage = '';
+                if (status === 'Rascunho') {
+                    successMessage = `Pedido N° ${poId} salvo como **RASCUNHO** com sucesso!`;
+                } else {
+                    successMessage = `Pedido N° ${poId} salvo no **HISTÓRICO** com sucesso!`;
+                }
+
+                showCustomAlert('Sucesso!', successMessage, () => {
+                    if (status === 'Finalizado') {
+                        window.location.href = 'historico.html';
+                    } else {
+                        // Redireciona para o novo pedido (que agora vai gerar um novo PO)
+                        window.location.href = 'index.html'; 
+                    }
+                });
+
+            } catch (error) {
+                console.error(`Erro ao salvar pedido como ${status}:`, error);
+                showCustomAlert('Erro', `Não foi possível salvar o pedido como ${status}: ` + error.message);
+            }
+        }
+
+        // 3. Funções chamadas pelos Botões
+
+        // Salvar em Rascunho
+        function saveAsDraft(event) {
+            saveOrder(event, 'drafts', 'Rascunho');
+        }
+
+        // Salvar Definitivo (Finalizar)
+        function saveOrderAsFinal(event) {
+            showCustomConfirm('Finalizar Pedido', 'Tem certeza que deseja SALVAR este pedido como Finalizado e enviá-lo ao Histórico?', () => {
+                saveOrder(event, 'orders', 'Finalizado');
+            });
+        }
+        
+        // Visualizar Pedido de Compra (Prévia de Impressão)
+        function viewPo(event) {
+            event.preventDefault();
+            const poData = getFormData();
+            if (!poData) return;
+            
+            let printWindow = window.open('', '_blank');
+            printWindow.document.write(generatePrintContent(poData));
+            printWindow.document.close();
+            printWindow.focus();
+            setTimeout(() => {
+                printWindow.print();
+            }, 500);
+        }
+
+        // Função auxiliar para gerar o conteúdo HTML para impressão (mantida a mesma)
+        function generatePrintContent(order) {
+            const itemsHtml = order.items.map((item, index) => `
+                <tr>
+                    <td class="item-index">${index + 1}</td>
+                    <td class="item-sku">${item.sku}</td>
+                    <td class="item-name">
+                        ${item.name}<br>
+                        <small>Descrição: ${item.desc}</small>
+                    </td>
+                    <td class="item-qty">${item.qty}</td>
+                    <td class="item-price">R$ ${parseFloat(item.price).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td class="item-total">R$ ${parseFloat(item.total).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                </tr>
+            `).join('');
+
+            return `
+                <html>
+                <head>
+                    <title>Pedido de Compra N° ${order.poNumber}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; font-size: 10pt; }
+                        .po-container { max-width: 800px; margin: 0 auto; border: 1px solid #000; padding: 20px; }
+                        h1 { text-align: center; color: #004c99; margin-bottom: 20px; font-size: 16pt; border-bottom: 2px solid #004c99; padding-bottom: 5px; }
+                        h2 { font-size: 12pt; color: #333; margin-top: 15px; margin-bottom: 5px; border-bottom: 1px solid #ccc; padding-bottom: 2px; }
+                        .details { display: flex; flex-wrap: wrap; margin-bottom: 10px; }
+                        .detail-item { flex: 1 1 50%; min-width: 300px; margin-bottom: 5px; }
+                        .detail-item strong { font-weight: bold; }
+
+                        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        th { background-color: #f2f2f2; color: #333; font-weight: bold; }
+                        .item-qty, .item-price, .item-total { text-align: right; }
+                        .item-index { text-align: center; width: 30px; }
+
+                        .po-total { text-align: right; margin-top: 20px; font-size: 14pt; font-weight: bold; color: #004c99; }
+                        
+                        @media print {
+                            body { margin: 0; }
+                            .po-container { border: none; padding: 0; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="po-container">
+                        <h1>PEDIDO DE COMPRA N° ${order.poNumber}</h1>
+                        
+                        <h2>Dados Gerais</h2>
+                        <div class="details">
+                            <div class="detail-item"><strong>Fornecedor:</strong> ${order.supplierName}</div>
+                            <div class="detail-item"><strong>Emissão:</strong> ${new Date(order.poDate + 'T00:00:00').toLocaleDateString('pt-BR')}</div>
+                            <div class="detail-item"><strong>Prazo Vencimento:</strong> ${new Date(order.poDueDate + 'T00:00:00').toLocaleDateString('pt-BR')}</div>
+                        </div>
+
+                        <h2>Dados da Farmácia (Entrega)</h2>
+                        <div class="details">
+                            <div class="detail-item"><strong>Farmácia:</strong> ${order.pharmacyName}</div>
+                            <div class="detail-item"><strong>Endereço:</strong> ${order.deliveryAddress}</div>
+                            <div class="detail-item"><strong>Data de Entrega Solicitada:</strong> ${new Date(order.deliveryDate + 'T00:00:00').toLocaleDateString('pt-BR')}</div>
+                            <div class="detail-item"><strong>Telefone:</strong> ${order.contactPhone}</div>
+                        </div>
+
+                        <h2>Itens do Pedido</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="item-index">#</th>
+                                    <th>SKU</th>
+                                    <th>Produto / Descrição</th>
+                                    <th class="item-qty">Qtd</th>
+                                    <th class="item-price">Unitário</th>
+                                    <th class="item-total">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${itemsHtml}
+                            </tbody>
+                        </table>
+                        
+                        <div class="po-total">
+                            Total Geral: R$ ${parseFloat(order.grandTotal).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </div>
+                        
+                        <div style="text-align: center; margin-top: 50px; padding-top: 20px; border-top: 1px dashed #ccc;">
+                            Assinatura do Responsável
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `;
+        }
+        
+        /* --------------------------------------------------
+        * FUNÇÕES DE CARREGAMENTO DE PEDIDO (AO EDITAR)
+        * -------------------------------------------------- */
+        
+        // Gera um ID sequencial para novos pedidos (Corrigida)
+        async function getNextPoNumber() {
+            const userCounterRef = getUserCollectionRef('counter').doc('poCounter');
+            
+            let doc = await userCounterRef.get();
+            if (!doc.exists) {
+                 await userCounterRef.set({ lastPoNumber: 1000000, currentYear: new Date().getFullYear() });
+                 doc = await userCounterRef.get(); 
+            }
+
+            const lastNumber = doc.data().lastPoNumber || 1000000;
+            const newNumber = lastNumber + 1;
+            
+            // Salva o novo valor do contador (Para ser usado no próximo novo pedido)
+            await userCounterRef.update({ lastPoNumber: newNumber }); 
+
+            // Formato: 2025-1000001
+            return `${new Date().getFullYear()}-${newNumber}`;
+        }
+        
+        // Carrega um pedido (rascunho ou histórico) para edição
+        async function loadOrderForEditing(poNumber, collectionName) {
+            isEditing = true;
+            editingFromDraft = (collectionName === 'drafts');
+            
+            document.getElementById('poNumber').value = poNumber;
             
             try {
-                // 1. Salva no Firestore na coleção de rascunhos
-                await getUserCollectionRef('drafts').doc(poNumber).set(draft);
+                const doc = await getUserCollectionRef(collectionName).doc(poNumber).get();
 
-                // 2. SE VEIO DO HISTÓRICO, EXCLUI O ORIGINAL DE LÁ (Movimentação)
-                if (isEditingHistory) {
-                    await getUserCollectionRef('orders').doc(poNumber).delete();
-                    localStorage.removeItem('isEditingHistory'); // Limpa a flag após a exclusão
+                if (!doc.exists) {
+                    showCustomAlert('Erro', 'Pedido não encontrado para edição.', () => {
+                        window.location.href = 'index.html'; // Redireciona para novo pedido
+                    });
+                    return;
                 }
+
+                const poData = doc.data();
                 
-                // Limpar dados de edição após o salvamento
-                localStorage.removeItem('editingPo');
-                localStorage.removeItem('currentPoDate');
+                // Preenche os campos principais
+                document.getElementById('poIdHidden').value = poNumber;
+                document.getElementById('poDate').value = poData.poDate;
+                document.getElementById('supplierSelect').value = poData.supplierCnpj;
                 
-                showCustomAlert('Memorizado!', `Pedido N° ${poNumber} salvo com sucesso como Rascunho.`, () => {
-                    window.location.href = 'rascunhos.html';
+                // Prazo de Vencimento
+                document.getElementById('poDueDate').value = poData.poDueDate || ''; 
+                
+                // CAMPOS DA FARMÁCIA (Mantidos os valores salvos, têm prioridade)
+                document.getElementById('pharmacyName').value = poData.pharmacyName || document.getElementById('pharmacyName').defaultValue;
+                document.getElementById('deliveryAddress').value = poData.deliveryAddress || document.getElementById('deliveryAddress').defaultValue;
+                document.getElementById('deliveryDate').value = poData.deliveryDate || '';
+                document.getElementById('contactPhone').value = poData.contactPhone || document.getElementById('contactPhone').defaultValue;
+                formatPhone(document.getElementById('contactPhone'));
+
+                // Limpa os itens atuais e carrega os novos
+                document.getElementById('orderItemsContainer').innerHTML = '';
+                poData.items.forEach(item => {
+                    const itemData = {
+                        sku: item.sku,
+                        qty: item.qty,
+                        price: parseFloat(item.price).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+                        desc: item.desc 
+                    };
+                    addItem(itemData);
                 });
+                
+                calculateTotal();
+
+                if (collectionName === 'orders') {
+                    showCustomAlert('Atenção', `Você está **EDITANDO** um pedido Finalizado (N° ${poNumber}). Se salvar, ele será atualizado no Histórico.`, null);
+                } else {
+                    showCustomAlert('Atenção', `Você está **EDITANDO** um Rascunho (N° ${poNumber}).`, null);
+                }
+
             } catch (error) {
-                console.error("Erro ao salvar como rascunho:", error);
-                showCustomAlert('Erro', 'Não foi possível salvar como rascunho: ' + error.message);
+                console.error("Erro ao carregar pedido para edição:", error);
+                showCustomAlert('Erro', 'Falha ao carregar pedido para edição.');
             }
         }
+        
+        // Função principal de inicialização (Corrigida)
+        async function init() {
+            // Verifica se há um ID de PO/Rascunho na URL para edição
+            const urlParams = new URLSearchParams(window.location.search);
+            const poToEdit = urlParams.get('po');
+            const draftToEdit = urlParams.get('draft');
 
-        // ... (Função saveOrderAsFinal)
-
-        // ... (Função init)
-        function init() {
-            // ... (código existente da init)
+            // Carrega listas antes de tudo
+            await loadSupplierSelect();
+            await loadProductSelect();
             
-            // Carregar listas de fornecedores e produtos para autocompletar e validação
-            loadSuppliersList();
-            loadProductSuggestions();
-
-            // Tenta carregar dados de um PO em edição
-            const poNumber = localStorage.getItem('editingPo');
-            
-            if (poNumber) {
-                // Se houver PO em edição, carrega
-                // ... (código de carregamento de PO existente)
+            // Verifica se está editando (o número já veio na URL)
+            if (poToEdit) {
+                await loadOrderForEditing(poToEdit, 'orders');
+            } else if (draftToEdit) {
+                await loadOrderForEditing(draftToEdit, 'drafts');
             } else {
-                // Se for um novo PO
-                // ... (código de inicialização de novo PO existente)
+                // Novo pedido:
+                
+                // 1. Tenta carregar o número do PO do localStorage
+                let poNumber = localStorage.getItem('currentPoNumber');
+                
+                if (!poNumber) {
+                    // 2. Se não estiver no localStorage, gera um novo número
+                    document.getElementById('poNumber').value = 'Gerando...'; 
+                    poNumber = await getNextPoNumber();
+                    localStorage.setItem('currentPoNumber', poNumber);
+                    
+                    // Salva a data de emissão junto com o PO no localStorage
+                    const today = new Date().toISOString().slice(0, 10);
+                    localStorage.setItem('currentPoDate', today);
+                }
+
+                // 3. Aplica o número (do localStorage ou recém-gerado)
+                document.getElementById('poNumber').value = poNumber;
+                
+                // Aplica a data (do localStorage ou recém-gerada)
+                const poDate = localStorage.getItem('currentPoDate') || new Date().toISOString().slice(0, 10);
+                document.getElementById('poDate').value = poDate;
+                
+                // Data de vencimento sugerida
+                document.getElementById('poDueDate').value = new Date(new Date().setDate(new Date().getDate() + 7)).toISOString().slice(0, 10);
+                
+                addItem(); // Adiciona um item inicial vazio
+                formatPhone(document.getElementById('contactPhone')); // Garante formatação inicial
             }
-            
-            // Não precisa de alteração na init, o controle da flag é feito em saveAsDraft e cancelEditing
-            // e a flag é definida em historico.html e rascunhos.html.
         }
 
         // Função de carregamento que é chamada após a autenticação
@@ -420,7 +1028,6 @@
         window.resequenceItems = resequenceItems; 
         window.closeModal = closeModal; 
         window.logout = logout;
-        window.cancelEditing = cancelEditing; // NOVO: Exporta a função de cancelamento
     </script>
 </body>
 </html>
