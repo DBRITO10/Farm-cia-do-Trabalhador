@@ -17,460 +17,277 @@
         /* Barra Superior (User/Logout) */
         .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; margin-bottom: 10px; border-bottom: 1px solid #ddd; }
         .user-info { font-weight: bold; color: #004c99; font-size: 14px; }
-        .logout-btn { background-color: #d9534f; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; transition: background-color 0.3s; }
-        .logout-btn:hover { background-color: #c9302c; }
-
-        /* Menu de Navegação */
-        .nav-menu { display: flex; justify-content: space-around; margin-bottom: 30px; padding: 10px 0; border-bottom: 2px solid #004c99; }
-        .nav-menu a { text-decoration: none; color: #004c99; font-weight: bold; padding: 8px 15px; border-radius: 5px; transition: background-color 0.3s; }
-        .nav-menu a.active, .nav-menu a:hover { background-color: #e6f0ff; }
+        .logout-btn { background-color: #dc3545; color: white; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
         
-        /* Cabeçalho */
-        h1 { color: #004c99; text-align: center; margin-bottom: 20px; }
-        
-        /* Campo de Busca (NOVO) */
-        .search-container {
-            margin-bottom: 20px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            background-color: #f9f9f9;
-        }
-        .search-container input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
+        /* Cabeçalho e Botões */
+        h1 { color: #333; margin-top: 0; border-bottom: 2px solid #004c99; padding-bottom: 10px; }
+        .list-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .search-input { padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: 300px; font-size: 16px; }
 
-        /* Lista de Pedidos */
-        #historyList { list-style: none; padding: 0; }
+        /* Lista de Itens */
+        .list-container { border: 1px solid #ddd; border-radius: 4px; overflow: hidden; }
         .list-item { 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
             padding: 15px; 
-            margin-bottom: 10px; 
-            border-radius: 6px; 
+            border-bottom: 1px solid #eee; 
             background-color: #fff;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            border-left: 5px solid #004c99; /* Indicador de Pedido Finalizado */
-            cursor: pointer; /* Indica que é clicável para edição */
-            transition: background-color 0.3s;
+            cursor: pointer; /* Indica que é clicável */
+            transition: background-color 0.3s ease;
         }
-        .list-item:hover { background-color: #f0f8ff; }
-
-        .list-item-details { flex-grow: 1; margin-right: 15px; }
-        .list-item-details strong { font-size: 1.1em; color: #004c99; display: block; margin-bottom: 5px; }
-        .list-item-details span { font-size: 0.9em; color: #555; display: block; }
-
-        .list-item-actions button {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-left: 10px;
+        .list-item:hover {
+            background-color: #f9f9f9;
+        }
+        .list-item:last-child {
+            border-bottom: none;
+        }
+        .po-details { 
+            flex-grow: 1; 
+            font-size: 14px;
+            color: #555;
+        }
+        .po-number { 
+            font-size: 16px; 
+            font-weight: bold; 
+            color: #004c99; 
+            margin-bottom: 5px; 
+        }
+        .po-status {
             font-weight: bold;
-            transition: background-color 0.3s;
+            color: #28a745;
         }
-        .btn-edit { background-color: #f0ad4e; color: white; }
-        .btn-edit:hover { background-color: #ec971f; }
-        .delete-btn { background-color: #d9534f; color: white; }
-        .delete-btn:hover { background-color: #c9302c; }
-        .btn-print { background-color: #5bc0de; color: white; }
-        .btn-print:hover { background-color: #31b0d5; }
-        
-        /* Estilos do Modal (Alerta/Confirmação) */
-        .custom-modal-backdrop {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); z-index: 1000;
-            display: none; justify-content: center; align-items: center;
+        .list-item-actions button {
+            margin-left: 10px;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
         }
-        .custom-modal-content {
-            background-color: white; padding: 25px; border-radius: 8px;
-            width: 90%; max-width: 400px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            animation: fadeIn 0.3s;
-        }
-        .custom-modal-content h3 { color: #004c99; margin-top: 0; }
-        .custom-modal-actions { text-align: right; margin-top: 20px; }
-        .custom-modal-actions button {
-            padding: 10px 20px; margin: 5px; border: none; border-radius: 5px;
-            cursor: pointer; background-color: #004c99; color: white;
-            transition: background-color 0.3s;
-        }
-        .custom-modal-actions button:hover { background-color: #003366; }
+        .btn-edit { background-color: #007bff; color: white; }
+        .btn-edit:hover { background-color: #0056b3; }
+        .delete-btn { background-color: #dc3545; color: white; }
+        .delete-btn:hover { background-color: #c82333; }
+        .btn-print { background-color: #6c757d; color: white; }
+        .btn-print:hover { background-color: #5a6268; }
 
+        /* Modal e Alertas Personalizados (Os mesmos que nos outros arquivos) */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1000; 
+            left: 0; 
+            top: 0; 
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.4); 
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto; /* 5% do topo e centralizado */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 700px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close-btn:hover, .close-btn:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .custom-alert-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 2000;
+            text-align: center;
+            display: none; /* Inicia oculto */
+        }
+        .custom-alert-box h3 { margin-top: 0; color: #004c99; }
+        .custom-alert-box p { margin-bottom: 20px; }
+        .custom-alert-box button {
+            padding: 10px 20px;
+            background-color: #004c99;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .custom-confirm-box { /* Estilo similar ao alerta */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 2000;
+            text-align: center;
+            display: none; 
+        }
+        .custom-confirm-box h3 { margin-top: 0; color: #dc3545; }
+        .custom-confirm-box p { margin-bottom: 20px; }
+        .confirm-actions button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .confirm-actions .btn-yes { background-color: #dc3545; color: white; }
+        .confirm-actions .btn-no { background-color: #ccc; color: #333; }
+
+        /* Estilos de impressão (para a função printPo) */
+        @media print {
+            body * { visibility: hidden; }
+            .modal, .modal * { visibility: visible; }
+            .modal { position: absolute; left: 0; top: 0; width: 100%; height: auto; padding-top: 0; }
+            .modal-content { margin: 0; width: 100%; max-width: none; border: none; box-shadow: none; }
+            .close-btn, .print-btn { display: none; }
+            .po-view { page-break-after: always; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="top-bar">
-            <span class="user-info">Carregando usuário...</span>
+            <span class="user-info" id="userInfo">Carregando usuário...</span>
             <button class="logout-btn" onclick="logout()">Sair</button>
         </div>
 
-        <div class="nav-menu">
-            <a href="index.html">Novo Pedido</a>
-            <a href="historico.html" class="active">Histórico</a>
-            <a href="rascunhos.html">Rascunhos</a>
-            <a href="produtos.html">Catálogo</a>
-            <a href="fornecedores.html">Fornecedores</a>
-        </div>
+        <nav>
+            <a href="index.html" class="nav-link">Novo Pedido</a> |
+            <a href="rascunhos.html" class="nav-link">Rascunhos</a> |
+            <span class="nav-link active">Histórico</span> |
+            <a href="produtos.html" class="nav-link">Produtos</a> |
+            <a href="fornecedores.html" class="nav-link">Fornecedores</a>
+        </nav>
 
         <h1>Histórico de Pedidos Finalizados</h1>
-        
-        <div class="search-container">
-            <input type="text" id="searchInput" oninput="filterList()" placeholder="Buscar por N° do Pedido, Fornecedor ou Data...">
+
+        <div class="list-controls">
+            <input type="text" id="filterInput" class="search-input" onkeyup="filterList()" placeholder="Filtrar por N° ou Fornecedor...">
         </div>
 
-        <ul id="historyList">
-            <p style="text-align: center;">Carregando histórico...</p>
-        </ul>
-    </div>
-
-    <div id="customModal" class="custom-modal-backdrop">
-        <div id="alertContent" class="custom-modal-content">
-            <h3 id="alertTitle">Título</h3>
-            <p id="alertMessage">Mensagem</p>
-            <div id="modalActions" class="custom-modal-actions">
-                <button class="alert-ok" onclick="closeModal()">OK</button>
-            </div>
+        <div class="list-container" id="historyList">
+            <p>Carregando pedidos...</p>
         </div>
     </div>
 
+    <div id="poModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('poModal')">&times;</span>
+            <div id="poViewContent">
+                </div>
+            <button class="btn-print" onclick="window.print()" style="margin-top: 20px;">Imprimir Pedido</button>
+        </div>
+    </div>
+
+    <div id="customAlert" class="custom-alert-box">
+        <h3 id="customAlertTitle"></h3>
+        <p id="customAlertMessage"></p>
+        <button id="customAlertButton">OK</button>
+    </div>
+
+    <div id="customConfirm" class="custom-confirm-box">
+        <h3 id="customConfirmTitle"></h3>
+        <p id="customConfirmMessage"></p>
+        <div class="confirm-actions">
+            <button class="btn-yes" id="customConfirmYes">Sim</button>
+            <button class="btn-no" id="customConfirmNo">Não</button>
+        </div>
+    </div>
+
+    <script src="js/firebase-common.js"></script>
     <script>
-        let db;
-        let auth;
-        let allOrders = []; // Armazena todos os pedidos para o filtro
+        // ... (resto do JS, incluindo setupFirebase, logout, setupModal, showCustomAlert, showCustomConfirm)
+        // ... (Função loadHistory, viewPo, filterList, deletePo, printPo)
 
-        // CONFIGURAÇÃO DO FIREBASE COM SUA CHAVE
-        const firebaseConfig = {
-            apiKey: "AIzaSyAXKlq9WOs_5_ilfhG13xQwNVwQa6MaBfg",
-            authDomain: "farmacia-a6682.firebaseapp.com",
-            projectId: "farmacia-a6682",
-            storageBucket: "farmacia-a6682.firebasestorage.app",
-            messagingSenderId: "144965717217",
-            appId: "1:144965717217:web:de43b2316e8b7a25293ba0"
-        };
-
-        /* --------------------------------------------------
-        * FUNÇÕES DE UTILIDADE E FIREBASE 
-        * -------------------------------------------------- */
-
-        function setupFirebase() {
-            if (!firebase.apps.length) {
-                firebase.initializeApp(firebaseConfig);
-            }
-
-            auth = firebase.auth();
-            db = firebase.firestore();
-
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    document.querySelector('.user-info').textContent = 'Usuário: ' + (user.email || 'Admin');
-                    if (typeof window.loadData === 'function') {
-                        window.loadData();
-                    }
-                } else {
-                    if (window.location.pathname.indexOf('login.html') === -1) {
-                        window.location.href = 'login.html';
-                    }
-                }
-            });
-        }
-
-        function logout() {
-            auth.signOut().then(() => {
-                window.location.href = 'login.html';
-            }).catch(error => {
-                console.error("Erro ao fazer logout:", error);
-            });
-        }
-
-        function getUserCollectionRef(collectionName) {
-            const user = auth.currentUser;
-            if (!user) {
-                window.location.href = 'login.html';
-                throw new Error("Usuário não autenticado.");
-            }
-            return db.collection('users').doc(user.uid).collection(collectionName);
-        }
-
-        // Funções de Modal (Alerta/Confirmação)
-        function setupModal() {
-            const modal = document.getElementById('customModal');
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    closeModal();
-                }
-            });
-        }
-        
-        function showCustomAlert(title, message, callback) {
-            document.getElementById('alertTitle').textContent = title;
-            document.getElementById('alertMessage').innerHTML = message;
+        /**
+         * FUNÇÃO editPo ATUALIZADA (AJUSTE SOLICITADO)
+         * Leva o usuário para a tela de edição e marca que o pedido veio do histórico.
+         */
+        function editPo(poNumber, event) {
+            event.stopPropagation();
             
-            const okButton = document.getElementById('modalActions').querySelector('.alert-ok');
-            if (callback) {
-                okButton.onclick = () => { closeModal(); callback(); };
-            } else {
-                okButton.onclick = closeModal;
-            }
-
-            document.getElementById('customModal').style.display = 'flex';
-        }
-
-        function showCustomConfirm(title, message, onYes) {
-            document.getElementById('alertTitle').textContent = title;
-            document.getElementById('alertMessage').innerHTML = message;
+            // Salva o número do pedido em localStorage para que index.html possa carregar
+            localStorage.setItem('editingPo', poNumber);
             
-            const actions = document.getElementById('modalActions');
-            actions.innerHTML = `
-                <button class="btn-primary" id="modalConfirmYes">Sim</button>
-                <button class="btn-secondary" onclick="closeModal()">Não</button>
-            `;
+            // Armazena a data atual do pedido para manter a numeração (opcional, mas bom manter)
+            const poDateElement = document.querySelector(`.list-item[data-po="${poNumber}"] .po-date`);
+            const poDate = poDateElement ? poDateElement.textContent.split(': ')[1] : new Date().toISOString().slice(0, 10);
+            localStorage.setItem('currentPoDate', poDate);
 
-            document.getElementById('modalConfirmYes').onclick = () => {
-                closeModal();
-                onYes();
-            };
-
-            document.getElementById('customModal').style.display = 'flex';
+            // ******* AJUSTE: DEFINE A FLAG DE EDIÇÃO DO HISTÓRICO *******
+            localStorage.setItem('isEditingHistory', 'true');
+            
+            window.location.href = 'index.html';
         }
 
-        function closeModal() {
-            document.getElementById('customModal').style.display = 'none';
-            // Restaura o botão OK padrão para o caso de ter sido um confirm
-            document.getElementById('modalActions').innerHTML = `<button class="alert-ok" onclick="closeModal()">OK</button>`;
-        }
-        
-        // Formatação de Data
-        function formatDate(dateString) {
-            if (!dateString) return 'N/A';
-            // dateString deve ser AAAA-MM-DD, então passamos para o Date com T00:00:00 para evitar problemas de fuso
-            const date = new Date(dateString + 'T00:00:00'); 
-            return date.toLocaleDateString('pt-BR');
-        }
-        
-        /* --------------------------------------------------
-        * FUNÇÕES DE LISTAGEM E FILTRO (HISTÓRICO)
-        * -------------------------------------------------- */
-
-        async function loadHistory() {
+        function loadHistory() {
             const list = document.getElementById('historyList');
-            list.innerHTML = '<p style="text-align: center;">Carregando pedidos...</p>';
+            if (!auth.currentUser) {
+                list.innerHTML = '<p>Faça login para ver o histórico.</p>';
+                return;
+            }
 
-            try {
-                // Busca no Firestore e ordena por data de criação (mais recente primeiro)
-                const snapshot = await getUserCollectionRef('orders').orderBy('createdAt', 'desc').get();
-                allOrders = []; // Limpa a lista de pedidos
-
+            getUserCollectionRef('orders').orderBy('poNumber', 'desc').onSnapshot((snapshot) => {
+                list.innerHTML = ''; // Limpa a lista antes de preencher
                 if (snapshot.empty) {
-                    list.innerHTML = '<p style="text-align: center;">Nenhum pedido finalizado encontrado.</p>';
+                    list.innerHTML = '<p>Nenhum pedido finalizado encontrado no histórico.</p>';
                     return;
                 }
 
                 snapshot.forEach(doc => {
-                    const order = doc.data();
-                    order.id = doc.id; // Adiciona o ID (que é o poNumber)
-                    allOrders.push(order);
+                    const po = doc.data();
+                    const item = document.createElement('div');
+                    item.className = 'list-item';
+                    item.setAttribute('data-po', po.poNumber);
+                    item.setAttribute('data-supplier', po.supplierName.toLowerCase());
+                    item.onclick = () => viewPo(po);
+
+                    const statusText = po.status || 'Finalizado'; 
+
+                    item.innerHTML = `
+                        <div class="po-details">
+                            <div class="po-number">Pedido N°: ${po.poNumber}</div>
+                            <div class="po-supplier">Fornecedor: <strong>${po.supplierName}</strong></div>
+                            <div class="po-date">Data: ${po.poDate}</div>
+                            <div class="po-status">Status: ${statusText}</div>
+                        </div>
+                        <div class="list-item-actions">
+                            <button class="btn-edit" onclick="editPo('${po.poNumber}', event)">Editar</button>
+                            <button class="btn-print" onclick="printPo(${JSON.stringify(po).split(/"/).join('&quot;')}, event)">Imprimir</button>
+                            <button class="delete-btn" onclick="deletePo('${po.poNumber}', event)">Excluir</button>
+                        </div>
+                    `;
+                    list.appendChild(item);
                 });
-
-                // Renderiza a lista inicial
-                renderList(allOrders);
-
-            } catch (error) {
-                console.error("Erro ao carregar histórico:", error);
-                list.innerHTML = '<p style="color: red; text-align: center;">Erro ao carregar o histórico de pedidos.</p>';
-            }
-        }
-
-        function renderList(ordersToRender) {
-            const list = document.getElementById('historyList');
-            list.innerHTML = ''; // Limpa a lista antes de renderizar
-
-            if (ordersToRender.length === 0) {
-                 list.innerHTML = '<p style="text-align: center;">Nenhum pedido encontrado com o filtro aplicado.</p>';
-                 return;
-            }
-
-            ordersToRender.forEach(order => {
-                const item = document.createElement('li');
-                item.className = 'list-item';
-                // Adiciona a função para editar/visualizar ao clicar no item (área principal)
-                item.onclick = () => editPo(order.id); 
-
-                const poDateFormatted = formatDate(order.poDate);
-                const totalFormatted = parseFloat(order.grandTotal).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
-                item.innerHTML = `
-                    <div class="list-item-details">
-                        <strong>Pedido N°: ${order.id}</strong>
-                        <span>Fornecedor: ${order.supplierName || 'N/A'}</span>
-                        <span>Emissão: ${poDateFormatted} | Total: ${totalFormatted}</span>
-                    </div>
-                    <div class="list-item-actions">
-                        <button class="btn-print" onclick="printPo('${order.id}', event)">Imprimir</button>
-                        <button class="btn-edit" onclick="editPo('${order.id}', event)">Visualizar/Editar</button>
-                        <button class="delete-btn" onclick="deletePo('${order.id}', event)">Excluir</button>
-                    </div>
-                `;
-                list.appendChild(item);
+            }, (error) => {
+                console.error("Erro no listener do histórico:", error);
+                list.innerHTML = '<p style="color: red;">Erro ao carregar histórico.</p>';
             });
         }
         
-        // **NOVA FUNÇÃO:** Filtra a lista com base no input
-        function filterList() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-            
-            if (searchTerm === '') {
-                renderList(allOrders);
-                return;
-            }
-
-            const filteredOrders = allOrders.filter(order => {
-                // Busca em: poNumber, supplierName, poDate (formatada)
-                const poDateFormatted = formatDate(order.poDate);
-                
-                return order.id.toLowerCase().includes(searchTerm) ||
-                       (order.supplierName && order.supplierName.toLowerCase().includes(searchTerm)) ||
-                       poDateFormatted.includes(searchTerm);
-            });
-
-            renderList(filteredOrders);
-        }
-
-
-        /* --------------------------------------------------
-        * FUNÇÕES DE AÇÃO (EDIÇÃO, EXCLUSÃO, IMPRESSÃO)
-        * -------------------------------------------------- */
-
-        function editPo(poNumber, event) {
-            if (event) event.stopPropagation();
-            // Redireciona para o index.html com o parâmetro 'po' para carregar a edição
-            window.location.href = `index.html?po=${poNumber}`;
-        }
-        
-        // A função printPo no historico.html precisa carregar os dados para gerar a impressão.
-        async function printPo(poNumber, event) {
-            event.stopPropagation();
-            
-            try {
-                const doc = await getUserCollectionRef('orders').doc(poNumber).get();
-                if (!doc.exists) {
-                    showCustomAlert('Erro', 'Pedido não encontrado para impressão.');
-                    return;
-                }
-                const poData = doc.data();
-
-                // Usa o código de geração de impressão que já existe no index.html (reproduzido aqui)
-                let printWindow = window.open('', '_blank');
-                printWindow.document.write(generatePrintContent(poData));
-                printWindow.document.close();
-                printWindow.focus();
-                setTimeout(() => {
-                    printWindow.print();
-                }, 500);
-
-            } catch (error) {
-                 console.error("Erro ao carregar PO para impressão:", error);
-                 showCustomAlert('Erro', 'Não foi possível carregar o pedido para impressão.');
-            }
-        }
-        
-        // Função auxiliar para gerar o conteúdo HTML para impressão (Copiada do index.html para funcionar aqui)
-        function generatePrintContent(order) {
-            const itemsHtml = order.items.map((item, index) => `
-                <tr>
-                    <td class="item-index">${index + 1}</td>
-                    <td class="item-sku">${item.sku}</td>
-                    <td class="item-name">
-                        ${item.name}<br>
-                        <small>Descrição: ${item.desc || 'Sem descrição'}</small>
-                    </td>
-                    <td class="item-qty">${item.qty}</td>
-                    <td class="item-price">R$ ${parseFloat(item.price).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                    <td class="item-total">R$ ${parseFloat(item.total).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                </tr>
-            `).join('');
-
-            return `
-                <html>
-                <head>
-                    <title>Pedido de Compra N° ${order.poNumber}</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; font-size: 10pt; }
-                        .po-container { max-width: 800px; margin: 0 auto; border: 1px solid #000; padding: 20px; }
-                        h1 { text-align: center; color: #004c99; margin-bottom: 20px; font-size: 16pt; border-bottom: 2px solid #004c99; padding-bottom: 5px; }
-                        h2 { font-size: 12pt; color: #333; margin-top: 15px; margin-bottom: 5px; border-bottom: 1px solid #ccc; padding-bottom: 2px; }
-                        .details { display: flex; flex-wrap: wrap; margin-bottom: 10px; }
-                        .detail-item { flex: 1 1 50%; min-width: 300px; margin-bottom: 5px; }
-                        .detail-item strong { font-weight: bold; }
-
-                        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-                        th { background-color: #f2f2f2; color: #333; font-weight: bold; }
-                        .item-qty, .item-price, .item-total { text-align: right; }
-                        .item-index { text-align: center; width: 30px; }
-
-                        .po-total { text-align: right; margin-top: 20px; font-size: 14pt; font-weight: bold; color: #004c99; }
-                        
-                        @media print {
-                            body { margin: 0; }
-                            .po-container { border: none; padding: 0; }
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="po-container">
-                        <h1>PEDIDO DE COMPRA N° ${order.poNumber}</h1>
-                        
-                        <h2>Dados Gerais</h2>
-                        <div class="details">
-                            <div class="detail-item"><strong>Fornecedor:</strong> ${order.supplierName}</div>
-                            <div class="detail-item"><strong>Emissão:</strong> ${new Date(order.poDate + 'T00:00:00').toLocaleDateString('pt-BR')}</div>
-                            <div class="detail-item"><strong>Prazo Vencimento:</strong> ${new Date(order.poDueDate + 'T00:00:00').toLocaleDateString('pt-BR')}</div>
-                        </div>
-
-                        <h2>Dados da Farmácia (Entrega)</h2>
-                        <div class="details">
-                            <div class="detail-item"><strong>Farmácia:</strong> ${order.pharmacyName}</div>
-                            <div class="detail-item"><strong>Endereço:</strong> ${order.deliveryAddress}</div>
-                            <div class="detail-item"><strong>Data de Entrega Solicitada:</strong> ${new Date(order.deliveryDate + 'T00:00:00').toLocaleDateString('pt-BR')}</div>
-                            <div class="detail-item"><strong>Telefone:</strong> ${order.contactPhone}</div>
-                        </div>
-
-                        <h2>Itens do Pedido</h2>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th class="item-index">#</th>
-                                    <th>SKU</th>
-                                    <th>Produto / Descrição</th>
-                                    <th class="item-qty">Qtd</th>
-                                    <th class="item-price">Unitário</th>
-                                    <th class="item-total">Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${itemsHtml}
-                            </tbody>
-                        </table>
-                        
-                        <div class="po-total">
-                            Total Geral: R$ ${parseFloat(order.grandTotal).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                        </div>
-                        
-                        <div style="text-align: center; margin-top: 50px; padding-top: 20px; border-top: 1px dashed #ccc;">
-                            Assinatura do Responsável
-                        </div>
-                    </div>
-                </body>
-                </html>
-            `;
-        }
-
         function deletePo(poNumber, event) {
             event.stopPropagation();
             showCustomConfirm(
