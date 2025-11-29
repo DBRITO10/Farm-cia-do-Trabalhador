@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Acesso Restrito ao Sistema</title>
     
+    <!-- Firebase SDKs V8 (Mantendo compatibilidade com o código) -->
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
@@ -33,11 +34,13 @@
         .logo {
             max-width: 150px;
             margin-bottom: 25px;
+            border-radius: 5px;
         }
 
-        h2 {
-            margin-bottom: 20px;
+        h1 {
             color: #004c99;
+            margin-bottom: 30px;
+            font-size: 1.5em;
         }
 
         .form-group {
@@ -47,7 +50,7 @@
 
         .form-group label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             font-weight: bold;
             color: #333;
         }
@@ -56,227 +59,136 @@
             width: 100%;
             padding: 12px;
             border: 1px solid #ccc;
-            border-radius: 6px;
+            border-radius: 5px;
             box-sizing: border-box;
-            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: #004c99;
+            outline: none;
         }
 
         .login-btn {
             width: 100%;
             padding: 12px;
-            background-color: #007bff;
+            background-color: #004c99;
             color: white;
             border: none;
-            border-radius: 6px;
+            border-radius: 5px;
+            font-size: 1.1em;
             cursor: pointer;
-            font-size: 18px;
-            font-weight: bold;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, opacity 0.3s;
         }
 
         .login-btn:hover:not(:disabled) {
-            background-color: #0056b3;
+            background-color: #003366;
         }
-        
+
         .login-btn:disabled {
-            background-color: #999;
+            background-color: #ccc;
             cursor: not-allowed;
+            opacity: 0.7;
         }
 
         .error-message {
-            margin-top: 15px;
+            color: #d9534f;
+            background-color: #f9e2e1;
             padding: 10px;
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
             border-radius: 5px;
-            text-align: left;
+            margin-top: 15px;
             display: none;
         }
-
-        .register-link {
-            margin-top: 20px;
-            font-size: 14px;
-        }
-
-        .register-link a {
-            color: #007bff;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        
-        /* Custom Alert/Confirm */
-        #customAlertModal {
-            display: none;
-            position: fixed;
-            z-index: 100;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.6);
-        }
-        #customAlertContent {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 400px;
-            border-radius: 10px;
-            text-align: center;
-        }
-        #customAlertTitle {
-            font-size: 1.5em;
-            margin-bottom: 15px;
-            color: #004c99;
-        }
-        #customAlertMessage {
-            margin-bottom: 20px;
-        }
-        #customAlertButtons button {
-            padding: 10px 20px;
-            margin: 5px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        .alert-ok-btn { background-color: #007bff; color: white; }
     </style>
-</head>
-<body>
-    <div class="login-container">
-        <img src="Logo.jpg" alt="Logo da Empresa" class="logo">
-        <h2>Acesso ao Sistema</h2>
-        
-        <div class="error-message" id="errorMessage"></div>
-        
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="email">E-mail</label>
-                <input type="email" id="email" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Senha</label>
-                <input type="password" id="password" required>
-            </div>
-            
-            <button type="submit" class="login-btn" id="loginButton" disabled>Entrar</button>
-        </form>
-        
-        <div class="register-link">
-            Não tem cadastro? 
-            <p style="margin-top: 5px;">Entre em contato com o administrador.</p>
-        </div>
-    </div>
-    
-    <div id="customAlertModal">
-        <div id="customAlertContent">
-            <h3 id="customAlertTitle"></h3>
-            <p id="customAlertMessage"></p>
-            <div id="customAlertButtons">
-                <button class="alert-ok-btn" onclick="closeCustomAlert()">OK</button>
-            </div>
-        </div>
-    </div>
-
 
     <script>
-        // Variáveis de Configuração Firebase (Deve ser definido globalmente ou em um arquivo comum)
-        // ATENÇÃO: Substitua pelos seus dados de configuração
+        // SEUS DADOS DE CONFIGURAÇÃO FORNECIDOS (CORRIGIDO)
         const firebaseConfig = {
-            apiKey: "AIzaSyAXKlq9WOs_5_ilfhG13xQwNVwQa6MaBfg",
-            authDomain: "farmacia-a6682.firebaseapp.com",
-            projectId: "farmacia-a6682",
-            storageBucket: "farmacia-a6682.firebasestorage.app",
-            messagingSenderId: "144965717217",
-            appId: "1:144965717217:web:de43b2316e8b7a25293ba0"
+          apiKey: "AIzaSyAXKlq9WOs_5_ilfhG13xQwNVwQa6MaBfg",
+          authDomain: "farmacia-a6682.firebaseapp.com",
+          projectId: "farmacia-a6682",
+          storageBucket: "farmacia-a6682.firebasestorage.app",
+          messagingSenderId: "144965717217",
+          appId: "1:144965717217:web:de43b2316e8b7a25293ba0"
         };
         
-        let auth;
-        
-        function initializeFirebase() {
-            try {
-                if (!firebase.apps.length) {
-                    firebase.initializeApp(firebaseConfig);
-                }
-                auth = firebase.auth();
-                // O restante da inicialização e verificação de estado vai no final do script
-            } catch (error) {
-                console.error("Erro ao inicializar Firebase:", error);
-                showError("ERRO: As bibliotecas do Firebase não estão carregadas. Verifique a configuração.");
-                setButtonState(false);
-            }
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
         }
 
-        // --- Funções de UI/Alert ---
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Variável global para controle de promessa do modal (necessário para a função showError)
+        let resolveModalPromise; 
+
+        function setButtonState(disabled) {
+            document.getElementById('loginButton').disabled = disabled;
+            document.getElementById('loginButton').textContent = disabled ? 'Aguarde...' : 'Acessar';
+        }
+
+        // Funções de Modal (Alerta/Erro) - Versão simplificada para Login
+        function setupModal() {
+            const modal = document.getElementById('customModal');
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        }
 
         function showError(message) {
             const errorElement = document.getElementById('errorMessage');
             errorElement.textContent = message;
             errorElement.style.display = 'block';
         }
-
-        function setButtonState(isLoading) {
-            const button = document.getElementById('loginButton');
-            button.disabled = isLoading;
-            button.textContent = isLoading ? 'Aguarde...' : 'Entrar';
-        }
         
-        function setupModal() {
-            // Apenas para uso do show/closeError (que usa customAlert no outro código)
-            // Mantendo a lógica de um alert simples no login por conveniência
+        function hideError() {
+            document.getElementById('errorMessage').style.display = 'none';
         }
+
+    </script>
+</head>
+<body>
+    <div class="login-container">
+        <!-- Substitua pela sua Logo real -->
+        <img src="Logo.jpg" alt="Logo da Empresa" class="logo">
+        <h1>Sistema de Pedidos de Compra</h1>
         
-        function showCustomAlert(title, message) {
-            document.getElementById('customAlertTitle').textContent = title;
-            document.getElementById('customAlertMessage').textContent = message;
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" required value="admin@exemplo.com">
+            </div>
             
-            const buttonsDiv = document.getElementById('customAlertButtons');
-            buttonsDiv.innerHTML = `<button class="alert-ok-btn" onclick="closeCustomAlert()">OK</button>`;
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <input type="password" id="password" required value="123456">
+            </div>
             
-            document.getElementById('customAlertModal').style.display = 'block';
-        }
-        
-        function closeCustomAlert() {
-            document.getElementById('customAlertModal').style.display = 'none';
-        }
-
-
-        // --- Lógica Principal de Login ---
-
-        window.onload = () => {
-             // Inicia o Firebase
-            initializeFirebase();
+            <div id="errorMessage" class="error-message"></div>
             
-            // Tenta verificar o estado de autenticação ANTES de vincular o formulário
-            if (typeof auth !== 'undefined') {
-                 auth.onAuthStateChanged(user => {
-                    if (user) {
-                        // Se já estiver logado, redireciona para a página principal
-                        window.location.href = 'index.html';
-                    } else {
-                        // Se não estiver logado, habilita o botão de login para o usuário tentar
-                        setButtonState(false); 
-                    }
-                });
-            }
+            <button type="submit" id="loginButton" class="login-btn" disabled>Aguarde...</button>
+        </form>
+    </div>
 
-
-            // Adiciona o listener de submissão do formulário APÓS a inicialização do Firebase
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+             // Esconde a mensagem de erro ao carregar
+            hideError(); 
+            // Já que o Firebase está inicializado no head, definimos o listener do formulário
             document.getElementById('loginForm').addEventListener('submit', async (event) => {
                 event.preventDefault();
                 setButtonState(true);
-                document.getElementById('errorMessage').style.display = 'none';
+                hideError();
 
                 const email = document.getElementById('email').value;
                 const password = document.getElementById('password').value;
 
                 try {
-                    const userCredential = await auth.signInWithEmailAndPassword(email, password);
-                    // Sucesso no login, redireciona
+                    await auth.signInWithEmailAndPassword(email, password);
+                    
+                    // Login bem-sucedido, redireciona
                     window.location.href = 'index.html'; 
 
                 } catch (error) {
@@ -293,11 +205,26 @@
                     setButtonState(false);
                 }
             });
-        };
-        
-        
-        // Exporta funções para uso global (se necessário)
-        window.showError = showError;
+        });
+
+        // Verificação de estado para redirecionamento automático
+        if (typeof auth !== 'undefined') {
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    // Se já estiver logado, redireciona para a página principal
+                    window.location.href = 'index.html';
+                } else {
+                    // Se não estiver logado, habilita o botão de login
+                    setButtonState(false);
+                }
+            });
+        } else {
+             // Tratamento de erro se o Firebase não carregar
+             window.onload = () => {
+                showError("ERRO: As bibliotecas do Firebase não estão carregadas.");
+                setButtonState(false);
+            };
+        }
     </script>
 </body>
 </html>

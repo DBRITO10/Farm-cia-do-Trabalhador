@@ -17,252 +17,275 @@
         /* Barra Superior (User/Logout) */
         .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; margin-bottom: 10px; border-bottom: 1px solid #ddd; }
         .user-info { font-weight: bold; color: #004c99; font-size: 14px; }
-        .logout-btn { background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; transition: background 0.3s; }
-        .logout-btn:hover { background: #c82333; }
+        .logout-btn { background-color: #d9534f; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; transition: background-color 0.3s; }
+        .logout-btn:hover { background-color: #c9302c; }
 
-        /* Navegação */
-        nav { margin-bottom: 20px; }
-        nav a { margin-right: 15px; text-decoration: none; color: #004c99; font-weight: bold; }
-        nav a:hover { text-decoration: underline; }
+        /* Menu de Navegação */
+        .nav-menu { display: flex; justify-content: space-around; margin-bottom: 30px; padding: 10px 0; border-bottom: 2px solid #004c99; }
+        .nav-menu a { text-decoration: none; color: #004c99; font-weight: bold; padding: 8px 15px; border-radius: 5px; transition: background-color 0.3s; }
+        .nav-menu a.active, .nav-menu a:hover { background-color: #e6f0ff; }
         
-        /* Formulário de Cabeçalho */
-        .header-form { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; padding: 15px; border: 1px solid #ccc; border-radius: 8px; }
-        .form-group { margin-bottom: 15px; }
+        /* Cabeçalho do Pedido */
+        h1 { color: #004c99; text-align: center; margin-bottom: 30px; }
+        
+        /* Detalhes do Pedido e Farmácia */
+        .header-details, .delivery-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            background-color: #f9f9f9;
+        }
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; }
-        .form-group input, .form-group select {
-            width: 100%;
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        
+        /* Itens do Pedido */
+        h2 { color: #333; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 15px; }
+        .order-item {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            margin-bottom: 15px;
             padding: 10px;
-            border: 1px solid #ccc;
+            border: 1px solid #ddd;
             border-radius: 5px;
-            box-sizing: border-box; 
         }
 
-        /* Tabela de Itens */
-        .items-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .items-table th, .items-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        .items-table th { background-color: #f0f0f0; }
-        .items-table input[type="number"], 
-        .items-table input[type="text"] {
-            width: 100%;
-            padding: 5px;
-            border: 1px solid #eee;
-            border-radius: 3px;
-            box-sizing: border-box;
+        .order-item-number {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #004c99;
+            padding-right: 10px;
+            min-width: 25px;
+            text-align: center;
+            padding-top: 10px;
+        }
+        
+        .item-details {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr; /* Produto | Qtd | Preço | Total */
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .product-select-container {
+            grid-column: 1 / span 1;
+        }
+
+        .product-description-text {
+            display: block;
+            margin-top: 5px;
+            font-size: 0.9em;
+            color: #666;
+            font-style: italic;
+            padding: 2px 0;
+            grid-column: 1 / span 4; /* Ocupa a linha toda abaixo do select */
+        }
+
+        .item-details input {
             text-align: right;
         }
-        .items-table .item-desc { width: 40%; text-align: left; }
-        .items-table .item-sku { width: 15%; }
-        .items-table .item-qty, .items-table .item-price, .items-table .item-total { width: 15%; text-align: right; }
-        .items-table .item-actions { width: 50px; text-align: center; }
-        .items-table .delete-btn { background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; }
-
-        /* Rodapé / Totais */
-        .footer-actions { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            margin-top: 20px; 
-            padding-top: 15px; 
-            border-top: 1px solid #ddd;
-        }
-        .total-area { font-size: 1.5em; font-weight: bold; color: #004c99; }
-        .action-buttons button { margin-left: 10px; padding: 10px 20px; border-radius: 5px; cursor: pointer; transition: background 0.3s; }
-        .btn-draft { background-color: #ffc107; color: #333; border: none; }
-        .btn-draft:hover { background-color: #e0a800; }
-        .btn-finalize { background-color: #28a745; color: white; border: none; }
-        .btn-finalize:hover { background-color: #218838; }
-
-        /* Modal e Alertas */
-        .modal {
-            display: none; 
-            position: fixed; 
-            z-index: 10; 
-            left: 0; 
-            top: 0;
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
-            background-color: rgba(0,0,0,0.4); 
-            padding-top: 60px;
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 10% auto; 
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%; 
-            max-width: 400px;
-            border-radius: 10px;
-            position: relative;
-            text-align: center;
-        }
-        .close-btn {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-        .close-btn:hover,
-        .close-btn:focus {
-            color: #000;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .alert {
-            padding: 10px;
-            margin-bottom: 15px;
+        
+        .remove-item-btn {
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            padding: 8px 12px;
             border-radius: 5px;
-            text-align: left;
-            display: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            align-self: flex-start;
+            margin-top: 5px;
         }
-        .alert-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .remove-item-btn:hover { background-color: #c9302c; }
 
+        /* Rodapé e Totais */
+        .total-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+            border-top: 2px solid #004c99;
+            padding-top: 15px;
+        }
+        .total-box {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #004c99;
+            padding: 10px 20px;
+            background-color: #e6f0ff;
+            border-radius: 5px;
+        }
+
+        .add-item-btn {
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        .add-item-btn:hover { background-color: #4cae4c; }
+
+        /* Botões de Ação (Bottom) */
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ccc;
+        }
+
+        .action-buttons button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .btn-secondary { background-color: #f0ad4e; color: white; } /* Laranja - Rascunho */
+        .btn-secondary:hover { background-color: #ec971f; }
+        
+        .btn-info { background-color: #004c99; color: white; } /* Azul Escuro - Visualizar */
+        .btn-info:hover { background-color: #003366; }
+        
+        .btn-primary { background-color: #5cb85c; color: white; } /* Verde - Salvar Definitivo */
+        .btn-primary:hover { background-color: #4cae4c; }
+        
+        /* Estilos do Modal (Alerta) */
+        .custom-modal-backdrop {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); z-index: 1000;
+            display: none; justify-content: center; align-items: center;
+        }
+        .custom-modal-content {
+            background-color: white; padding: 25px; border-radius: 8px;
+            width: 90%; max-width: 400px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            animation: fadeIn 0.3s;
+        }
+        .custom-modal-content h3 { color: #004c99; margin-top: 0; }
+        .custom-modal-actions { text-align: right; margin-top: 20px; }
+        .custom-modal-actions button {
+            padding: 10px 20px; margin: 5px; border: none; border-radius: 5px;
+            cursor: pointer; background-color: #004c99; color: white;
+            transition: background-color 0.3s;
+        }
+        .custom-modal-actions button:hover { background-color: #003366; }
+
+        @media (max-width: 768px) {
+            .order-item { flex-direction: column; }
+            .item-details { grid-template-columns: 1fr; gap: 10px; }
+            .remove-item-btn { align-self: flex-end; }
+            .action-buttons { flex-direction: column; }
+            .action-buttons button { width: 100%; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="top-bar">
-            <h1>Gerador de Pedido de Compra</h1>
-            <div>
-                <span class="user-info" id="userInfo">Carregando...</span>
-                <button class="logout-btn" onclick="logout()">Sair</button>
-            </div>
+            <span class="user-info">Carregando usuário...</span>
+            <button class="logout-btn" onclick="logout()">Sair</button>
         </div>
 
-        <nav>
-            <a href="rascunhos.html">Rascunhos</a>
+        <div class="nav-menu">
+            <a href="index.html" class="active">Novo Pedido</a>
             <a href="historico.html">Histórico</a>
-            <a href="produtos.html">Catálogo de Produtos</a>
+            <a href="rascunhos.html">Rascunhos</a>
+            <a href="produtos.html">Catálogo</a>
             <a href="fornecedores.html">Fornecedores</a>
-        </nav>
+        </div>
 
-        <div class="alert alert-error" id="generalError" role="alert"></div>
+        <h1>Gerar Novo Pedido de Compra</h1>
 
-        <form id="purchaseOrderForm">
-            <h3 id="formTitle">Novo Pedido de Compra</h3>
-
-            <div class="header-form">
+        <form id="purchaseOrderForm" onsubmit="return false;"> 
+            <input type="hidden" id="poIdHidden"> 
+            
+            <h2>Detalhes do Pedido</h2>
+            <div class="header-details">
                 <div class="form-group">
-                    <label for="poNumber">Nº do Pedido (PO)</label>
-                    <input type="text" id="poNumber" required readonly title="O número do pedido é gerado automaticamente, mas pode ser editado.">
+                    <label for="poNumber">Número do Pedido</label>
+                    <input type="text" id="poNumber" required readonly>
                 </div>
                 <div class="form-group">
-                    <label for="poDate">Data do Pedido</label>
-                    <input type="date" id="poDate" required>
+                    <label for="poDate">Data de Emissão</label>
+                    <input type="date" id="poDate" required readonly>
                 </div>
-
                 <div class="form-group">
                     <label for="supplierSelect">Fornecedor</label>
-                    <select id="supplierSelect" required onchange="updateSupplierDetails()">
-                        <option value="">Selecione um Fornecedor</option>
-                        </select>
+                    <select id="supplierSelect" required></select>
                 </div>
                 <div class="form-group">
-                    <label for="poDueDate">Data de Vencimento/Entrega Sugerida</label>
-                    <input type="date" id="poDueDate">
-                </div>
-
-                <div class="form-group">
-                    <label>Detalhes do Fornecedor</label>
-                    <textarea id="supplierDetails" rows="4" readonly style="width: 100%; resize: none; background-color: #eee;"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>Detalhes da Farmácia (Comprador) <a href="#" onclick="openConfigModal(event)">(Configurar)</a></label>
-                    <textarea id="pharmacyDetails" rows="4" readonly style="width: 100%; resize: none; background-color: #eee;"></textarea>
+                    <label for="poDueDate">Prazo de Vencimento</label>
+                    <input type="date" id="poDueDate" required>
                 </div>
             </div>
 
-            <h3>Itens do Pedido</h3>
-            <table class="items-table">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th class="item-sku">SKU</th>
-                        <th class="item-desc">Descrição do Produto (Busca)</th>
-                        <th class="item-qty">Qtd</th>
-                        <th class="item-price">Preço Unit.</th>
-                        <th class="item-total">Total Item</th>
-                        <th class="item-actions">Ação</th>
-                    </tr>
-                </thead>
-                <tbody id="itemsList">
-                    </tbody>
-            </table>
-
-            <button type="button" class="add-btn" onclick="addItem()" style="margin-top: 10px; padding: 8px 15px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">+ Adicionar Item</button>
-
-            <div class="footer-actions">
-                <div class="total-area">
-                    TOTAL: <span id="orderTotal">R$ 0,00</span>
+            <h2>Dados da Farmácia (Receptor)</h2>
+            <div class="delivery-details">
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label for="pharmacyName">Nome da Farmácia</label>
+                    <input type="text" id="pharmacyName" value="FARMACIA DO TRABALHADOR E APOSENTADOS DE PINHEIROS LTDA - ME" required>
                 </div>
-                <div class="action-buttons">
-                    <button type="button" class="btn-draft" onclick="saveAsDraft()">Salvar Rascunho</button>
-                    <button type="button" class="btn-finalize" onclick="saveOrderAsFinal()">Finalizar Pedido</button>
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label for="deliveryAddress">Endereço de Entrega Completo</label>
+                    <input type="text" id="deliveryAddress" value="PRAC BAIANA 75-B ANEXO B, Centro - Pinheiros/ES - CEP 29980-000" required>
                 </div>
+                <div class="form-group">
+                    <label for="deliveryDate">Data de Entrega Solicitada</label>
+                    <input type="date" id="deliveryDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="contactPhone">Telefone de Contato</label>
+                    <input type="text" id="contactPhone" oninput="formatPhone(this)" maxlength="15" value="(27) 99981-8349">
+                </div>
+            </div>
+
+            <h2>Itens Solicitados</h2>
+            <div id="orderItemsContainer">
+                </div>
+            
+            <button type="button" class="add-item-btn" onclick="addItem()">+ Adicionar Item</button>
+
+            <div class="total-section">
+                <div class="total-box">Total Geral: <span id="grandTotal">R$ 0,00</span></div>
+            </div>
+
+            <div class="action-buttons">
+                <button type="button" class="btn-secondary" onclick="saveAsDraft(event)">Salvar em Rascunho</button>
+                <button type="button" class="btn-info" onclick="viewPo(event)">Visualizar Pedido de Compra</button>
+                <button type="button" class="btn-primary" onclick="saveOrderAsFinal(event)">Salvar Definitivo</button>
             </div>
         </form>
     </div>
 
-    <div id="configModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal('configModal')">&times;</span>
-            <h2>Configurar Dados da Farmácia</h2>
-            <form id="pharmacyConfigForm">
-                <div class="alert alert-error" id="configError" role="alert"></div>
-
-                <div class="form-group">
-                    <label for="pharmacyName">Nome da Farmácia</label>
-                    <input type="text" id="pharmacyName" required>
-                </div>
-                <div class="form-group">
-                    <label for="pharmacyCNPJ">CNPJ (apenas números)</label>
-                    <input type="text" id="pharmacyCNPJ" required pattern="[0-9]{14}" title="CNPJ deve conter 14 dígitos (apenas números)" maxlength="18" onkeyup="formatCNPJ(this)">
-                </div>
-                <div class="form-group">
-                    <label for="pharmacyEmail">E-mail</label>
-                    <input type="email" id="pharmacyEmail">
-                </div>
-                <div class="form-group">
-                    <label for="pharmacyPhone">Telefone</label>
-                    <input type="tel" id="pharmacyPhone" maxlength="15" onkeyup="formatPhone(this)">
-                </div>
-                <div class="form-group">
-                    <label for="pharmacyAddress">Endereço (Rua, Número, Cidade, Estado)</label>
-                    <input type="text" id="pharmacyAddress">
-                </div>
-
-                <div class="form-actions" style="text-align: center;">
-                    <button type="submit" class="btn-save" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Salvar Configuração</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    
-    <div id="viewPoModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal('viewPoModal')">&times;</span>
-            <h2 id="viewPoTitle"></h2>
-            <p id="viewPoDetails"></p>
-            <button class="btn-finalize" onclick="window.location.reload()" style="background-color: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Voltar ao Formulário</button>
-        </div>
-    </div>
-    
-    <div id="customAlertModal" class="modal">
-        <div class="modal-content" style="max-width: 350px;">
-            <h3 id="customAlertTitle" style="margin-top: 0; color: #004c99;"></h3>
-            <p id="customAlertMessage"></p>
-            <div id="customAlertButtons">
-                <button class="btn-save" style="background-color: #007bff; color: white; border: none; padding: 8px 15px; border-radius: 5px;" onclick="closeCustomAlert()">OK</button>
+    <div id="customModal" class="custom-modal-backdrop">
+        <div id="alertContent" class="custom-modal-content">
+            <h3 id="alertTitle">Título</h3>
+            <p id="alertMessage">Mensagem</p>
+            <div id="modalActions" class="custom-modal-actions">
+                <button class="alert-ok" onclick="closeModal()">OK</button>
             </div>
         </div>
     </div>
 
-
     <script>
-        // Variáveis de Configuração Firebase (Deve ser definido globalmente ou em um arquivo comum)
-        // ATENÇÃO: Substitua pelos seus dados de configuração
+        let db;
+        let auth;
+        let suppliersList = []; // Lista de fornecedores para o <select>
+        let productsList = [];  // Lista de produtos para o <select>
+        let isEditing = false;
+        let editingFromDraft = false;
+
+        // CONFIGURAÇÃO DO FIREBASE COM SUA CHAVE
         const firebaseConfig = {
             apiKey: "AIzaSyAXKlq9WOs_5_ilfhG13xQwNVwQa6MaBfg",
             authDomain: "farmacia-a6682.firebaseapp.com",
@@ -272,709 +295,726 @@
             appId: "1:144965717217:web:de43b2316e8b7a25293ba0"
         };
         
-        let db;
-        let auth;
-        let suppliersList = []; // Cache de fornecedores
-        let productsList = [];  // Cache de produtos
-        let currentPharmacyConfig = null; // Configuração da Farmácia
-        let isEditingMode = false; // Indica se estamos editando um rascunho/pedido finalizado
-        let currentPoSource = null; // 'drafts' ou 'orders'
-        
-        // --- Funções Firebase (Setup e Auth) ---
-        
+        /* --------------------------------------------------
+        * FUNÇÕES DE UTILIDADE E FIREBASE 
+        * -------------------------------------------------- */
+
         function setupFirebase() {
             if (!firebase.apps.length) {
                 firebase.initializeApp(firebaseConfig);
             }
+
             auth = firebase.auth();
             db = firebase.firestore();
-            
-            // Listener de autenticação para verificar o login
+
             auth.onAuthStateChanged(user => {
                 if (user) {
-                    document.getElementById('userInfo').textContent = `Usuário: ${user.email}`;
-                    window.loadData(); // Chama a função de carregamento após a autenticação
+                    document.querySelector('.user-info').textContent = 'Usuário: ' + (user.email || 'Admin');
+                    if (typeof window.loadData === 'function') {
+                        window.loadData();
+                    }
                 } else {
-                    // Se não estiver logado, redireciona para a página de login
-                    window.location.href = 'login.html'; 
-                }
-            });
-        }
-        
-        function logout() {
-            auth.signOut().then(() => {
-                window.location.href = 'login.html';
-            });
-        }
-
-        // Função utilitária para obter a coleção do usuário atual
-        function getUserCollectionRef(collectionName) {
-            const user = auth.currentUser;
-            if (user) {
-                // Coleção específica para o CNPJ/UID do usuário atual
-                return db.collection('users').doc(user.uid).collection(collectionName);
-            }
-            throw new Error("Usuário não autenticado.");
-        }
-        
-        // --- Funções de UI/Modal/Alert ---
-        
-        function setupModal() {
-            // Configura os modais para fechar ao clicar fora
-            const modals = document.querySelectorAll('.modal');
-            modals.forEach(modal => {
-                modal.onclick = function(event) {
-                    if (event.target == modal) {
-                        modal.style.display = 'none';
+                    if (window.location.pathname.indexOf('login.html') === -1) {
+                        window.location.href = 'login.html';
                     }
                 }
             });
         }
-        
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-            // Para o modal de config, limpa erro
-            if (modalId === 'configModal') {
-                document.getElementById('configError').style.display = 'none';
-            }
+
+        function logout() {
+            auth.signOut().then(() => {
+                window.location.href = 'login.html';
+            }).catch(error => {
+                console.error("Erro ao fazer logout:", error);
+            });
         }
 
-        function displayGeneralError(message) {
-            const errorElement = document.getElementById('generalError');
-            errorElement.textContent = message;
-            errorElement.style.display = 'block';
-            setTimeout(() => errorElement.style.display = 'none', 5000);
+        function getUserCollectionRef(collectionName) {
+            const user = auth.currentUser;
+            if (!user) {
+                window.location.href = 'login.html';
+                throw new Error("Usuário não autenticado.");
+            }
+            return db.collection('users').doc(user.uid).collection(collectionName);
+        }
+
+        // Funções de Modal (Alerta/Confirmação)
+        function setupModal() {
+            const modal = document.getElementById('customModal');
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
         }
         
-        // Custom Alert (Simplificado para este arquivo)
-        let currentAlertCallback = null;
         function showCustomAlert(title, message, callback) {
-            document.getElementById('customAlertTitle').textContent = title;
-            document.getElementById('customAlertMessage').textContent = message;
+            document.getElementById('alertTitle').textContent = title;
+            document.getElementById('alertMessage').innerHTML = message;
             
-            const buttonsDiv = document.getElementById('customAlertButtons');
-            buttonsDiv.innerHTML = `<button class="btn-save" onclick="closeCustomAlert(true)">OK</button>`;
-            
-            currentAlertCallback = callback;
-            document.getElementById('customAlertModal').style.display = 'block';
-        }
-        
-        function closeCustomAlert(confirmed = true) {
-            document.getElementById('customAlertModal').style.display = 'none';
-            if (confirmed && currentAlertCallback) {
-                currentAlertCallback();
-            }
-            currentAlertCallback = null;
-        }
-
-        function openConfigModal(event) {
-            if (event) event.preventDefault();
-            
-            // Preenche o formulário com os dados atuais (se houver)
-            if (currentPharmacyConfig) {
-                document.getElementById('pharmacyName').value = currentPharmacyConfig.name || '';
-                document.getElementById('pharmacyCNPJ').value = currentPharmacyConfig.cnpj || '';
-                formatCNPJ(document.getElementById('pharmacyCNPJ'));
-                document.getElementById('pharmacyEmail').value = currentPharmacyConfig.email || '';
-                document.getElementById('pharmacyPhone').value = currentPharmacyConfig.phone || '';
-                formatPhone(document.getElementById('pharmacyPhone'));
-                document.getElementById('pharmacyAddress').value = currentPharmacyConfig.address || '';
+            const okButton = document.getElementById('modalActions').querySelector('.alert-ok');
+            if (callback) {
+                okButton.onclick = () => { closeModal(); callback(); };
             } else {
-                document.getElementById('pharmacyConfigForm').reset();
+                okButton.onclick = closeModal;
             }
-            document.getElementById('configModal').style.display = 'block';
+
+            document.getElementById('customModal').style.display = 'flex';
         }
 
-        function formatCNPJ(input) {
-            let value = input.value.replace(/\D/g, "");
-            if (value.length > 14) value = value.slice(0, 14);
+        function showCustomConfirm(title, message, onYes) {
+            document.getElementById('alertTitle').textContent = title;
+            document.getElementById('alertMessage').innerHTML = message;
+            
+            const actions = document.getElementById('modalActions');
+            actions.innerHTML = `
+                <button class="btn-primary" id="modalConfirmYes">Sim</button>
+                <button class="btn-secondary" onclick="closeModal()">Não</button>
+            `;
 
-            if (value.length > 12) {
-                value = value.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5");
-            } else if (value.length > 8) {
-                value = value.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})$/, "$1.$2.$3/$4");
-            } else if (value.length > 5) {
-                value = value.replace(/^(\d{2})(\d{3})(\d{3})$/, "$1.$2.$3");
-            } else if (value.length > 2) {
-                value = value.replace(/^(\d{2})(\d{3})$/, "$1.$2");
-            } else if (value.length > 0) {
-                value = value.replace(/^(\d{2})$/, "$1");
-            }
-            input.value = value;
-            return input;
-        }
-
-        function formatPhone(input) {
-            let value = input.value.replace(/\D/g, "");
-            if (value.length > 11) value = value.slice(0, 11);
-
-            if (value.length > 10) {
-                value = value.replace(/^(\d{2})(\d{5})(\d{4})$/, "($1) $2-$3");
-            } else if (value.length > 6) {
-                value = value.replace(/^(\d{2})(\d{4})(\d{0,4})$/, "($1) $2-$3");
-            } else if (value.length > 2) {
-                value = value.replace(/^(\d{2})(\d{0,5})$/, "($1) $2");
-            } else if (value.length > 0) {
-                value = value.replace(/^(\d{0,2})$/, "($1");
-            }
-
-            input.value = value;
-            return input;
-        }
-
-
-        // --- Funções de Configuração da Farmácia ---
-
-        document.getElementById('pharmacyConfigForm').addEventListener('submit', savePharmacyConfig);
-
-        async function savePharmacyConfig(event) {
-            event.preventDefault();
-            document.getElementById('configError').style.display = 'none';
-
-            const name = document.getElementById('pharmacyName').value.trim();
-            const cnpjRaw = document.getElementById('pharmacyCNPJ').value.replace(/\D/g, "");
-            const email = document.getElementById('pharmacyEmail').value.trim();
-            const phone = document.getElementById('pharmacyPhone').value.trim();
-            const address = document.getElementById('pharmacyAddress').value.trim();
-
-            if (cnpjRaw.length !== 14) {
-                document.getElementById('configError').textContent = "CNPJ inválido. Deve conter 14 dígitos.";
-                document.getElementById('configError').style.display = 'block';
-                return;
-            }
-
-            const configData = {
-                name: name,
-                cnpj: cnpjRaw,
-                email: email,
-                phone: phone,
-                address: address,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            document.getElementById('modalConfirmYes').onclick = () => {
+                closeModal();
+                onYes();
             };
 
-            try {
-                const configRef = getUserCollectionRef('config').doc('pharmacy');
-                await configRef.set(configData);
-                currentPharmacyConfig = configData;
-                updatePharmacyDetailsDisplay();
-                closeModal('configModal');
-                showCustomAlert('Sucesso!', 'Os dados da sua farmácia foram salvos.');
-            } catch (error) {
-                console.error("Erro ao salvar configuração:", error);
-                document.getElementById('configError').textContent = "Erro ao salvar a configuração: " + error.message;
-                document.getElementById('configError').style.display = 'block';
-            }
+            document.getElementById('customModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('customModal').style.display = 'none';
+            // Restaura o botão OK padrão para o caso de ter sido um confirm
+            document.getElementById('modalActions').innerHTML = `<button class="alert-ok" onclick="closeModal()">OK</button>`;
         }
         
-        async function loadPharmacyConfig() {
-            try {
-                const configRef = getUserCollectionRef('config').doc('pharmacy');
-                const doc = await configRef.get();
-                if (doc.exists) {
-                    currentPharmacyConfig = doc.data();
-                } else {
-                    currentPharmacyConfig = null;
-                }
-                updatePharmacyDetailsDisplay();
-
-                // Se não tiver configurado, força a abertura do modal
-                if (!currentPharmacyConfig || !currentPharmacyConfig.cnpj) {
-                    openConfigModal();
-                    displayGeneralError("Por favor, configure os dados da sua farmácia antes de gerar um pedido.");
-                }
-
-            } catch (error) {
-                console.error("Erro ao carregar configuração da farmácia:", error);
-                displayGeneralError("Erro ao carregar os dados da farmácia. Tente recarregar a página.");
-            }
+        // Formatação de Telefone (padrão)
+        function formatPhone(input) {
+            let value = input.value.replace(/\D/g, ''); 
+            value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
+            value = value.replace(/(\d)(\d{4})$/, '$1-$2');
+            input.value = value;
         }
+        window.formatPhone = formatPhone; // Exporta para o HTML
 
-        function updatePharmacyDetailsDisplay() {
-            const display = document.getElementById('pharmacyDetails');
-            if (currentPharmacyConfig) {
-                display.value = 
-                    `${currentPharmacyConfig.name || 'N/A'}\n` +
-                    `CNPJ: ${formatCNPJ({ value: currentPharmacyConfig.cnpj || '' }).value}\n` +
-                    `E-mail: ${currentPharmacyConfig.email || 'N/A'}\n` +
-                    `Tel: ${currentPharmacyConfig.phone || 'N/A'}\n` +
-                    `Endereço: ${currentPharmacyConfig.address || 'N/A'}`;
-            } else {
-                display.value = "Dados da Farmácia não configurados.";
-            }
-        }
+        /* --------------------------------------------------
+        * FUNÇÕES DE CARREGAMENTO DE DADOS (SUPPLIERS, PRODUCTS)
+        * -------------------------------------------------- */
+        
+        // Carrega Fornecedores para o Select
+        async function loadSupplierSelect() {
+            const select = document.getElementById('supplierSelect');
+            select.innerHTML = '<option value="">Carregando...</option>';
 
-        // --- Funções de Catálogo e Fornecedores ---
-
-        async function loadSuppliersAndProducts() {
             try {
-                // Carrega Fornecedores
-                const suppliersSnapshot = await getUserCollectionRef('suppliers').orderBy('companyName', 'asc').get();
-                suppliersList = suppliersSnapshot.docs.map(doc => doc.data());
-                
-                const select = document.getElementById('supplierSelect');
-                select.innerHTML = '<option value="">Selecione um Fornecedor</option>';
-                suppliersList.forEach(supplier => {
+                const snapshot = await getUserCollectionRef('suppliers').orderBy('name').get();
+                suppliersList = []; // Limpa a lista local
+                select.innerHTML = '<option value="" disabled selected>Selecione um Fornecedor</option>';
+
+                snapshot.forEach(doc => {
+                    const supplier = doc.data();
+                    suppliersList.push(supplier);
                     const option = document.createElement('option');
-                    option.value = supplier.cnpj;
-                    option.textContent = `${supplier.companyName} (${formatCNPJ({ value: supplier.cnpj }).value})`;
+                    // Usa o CNPJ (só dígitos) como value
+                    option.value = supplier.cnpj; 
+                    option.textContent = supplier.name + ' (' + supplier.cnpj + ')';
                     select.appendChild(option);
                 });
-                
-                if (suppliersList.length === 0) {
-                     displayGeneralError("Nenhum fornecedor cadastrado. Cadastre um em 'Fornecedores'.");
-                }
-
-                // Carrega Produtos
-                const productsSnapshot = await getUserCollectionRef('products').orderBy('name', 'asc').get();
-                productsList = productsSnapshot.docs.map(doc => doc.data());
-                
-                if (productsList.length === 0) {
-                     console.warn("Nenhum produto cadastrado.");
-                }
-                
-                // Tenta carregar rascunho/pedido se houver instrução
-                checkLoadInstruction();
 
             } catch (error) {
-                console.error("Erro ao carregar fornecedores ou produtos:", error);
-                displayGeneralError("Erro ao carregar catálogos (Fornecedores/Produtos). Tente recarregar a página.");
+                console.error("Erro ao carregar fornecedores:", error);
+                select.innerHTML = '<option value="" disabled selected>Erro ao carregar fornecedores</option>';
             }
         }
 
-        function updateSupplierDetails() {
-            const select = document.getElementById('supplierSelect');
-            const detailsTextarea = document.getElementById('supplierDetails');
-            const selectedCNPJ = select.value;
-            
-            const selectedSupplier = suppliersList.find(s => s.cnpj === selectedCNPJ);
+        // Carrega Produtos para o Select
+        async function loadProductSelect() {
+            try {
+                const snapshot = await getUserCollectionRef('products').orderBy('name').get();
+                productsList = []; // Limpa a lista local
 
-            if (selectedSupplier) {
-                detailsTextarea.value = 
-                    `CNPJ: ${formatCNPJ({ value: selectedSupplier.cnpj }).value}\n` +
-                    `Contato: ${selectedSupplier.contactName || 'N/A'}\n` +
-                    `E-mail: ${selectedSupplier.contactEmail || 'N/A'}\n` +
-                    `Tel: ${selectedSupplier.phone || 'N/A'}\n` +
-                    `Endereço: ${selectedSupplier.address || 'N/A'}`;
-            } else {
-                detailsTextarea.value = "Detalhes do fornecedor serão exibidos aqui.";
+                snapshot.forEach(doc => {
+                    const product = doc.data();
+                    productsList.push(product);
+                });
+
+                // Recarrega todos os selects de produto existentes
+                const selects = document.querySelectorAll('.product-select');
+                selects.forEach(select => {
+                    const selectedSku = select.value; // Guarda o valor selecionado
+                    select.innerHTML = '<option value="" disabled selected>Selecione o Produto (SKU)</option>';
+                    productsList.forEach(product => {
+                        const option = document.createElement('option');
+                        option.value = product.sku;
+                        // Exibe Nome e SKU
+                        option.textContent = `${product.name} (${product.sku})`;
+                        if (product.sku === selectedSku) {
+                            option.selected = true;
+                        }
+                        select.appendChild(option);
+                    });
+                    // Atualiza a descrição e recalcula (importante ao recarregar um rascunho)
+                    updateItemDescription(select); 
+                });
+
+            } catch (error) {
+                console.error("Erro ao carregar produtos:", error);
+                // Não há um único select, então apenas loga o erro
             }
         }
 
-        // --- Funções de Item e Cálculo ---
 
-        let itemCounter = 0;
+        /* --------------------------------------------------
+        * FUNÇÕES DE ITENS DO PEDIDO
+        * -------------------------------------------------- */
 
-        function addItem(sku = '', desc = '', qty = 0, price = 0) {
-            itemCounter++;
-            const list = document.getElementById('itemsList');
-            const row = list.insertRow();
-            row.id = `itemRow-${itemCounter}`;
-            row.dataset.itemIndex = itemCounter;
-            
-            const total = (qty * price).toFixed(2);
+        function addItem(productData = {}) {
+            const container = document.getElementById('orderItemsContainer');
+            const count = container.children.length + 1; // ID para a nova linha
 
-            row.innerHTML = `
-                <td>${itemCounter}</td>
-                <td><input type="text" name="sku" value="${sku}" onchange="resequenceItems()"></td>
-                <td class="item-desc">
-                    <input type="text" name="desc" value="${desc}" list="productOptions" 
-                           onchange="updateItemDescription(this)" placeholder="Busque ou digite o nome">
-                    <datalist id="productOptions">
-                        ${productsList.map(p => `<option value="${p.name}" data-sku="${p.sku}" data-price="${p.price}"></option>`).join('')}
-                    </datalist>
-                </td>
-                <td><input type="number" name="qty" value="${qty}" min="0" onchange="calculateTotalItem(this)" onkeyup="calculateTotalItem(this)"></td>
-                <td><input type="number" name="price" value="${price.toFixed(2)}" min="0" step="0.01" onchange="calculateTotalItem(this)" onkeyup="calculateTotalItem(this)" style="text-align: right;"></td>
-                <td class="item-total" data-total="${total}">R$ ${parseFloat(total).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                <td class="item-actions"><button type="button" class="delete-btn" onclick="removeItem(this)">X</button></td>
+            const itemHTML = `
+                <div class="order-item" data-id="${count}">
+                    <div class="order-item-number">${count}.</div>
+                    <div class="item-details">
+                        <div class="form-group product-select-container">
+                            <label>Produto</label>
+                            <select 
+                                class="product-select" 
+                                onchange="updateItemDescription(this)"
+                                required
+                            >
+                                <option value="" disabled selected>Selecione o Produto (SKU)</option>
+                                ${productsList.map(p => `
+                                    <option value="${p.sku}" ${productData.sku === p.sku ? 'selected' : ''}>
+                                        ${p.name} (${p.sku})
+                                    </option>
+                                `).join('')}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Quantidade</label>
+                            <input 
+                                type="number" 
+                                class="item-qty" 
+                                value="${productData.qty || 1}" 
+                                min="1" 
+                                oninput="calculateTotal()" 
+                                required
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label>Preço Unitário</label>
+                            <input 
+                                type="text" 
+                                class="item-price" 
+                                value="${productData.price ? productData.price.replace('.', ',') : '0,00'}" 
+                                oninput="formatPrice(this); calculateTotal()" 
+                                required
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label>Total</label>
+                            <input 
+                                type="text" 
+                                class="item-total" 
+                                value="R$ 0,00" 
+                                readonly 
+                                disabled
+                            >
+                        </div>
+                        
+                        <span id="desc-${count}" class="product-description-text">${productData.desc || (productData.sku ? 'Carregando descrição...' : '')}</span>
+                    </div>
+                    
+                    <button type="button" class="remove-item-btn" onclick="removeItem(this)">X</button>
+                </div>
             `;
+            container.insertAdjacentHTML('beforeend', itemHTML);
+            calculateTotal();
             
-            calculateTotal(); // Recalcula o total geral
+            // Se dados foram fornecidos (ao carregar um rascunho), atualiza a descrição após a inserção
+            if (productData.sku) {
+                const newSelect = container.lastElementChild.querySelector('.product-select');
+                updateItemDescription(newSelect);
+            }
+        }
+
+        function removeItem(button) {
+            const item = button.closest('.order-item');
+            item.remove();
+            calculateTotal();
+            resequenceItems();
         }
 
         function resequenceItems() {
-            const list = document.getElementById('itemsList');
-            const rows = list.querySelectorAll('tr');
-            
-            // Corrige o índice visual e o ID do item
-            rows.forEach((row, index) => {
-                const itemIndex = index + 1;
-                row.querySelector('td:first-child').textContent = itemIndex; // Atualiza o #
-                // Não precisa atualizar o dataset ou id, a menos que o SKU tenha mudado, mas isso é complexo. 
-                // A ordem é o mais importante para a visualização.
+            const items = document.querySelectorAll('.order-item');
+            items.forEach((item, index) => {
+                const numberDiv = item.querySelector('.order-item-number');
+                if (numberDiv) {
+                    numberDiv.textContent = `${index + 1}.`;
+                    item.setAttribute('data-id', index + 1);
+                }
             });
         }
+        
+        // **FUNÇÃO:** Atualiza a descrição do produto ao ser selecionado
+        function updateItemDescription(selectElement) {
+            const row = selectElement.closest('.order-item');
+            const sku = selectElement.value;
+            
+            const product = productsList.find(p => p.sku === sku);
+            const priceInput = row.querySelector('.item-price');
+            const descElement = row.querySelector('.product-description-text');
+            
+            if (product) {
+                // Atualiza a descrição
+                descElement.textContent = product.desc || 'Sem descrição cadastrada.';
 
-
-        function removeItem(button) {
-            const row = button.closest('tr');
-            row.remove();
-            resequenceItems(); // Re-sequencia após remoção
+                // Atualiza o preço com o preço padrão (se a linha estiver zerada)
+                let currentPrice = priceInput.value.replace('.', '').replace(',', '.');
+                if (parseFloat(currentPrice) === 0 || priceInput.value.trim() === '') {
+                    priceInput.value = product.price.replace('.', ',');
+                }
+            } else {
+                descElement.textContent = '';
+                // Se nenhum produto selecionado, zera o preço
+                priceInput.value = '0,00';
+            }
+            
             calculateTotal();
+            resequenceItems();
         }
 
-        function calculateTotalItem(input) {
-            const row = input.closest('tr');
-            const qtyInput = row.querySelector('input[name="qty"]');
-            const priceInput = row.querySelector('input[name="price"]');
-            const totalCell = row.querySelector('.item-total');
-
-            const qty = parseFloat(qtyInput.value) || 0;
-            const price = parseFloat(priceInput.value) || 0;
-            
-            // Garante que o preço esteja com 2 casas decimais no input
-            priceInput.value = price.toFixed(2);
-
-            const total = (qty * price).toFixed(2);
-            
-            totalCell.dataset.total = total;
-            totalCell.textContent = `R$ ${parseFloat(total).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-
-            calculateTotal();
+        // Formatação de Preço (R$,##)
+        function formatPrice(input) {
+            let value = input.value.replace(/\D/g, ''); 
+            if (value.length > 2) {
+                value = value.replace(/(\d{2})$/, ',$1'); 
+            } else if (value.length === 1) {
+                value = '0,0' + value;
+            } else if (value.length === 2) {
+                value = '0,' + value;
+            }
+            input.value = value;
         }
 
         function calculateTotal() {
-            const list = document.getElementById('itemsList');
-            const totalCells = list.querySelectorAll('.item-total');
             let grandTotal = 0;
+            const items = document.querySelectorAll('.order-item');
 
-            totalCells.forEach(cell => {
-                grandTotal += parseFloat(cell.dataset.total) || 0;
+            items.forEach(item => {
+                const qtyInput = item.querySelector('.item-qty');
+                const priceInput = item.querySelector('.item-price');
+                const totalInput = item.querySelector('.item-total');
+
+                const qty = parseInt(qtyInput.value) || 0;
+                // Converte preço de R$,## para R$.##
+                const price = parseFloat(priceInput.value.replace('.', '').replace(',', '.')) || 0;
+                
+                const itemTotal = qty * price;
+                grandTotal += itemTotal;
+
+                // Formata o total da linha para R$ X.XXX,XX
+                totalInput.value = 'R$ ' + itemTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             });
 
-            document.getElementById('orderTotal').textContent = `R$ ${grandTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            // Formata o total geral para R$ X.XXX,XX
+            document.getElementById('grandTotal').textContent = 'R$ ' + grandTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
 
-        function updateItemDescription(input) {
-            const value = input.value.trim();
-            const row = input.closest('tr');
-            const skuInput = row.querySelector('input[name="sku"]');
-            const priceInput = row.querySelector('input[name="price"]');
-
-            // Busca o produto no cache
-            const productOption = productsList.find(p => p.name.toLowerCase() === value.toLowerCase());
-
-            if (productOption) {
-                // Preenche SKU e Preço se encontrado
-                skuInput.value = productOption.sku || '';
-                priceInput.value = parseFloat(productOption.price || 0).toFixed(2);
-                calculateTotalItem(priceInput); // Recalcula o total do item
-            } else {
-                // Se não encontrado, limpa SKU (mantém a descrição digitada e o preço atual)
-                skuInput.value = '';
-                // Não limpa o preço para que o usuário possa digitar um valor manual, mas recalcula
-                calculateTotalItem(priceInput);
-            }
-        }
+        /* --------------------------------------------------
+        * FUNÇÕES DE SALVAMENTO E FINALIZAÇÃO (BOTÕES)
+        * -------------------------------------------------- */
         
-        // --- Funções de Carregamento/Inicialização (Rascunho/Histórico) ---
-
-        function checkLoadInstruction() {
-            const poNumberToLoad = localStorage.getItem('loadPoNumber');
-            const poSourceToLoad = localStorage.getItem('loadPoSource');
-            
-            if (poNumberToLoad && poSourceToLoad) {
-                isEditingMode = true;
-                currentPoSource = poSourceToLoad;
-                document.getElementById('poNumber').readOnly = true; // Bloqueia edição do número do PO ao carregar
-                document.getElementById('formTitle').textContent = poSourceToLoad === 'drafts' ? 'Editar Rascunho' : 'Visualizar/Editar Pedido Finalizado';
-
-                if (poSourceToLoad === 'orders') {
-                    // Pedido finalizado, restringe a edição do cabeçalho
-                    document.getElementById('supplierSelect').disabled = true;
-                    document.getElementById('poDate').readOnly = true;
-                    document.getElementById('poDueDate').readOnly = true;
-                }
-                
-                // Limpa as instruções após capturar
-                localStorage.removeItem('loadPoNumber');
-                localStorage.removeItem('loadPoSource');
-                
-                loadPoData(poNumberToLoad, poSourceToLoad);
-            } else {
-                // Novo pedido
-                initNewOrder();
-            }
-        }
-
-        async function loadPoData(poNumber, source) {
-            try {
-                const collection = source === 'drafts' ? 'drafts' : 'orders';
-                const docRef = getUserCollectionRef(collection).doc(poNumber);
-                const doc = await docRef.get();
-
-                if (!doc.exists) {
-                    displayGeneralError(`Pedido N° ${poNumber} não encontrado em ${collection}.`);
-                    initNewOrder(); // Inicia um novo em caso de erro
-                    return;
-                }
-                
-                const po = doc.data();
-
-                // 1. Preenche o Cabeçalho
-                document.getElementById('poNumber').value = po.poNumber;
-                document.getElementById('poDate').value = po.poDate || '';
-                document.getElementById('poDueDate').value = po.poDueDate || '';
-                
-                // Seleciona o Fornecedor (usa setTimeout para garantir que as opções foram carregadas)
-                setTimeout(() => {
-                    document.getElementById('supplierSelect').value = po.supplier && po.supplier.cnpj ? po.supplier.cnpj : '';
-                    updateSupplierDetails(); // Atualiza os detalhes do fornecedor na tela
-                }, 100); 
-
-                // 2. Preenche os Itens
-                const itemsListElement = document.getElementById('itemsList');
-                itemsListElement.innerHTML = ''; // Limpa os itens iniciais
-                itemCounter = 0; // Reseta o contador
-                
-                if (po.items && po.items.length > 0) {
-                    po.items.forEach(item => {
-                        addItem(item.sku || '', item.desc || '', item.qty || 0, parseFloat(item.price || 0));
-                    });
-                } else {
-                    addItem(); // Adiciona um item vazio se não houver itens
-                }
-                
-                calculateTotal();
-
-                // 3. Exibe mensagem se for pedido finalizado
-                if (source === 'orders') {
-                    viewPo(poNumber, po.poDate, 'Pedido FINALIZADO'); // Exibe modal de visualização
-                }
-
-
-            } catch (error) {
-                console.error(`Erro ao carregar Pedido N° ${poNumber} de ${source}:`, error);
-                displayGeneralError("Erro ao carregar o pedido. Verifique o console para mais detalhes.");
-                initNewOrder();
-            }
-        }
-        
-        function initNewOrder() {
-            isEditingMode = false;
-            currentPoSource = null;
-            document.getElementById('formTitle').textContent = 'Novo Pedido de Compra';
-            document.getElementById('supplierSelect').disabled = false;
-            document.getElementById('poDate').readOnly = false;
-            document.getElementById('poDueDate').readOnly = false;
-            document.getElementById('poNumber').readOnly = false;
-            
-            // Tenta obter um novo número de PO e a data
-            generatePoNumberAndDate();
-            
-            // Limpa os itens
-            document.getElementById('itemsList').innerHTML = '';
-            itemCounter = 0;
-            addItem(); // Adiciona um item inicial vazio
-            
-            calculateTotal();
-            updateSupplierDetails(); // Limpa/Atualiza a área de detalhes do fornecedor
-        }
-
-        async function generatePoNumberAndDate() {
-            // Tenta carregar o último PO number
-            let poNumber = '1';
-            try {
-                 const counterDoc = await db.collection('app_config').doc('poCounter').get();
-                 if (counterDoc.exists) {
-                    // Usa o último número + 1
-                    poNumber = (counterDoc.data().lastPoNumber + 1).toString();
-                 }
-            } catch(e) {
-                console.warn("Erro ao carregar contador de PO. Usando '1'.", e);
-            }
-            
-            // Aplica o número (do localStorage ou recém-gerado)
-            // Mantém a lógica de usar localstorage se houver um número de PO em andamento
-            const storedPoNumber = localStorage.getItem('currentPoNumber');
-            if (storedPoNumber) {
-                poNumber = storedPoNumber;
-            } else {
-                 localStorage.setItem('currentPoNumber', poNumber);
-            }
-            
-            document.getElementById('poNumber').value = poNumber;
-            
-            // Aplica a data (do localStorage ou recém-gerada)
-            const poDate = localStorage.getItem('currentPoDate') || new Date().toISOString().slice(0, 10);
-            document.getElementById('poDate').value = poDate;
-            localStorage.setItem('currentPoDate', poDate);
-            
-            // Data de vencimento sugerida
-            document.getElementById('poDueDate').value = new Date(new Date().setDate(new Date().getDate() + 7)).toISOString().slice(0, 10);
-            
-            addItem(); // Adiciona um item inicial vazio
-            formatPhone(document.getElementById('contactPhone')); // Garante formatação inicial
-        }
-
-
-        // --- Funções de Salvar ---
-        
-        function getPoData() {
+        // 1. Função para extrair os dados do formulário
+        function getFormData() {
             const poNumber = document.getElementById('poNumber').value.trim();
             const poDate = document.getElementById('poDate').value;
-            const poDueDate = document.getElementById('poDueDate').value;
-            const supplierCNPJ = document.getElementById('supplierSelect').value;
+            const supplierCnpj = document.getElementById('supplierSelect').value;
+            const supplier = suppliersList.find(s => s.cnpj === supplierCnpj);
             
-            const supplierData = suppliersList.find(s => s.cnpj === supplierCNPJ);
-            
+            const poDueDate = document.getElementById('poDueDate').value; 
+
+            // CAMPOS DA FARMÁCIA (Atualizados)
+            const pharmacyName = document.getElementById('pharmacyName').value.trim();
+            const deliveryAddress = document.getElementById('deliveryAddress').value.trim();
+            const deliveryDate = document.getElementById('deliveryDate').value;
+            const contactPhone = document.getElementById('contactPhone').value.trim();
+
             const items = [];
+            let isValid = true;
             let total = 0;
-            const rows = document.getElementById('itemsList').querySelectorAll('tr');
-            
-            rows.forEach(row => {
-                const qtyInput = row.querySelector('input[name="qty"]');
-                const priceInput = row.querySelector('input[name="price"]');
+
+            document.querySelectorAll('.order-item').forEach(item => {
+                const sku = item.querySelector('.product-select').value;
+                const qty = parseInt(item.querySelector('.item-qty').value) || 0;
+                const price = parseFloat(item.querySelector('.item-price').value.replace('.', '').replace(',', '.')) || 0;
                 
-                const qty = parseFloat(qtyInput.value) || 0;
-                const price = parseFloat(priceInput.value) || 0;
-                const itemTotal = qty * price;
+                if (!sku || qty <= 0 || price <= 0) {
+                    isValid = false;
+                    return; 
+                }
+
+                const product = productsList.find(p => p.sku === sku);
+                const itemName = product ? product.name : 'Produto Desconhecido';
+                const itemDesc = product ? (product.desc || 'Sem descrição cadastrada.') : '';
 
                 items.push({
-                    sku: row.querySelector('input[name="sku"]').value.trim(),
-                    desc: row.querySelector('input[name="desc"]').value.trim(),
+                    sku: sku,
+                    name: itemName,
+                    desc: itemDesc, 
                     qty: qty,
-                    price: price.toFixed(2), // Salva com 2 casas para precisão
-                    total: itemTotal.toFixed(2)
+                    price: price.toFixed(2), 
+                    total: (qty * price).toFixed(2)
                 });
-                total += itemTotal;
+                total += qty * price;
             });
+
+            if (!isValid) {
+                showCustomAlert('Atenção', 'Todos os itens devem ter um Produto, Quantidade (>0) e Preço (>0).');
+                return null;
+            }
+
+            if (!poNumber || !poDate || !supplierCnpj || !poDueDate || !pharmacyName || !deliveryAddress || !deliveryDate || !contactPhone) {
+                showCustomAlert('Atenção', 'Por favor, preencha todos os campos obrigatórios.');
+                return null;
+            }
             
+            if (items.length === 0) {
+                showCustomAlert('Atenção', 'O pedido deve conter pelo menos um item.');
+                return null;
+            }
+
+
             return {
                 poNumber: poNumber,
                 poDate: poDate,
-                poDueDate: poDueDate,
-                supplier: supplierData,
-                pharmacy: currentPharmacyConfig,
-                items: items.filter(item => item.qty > 0 || item.desc || item.sku), // Filtra itens vazios, mas mantém se tiver descrição ou SKU
-                total: total.toFixed(2),
-                createdAt: isEditingMode ? undefined : firebase.firestore.FieldValue.serverTimestamp(),
+                supplierCnpj: supplierCnpj,
+                supplierName: supplier ? supplier.name : 'N/A',
+                poDueDate: poDueDate, 
+                
+                // DADOS DA FARMÁCIA
+                pharmacyName: pharmacyName,
+                deliveryAddress: deliveryAddress,
+                contactPhone: contactPhone,
+                deliveryDate: deliveryDate,
+
+                items: items,
+                grandTotal: total.toFixed(2),
+                status: '', // Será definido pela função chamadora
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             };
         }
 
-        function validatePoData(data) {
-            if (!currentPharmacyConfig || !currentPharmacyConfig.cnpj) {
-                return "Os dados da sua farmácia (Comprador) não estão configurados. Clique em (Configurar) ao lado do título para preencher.";
-            }
-            if (!data.poNumber) {
-                return "O número do Pedido de Compra não foi gerado.";
-            }
-            if (!data.poDate) {
-                return "A data do pedido é obrigatória.";
-            }
-            if (!data.supplier) {
-                return "Selecione um Fornecedor.";
-            }
-            if (data.items.length === 0) {
-                return "O pedido deve ter pelo menos um item com quantidade maior que zero, ou com descrição/SKU preenchido.";
-            }
-            return null; // Validação OK
-        }
-
-        async function saveOrder(collectionName, status, callback) {
-            const poData = getPoData();
-            const validationError = validatePoData(poData);
+        // 2. Função de salvamento Core
+        async function saveOrder(event, targetCollection, status) {
+            event.preventDefault();
             
-            if (validationError) {
-                displayGeneralError(validationError);
-                return;
-            }
+            const poData = getFormData();
+            if (!poData) return; // Se a validação falhar, sai
+
+            poData.status = status;
+            
+            const poId = document.getElementById('poNumber').value;
+            const docRef = getUserCollectionRef(targetCollection).doc(poId);
 
             try {
-                const docRef = getUserCollectionRef(collectionName).doc(poData.poNumber);
-                
-                // Adiciona o status
-                poData.status = status;
-                
-                // Para pedidos finalizados, garante que o contador seja atualizado se for um NOVO pedido
-                if (status === 'FINALIZADO' && !isEditingMode) {
-                    await db.collection('app_config').doc('poCounter').set({
-                        lastPoNumber: parseInt(poData.poNumber),
-                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                    }, { merge: true });
-                    
-                    // Limpa o PO number e data para gerar um novo no próximo acesso
+                if (!isEditing || !poData.createdAt) {
+                    poData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                }
+
+                await docRef.set(poData);
+
+                // **NOVA LÓGICA:** Depois de salvar, se for um novo pedido, gera um novo número para o próximo
+                if (!isEditing) {
                     localStorage.removeItem('currentPoNumber');
                     localStorage.removeItem('currentPoDate');
                 }
-                
-                // Salva no Firestore
-                await docRef.set(poData, { merge: true });
 
-                // Se salvou com sucesso e era um rascunho antigo, remove-o
-                if (status === 'FINALIZADO' && currentPoSource === 'drafts') {
-                    await getUserCollectionRef('drafts').doc(poData.poNumber).delete();
+                // Se salvou no histórico, remove dos rascunhos (caso estivesse editando um rascunho)
+                if (targetCollection === 'orders' && editingFromDraft) {
+                     await getUserCollectionRef('drafts').doc(poId).delete();
                 }
 
-                showCustomAlert('Sucesso!', `Pedido N° ${poData.poNumber} foi salvo como ${status}.`, callback);
-                
-                // Se era um novo pedido e foi finalizado, recarrega para iniciar um novo
-                if (status === 'FINALIZADO' && !isEditingMode) {
-                    window.location.reload(); 
+                let successMessage = '';
+                if (status === 'Rascunho') {
+                    successMessage = `Pedido N° ${poId} salvo como **RASCUNHO** com sucesso!`;
+                } else {
+                    successMessage = `Pedido N° ${poId} salvo no **HISTÓRICO** com sucesso!`;
                 }
+
+                showCustomAlert('Sucesso!', successMessage, () => {
+                    if (status === 'Finalizado') {
+                        window.location.href = 'historico.html';
+                    } else {
+                        // Redireciona para o novo pedido (que agora vai gerar um novo PO)
+                        window.location.href = 'index.html'; 
+                    }
+                });
 
             } catch (error) {
                 console.error(`Erro ao salvar pedido como ${status}:`, error);
-                displayGeneralError(`Erro ao salvar o pedido: ${error.message}`);
+                showCustomAlert('Erro', `Não foi possível salvar o pedido como ${status}: ` + error.message);
             }
         }
 
-        function saveAsDraft() {
-            saveOrder('drafts', 'RASCUNHO', () => {
-                // Ao salvar como rascunho, redireciona para a lista de rascunhos
-                window.location.href = 'rascunhos.html';
+        // 3. Funções chamadas pelos Botões
+
+        // Salvar em Rascunho
+        function saveAsDraft(event) {
+            saveOrder(event, 'drafts', 'Rascunho');
+        }
+
+        // Salvar Definitivo (Finalizar)
+        function saveOrderAsFinal(event) {
+            showCustomConfirm('Finalizar Pedido', 'Tem certeza que deseja SALVAR este pedido como Finalizado e enviá-lo ao Histórico?', () => {
+                saveOrder(event, 'orders', 'Finalizado');
             });
         }
         
-        function saveOrderAsFinal() {
-            // Se estiver em modo de visualização de pedido finalizado, avisa
-            if (currentPoSource === 'orders') {
-                showCustomAlert('Aviso', 'Você está apenas editando/visualizando um pedido finalizado. Para salvar alterações (que só afetarão este registro), clique em "Salvar Rascunho" ou use o histórico para voltar à lista.', () => {});
-                return; 
-            }
+        // Visualizar Pedido de Compra (Prévia de Impressão)
+        function viewPo(event) {
+            event.preventDefault();
+            const poData = getFormData();
+            if (!poData) return;
             
-            showCustomConfirm(
-                'Confirmação',
-                'Tem certeza que deseja FINALIZAR este Pedido de Compra? Ele será movido para o Histórico e um novo número de pedido será gerado.',
-                () => {
-                    saveOrder('orders', 'FINALIZADO', () => {
-                        window.location.href = 'historico.html';
-                    });
-                }
-            );
+            let printWindow = window.open('', '_blank');
+            printWindow.document.write(generatePrintContent(poData));
+            printWindow.document.close();
+            printWindow.focus();
+            setTimeout(() => {
+                printWindow.print();
+            }, 500);
         }
 
-        // --- Funções de Visualização (Modal) ---
-        
-        function viewPo(poNumber, poDate, status) {
-            const modal = document.getElementById('viewPoModal');
-            document.getElementById('viewPoTitle').textContent = `Pedido N° ${poNumber}`;
-            document.getElementById('viewPoDetails').innerHTML = `
-                <p><strong>Status:</strong> ${status}</p>
-                <p><strong>Data:</strong> ${poDate ? new Date(poDate).toLocaleDateString('pt-BR') : 'N/A'}</p>
-                <p>Para editar, modifique o formulário abaixo e clique em "Salvar Rascunho".</p>
+        // Função auxiliar para gerar o conteúdo HTML para impressão (mantida a mesma)
+        function generatePrintContent(order) {
+            const itemsHtml = order.items.map((item, index) => `
+                <tr>
+                    <td class="item-index">${index + 1}</td>
+                    <td class="item-sku">${item.sku}</td>
+                    <td class="item-name">
+                        ${item.name}<br>
+                        <small>Descrição: ${item.desc}</small>
+                    </td>
+                    <td class="item-qty">${item.qty}</td>
+                    <td class="item-price">R$ ${parseFloat(item.price).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td class="item-total">R$ ${parseFloat(item.total).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                </tr>
+            `).join('');
+
+            return `
+                <html>
+                <head>
+                    <title>Pedido de Compra N° ${order.poNumber}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; font-size: 10pt; }
+                        .po-container { max-width: 800px; margin: 0 auto; border: 1px solid #000; padding: 20px; }
+                        h1 { text-align: center; color: #004c99; margin-bottom: 20px; font-size: 16pt; border-bottom: 2px solid #004c99; padding-bottom: 5px; }
+                        h2 { font-size: 12pt; color: #333; margin-top: 15px; margin-bottom: 5px; border-bottom: 1px solid #ccc; padding-bottom: 2px; }
+                        .details { display: flex; flex-wrap: wrap; margin-bottom: 10px; }
+                        .detail-item { flex: 1 1 50%; min-width: 300px; margin-bottom: 5px; }
+                        .detail-item strong { font-weight: bold; }
+
+                        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        th { background-color: #f2f2f2; color: #333; font-weight: bold; }
+                        .item-qty, .item-price, .item-total { text-align: right; }
+                        .item-index { text-align: center; width: 30px; }
+
+                        .po-total { text-align: right; margin-top: 20px; font-size: 14pt; font-weight: bold; color: #004c99; }
+                        
+                        @media print {
+                            body { margin: 0; }
+                            .po-container { border: none; padding: 0; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="po-container">
+                        <h1>PEDIDO DE COMPRA N° ${order.poNumber}</h1>
+                        
+                        <h2>Dados Gerais</h2>
+                        <div class="details">
+                            <div class="detail-item"><strong>Fornecedor:</strong> ${order.supplierName}</div>
+                            <div class="detail-item"><strong>Emissão:</strong> ${new Date(order.poDate + 'T00:00:00').toLocaleDateString('pt-BR')}</div>
+                            <div class="detail-item"><strong>Prazo Vencimento:</strong> ${new Date(order.poDueDate + 'T00:00:00').toLocaleDateString('pt-BR')}</div>
+                        </div>
+
+                        <h2>Dados da Farmácia (Entrega)</h2>
+                        <div class="details">
+                            <div class="detail-item"><strong>Farmácia:</strong> ${order.pharmacyName}</div>
+                            <div class="detail-item"><strong>Endereço:</strong> ${order.deliveryAddress}</div>
+                            <div class="detail-item"><strong>Data de Entrega Solicitada:</strong> ${new Date(order.deliveryDate + 'T00:00:00').toLocaleDateString('pt-BR')}</div>
+                            <div class="detail-item"><strong>Telefone:</strong> ${order.contactPhone}</div>
+                        </div>
+
+                        <h2>Itens do Pedido</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="item-index">#</th>
+                                    <th>SKU</th>
+                                    <th>Produto / Descrição</th>
+                                    <th class="item-qty">Qtd</th>
+                                    <th class="item-price">Unitário</th>
+                                    <th class="item-total">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${itemsHtml}
+                            </tbody>
+                        </table>
+                        
+                        <div class="po-total">
+                            Total Geral: R$ ${parseFloat(order.grandTotal).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </div>
+                        
+                        <div style="text-align: center; margin-top: 50px; padding-top: 20px; border-top: 1px dashed #ccc;">
+                            Assinatura do Responsável
+                        </div>
+                    </div>
+                </body>
+                </html>
             `;
-            modal.style.display = 'block';
         }
+        
+        /* --------------------------------------------------
+        * FUNÇÕES DE CARREGAMENTO DE PEDIDO (AO EDITAR)
+        * -------------------------------------------------- */
+        
+        // Gera um ID sequencial para novos pedidos (Corrigida)
+        async function getNextPoNumber() {
+            const userCounterRef = getUserCollectionRef('counter').doc('poCounter');
+            
+            let doc = await userCounterRef.get();
+            if (!doc.exists) {
+                 await userCounterRef.set({ lastPoNumber: 1000000, currentYear: new Date().getFullYear() });
+                 doc = await userCounterRef.get(); 
+            }
 
+            const lastNumber = doc.data().lastPoNumber || 1000000;
+            const newNumber = lastNumber + 1;
+            
+            // Salva o novo valor do contador (Para ser usado no próximo novo pedido)
+            await userCounterRef.update({ lastPoNumber: newNumber }); 
 
-        // --- Inicialização ---
+            // Formato: 2025-1000001
+            return `${new Date().getFullYear()}-${newNumber}`;
+        }
+        
+        // Carrega um pedido (rascunho ou histórico) para edição
+        async function loadOrderForEditing(poNumber, collectionName) {
+            isEditing = true;
+            editingFromDraft = (collectionName === 'drafts');
+            
+            document.getElementById('poNumber').value = poNumber;
+            
+            try {
+                const doc = await getUserCollectionRef(collectionName).doc(poNumber).get();
+
+                if (!doc.exists) {
+                    showCustomAlert('Erro', 'Pedido não encontrado para edição.', () => {
+                        window.location.href = 'index.html'; // Redireciona para novo pedido
+                    });
+                    return;
+                }
+
+                const poData = doc.data();
+                
+                // Preenche os campos principais
+                document.getElementById('poIdHidden').value = poNumber;
+                document.getElementById('poDate').value = poData.poDate;
+                document.getElementById('supplierSelect').value = poData.supplierCnpj;
+                
+                // Prazo de Vencimento
+                document.getElementById('poDueDate').value = poData.poDueDate || ''; 
+                
+                // CAMPOS DA FARMÁCIA (Mantidos os valores salvos, têm prioridade)
+                document.getElementById('pharmacyName').value = poData.pharmacyName || document.getElementById('pharmacyName').defaultValue;
+                document.getElementById('deliveryAddress').value = poData.deliveryAddress || document.getElementById('deliveryAddress').defaultValue;
+                document.getElementById('deliveryDate').value = poData.deliveryDate || '';
+                document.getElementById('contactPhone').value = poData.contactPhone || document.getElementById('contactPhone').defaultValue;
+                formatPhone(document.getElementById('contactPhone'));
+
+                // Limpa os itens atuais e carrega os novos
+                document.getElementById('orderItemsContainer').innerHTML = '';
+                poData.items.forEach(item => {
+                    const itemData = {
+                        sku: item.sku,
+                        qty: item.qty,
+                        price: parseFloat(item.price).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+                        desc: item.desc 
+                    };
+                    addItem(itemData);
+                });
+                
+                calculateTotal();
+
+                if (collectionName === 'orders') {
+                    showCustomAlert('Atenção', `Você está **EDITANDO** um pedido Finalizado (N° ${poNumber}). Se salvar, ele será atualizado no Histórico.`, null);
+                } else {
+                    showCustomAlert('Atenção', `Você está **EDITANDO** um Rascunho (N° ${poNumber}).`, null);
+                }
+
+            } catch (error) {
+                console.error("Erro ao carregar pedido para edição:", error);
+                showCustomAlert('Erro', 'Falha ao carregar pedido para edição.');
+            }
+        }
+        
+        // Função principal de inicialização (Corrigida)
+        async function init() {
+            // Verifica se há um ID de PO/Rascunho na URL para edição
+            const urlParams = new URLSearchParams(window.location.search);
+            const poToEdit = urlParams.get('po');
+            const draftToEdit = urlParams.get('draft');
+
+            // Carrega listas antes de tudo
+            await loadSupplierSelect();
+            await loadProductSelect();
+            
+            // Verifica se está editando (o número já veio na URL)
+            if (poToEdit) {
+                await loadOrderForEditing(poToEdit, 'orders');
+            } else if (draftToEdit) {
+                await loadOrderForEditing(draftToEdit, 'drafts');
+            } else {
+                // Novo pedido:
+                
+                // 1. Tenta carregar o número do PO do localStorage
+                let poNumber = localStorage.getItem('currentPoNumber');
+                
+                if (!poNumber) {
+                    // 2. Se não estiver no localStorage, gera um novo número
+                    document.getElementById('poNumber').value = 'Gerando...'; 
+                    poNumber = await getNextPoNumber();
+                    localStorage.setItem('currentPoNumber', poNumber);
+                    
+                    // Salva a data de emissão junto com o PO no localStorage
+                    const today = new Date().toISOString().slice(0, 10);
+                    localStorage.setItem('currentPoDate', today);
+                }
+
+                // 3. Aplica o número (do localStorage ou recém-gerado)
+                document.getElementById('poNumber').value = poNumber;
+                
+                // Aplica a data (do localStorage ou recém-gerada)
+                const poDate = localStorage.getItem('currentPoDate') || new Date().toISOString().slice(0, 10);
+                document.getElementById('poDate').value = poDate;
+                
+                // Data de vencimento sugerida
+                document.getElementById('poDueDate').value = new Date(new Date().setDate(new Date().getDate() + 7)).toISOString().slice(0, 10);
+                
+                addItem(); // Adiciona um item inicial vazio
+                formatPhone(document.getElementById('contactPhone')); // Garante formatação inicial
+            }
+        }
 
         // Função de carregamento que é chamada após a autenticação
-        window.loadData = async () => {
-            await loadPharmacyConfig(); // Carrega a config da farmácia primeiro
-            loadSuppliersAndProducts(); // Em seguida, carrega catálogos e verifica instruções de PO
-        };
+        window.loadData = init;
 
         window.onload = () => {
             setupModal();
             setupFirebase(); 
-            
-            // Adiciona o listener para salvar a data do PO ao sair do campo
-            document.getElementById('poDate').addEventListener('change', (e) => {
-                localStorage.setItem('currentPoDate', e.target.value);
-            });
         };
 
         // Exporta funções para uso global (onchange/onclick no HTML)
@@ -988,10 +1028,6 @@
         window.resequenceItems = resequenceItems; 
         window.closeModal = closeModal; 
         window.logout = logout;
-        window.openConfigModal = openConfigModal;
-        window.updateSupplierDetails = updateSupplierDetails;
-        window.formatCNPJ = formatCNPJ; // Exporta para uso no modal de config
-        window.formatPhone = formatPhone; // Exporta para uso no modal de config
     </script>
 </body>
 </html>

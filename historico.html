@@ -17,509 +17,458 @@
         /* Barra Superior (User/Logout) */
         .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; margin-bottom: 10px; border-bottom: 1px solid #ddd; }
         .user-info { font-weight: bold; color: #004c99; font-size: 14px; }
-        .logout-btn { background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; transition: background 0.3s; }
-        .logout-btn:hover { background: #c82333; }
+        .logout-btn { background-color: #d9534f; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; transition: background-color 0.3s; }
+        .logout-btn:hover { background-color: #c9302c; }
 
-        /* Navegação */
-        nav { margin-bottom: 20px; }
-        nav a { margin-right: 15px; text-decoration: none; color: #004c99; font-weight: bold; }
-        nav a:hover { text-decoration: underline; }
+        /* Menu de Navegação */
+        .nav-menu { display: flex; justify-content: space-around; margin-bottom: 30px; padding: 10px 0; border-bottom: 2px solid #004c99; }
+        .nav-menu a { text-decoration: none; color: #004c99; font-weight: bold; padding: 8px 15px; border-radius: 5px; transition: background-color 0.3s; }
+        .nav-menu a.active, .nav-menu a:hover { background-color: #e6f0ff; }
         
-        /* Filtro */
-        .filter-container { margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 5px; background-color: #f9f9f9; display: flex; gap: 10px; align-items: center; }
-        .filter-container label { font-weight: bold; color: #333; }
-        .filter-container input[type="text"] { padding: 8px; border: 1px solid #ccc; border-radius: 4px; flex-grow: 1; }
-        .filter-container button { 
-            background-color: #007bff; 
-            color: white; 
-            border: none; 
-            padding: 8px 15px; 
-            border-radius: 4px; 
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        .filter-container button:hover { background-color: #0056b3; }
-
-
-        /* Lista */
-        .list-container { margin-top: 20px; }
-        .list-item {
-            background-color: #f8f8f8;
-            border: 1px solid #eee;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .list-item h4 { margin: 0 0 5px 0; color: #004c99; }
-        .list-item-details { flex-grow: 1; }
-        .list-item-details strong { font-weight: bold; color: #333; }
-        .list-item-actions button { margin-left: 10px; }
+        /* Cabeçalho */
+        h1 { color: #004c99; text-align: center; margin-bottom: 20px; }
         
-        /* Botões de Ação na Lista */
-        .btn-edit { background: #ffc107; color: #333; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; transition: background 0.3s; }
-        .btn-edit:hover { background: #e0a800; }
-        .delete-btn { background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; transition: background 0.3s; }
-        .delete-btn:hover { background: #c82333; }
-        .print-btn { background: #6c757d; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; transition: background 0.3s; }
-        .print-btn:hover { background: #5a6268; }
-
-        /* Modal Padrão */
-        .modal {
-            display: none; 
-            position: fixed; 
-            z-index: 10; 
-            left: 0; 
-            top: 0;
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
-            background-color: rgba(0,0,0,0.4); 
-            padding-top: 60px;
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto; 
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%; 
-            max-width: 700px;
-            border-radius: 10px;
-            position: relative;
-        }
-        .close-btn {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-        .close-btn:hover,
-        .close-btn:focus {
-            color: #000;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        
-        /* Estilos de Impressão */
-        @media print {
-            body * { visibility: hidden; }
-            #printModal, #printModal * { visibility: visible; }
-            #printModal { 
-                position: absolute; 
-                left: 0; 
-                top: 0;
-                width: 100%;
-                margin: 0;
-                padding: 0;
-                box-shadow: none;
-            }
-            .po-print-header, .po-print-details, .po-print-items, .po-print-footer { visibility: visible !important; }
-            .po-print-header h2 { font-size: 24px; margin-bottom: 5px; }
-            .po-print-details { display: flex; justify-content: space-between; margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 10px; }
-            .po-print-details div { width: 48%; }
-            .po-print-items table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-            .po-print-items th, .po-print-items td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-            .po-print-items th { background-color: #eee; }
-            .po-print-total { text-align: right; font-size: 1.2em; font-weight: bold; }
-            .po-print-footer { margin-top: 50px; border-top: 1px solid #333; padding-top: 20px; text-align: center; }
-        }
-
-        /* Custom Alert/Confirm */
-        #customAlertModal {
-            display: none;
-            position: fixed;
-            z-index: 100;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.6);
-        }
-        #customAlertContent {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 400px;
-            border-radius: 10px;
-            text-align: center;
-        }
-        #customAlertTitle {
-            font-size: 1.5em;
-            margin-bottom: 15px;
-            color: #004c99;
-        }
-        #customAlertMessage {
+        /* Campo de Busca (NOVO) */
+        .search-container {
             margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background-color: #f9f9f9;
         }
-        #customAlertButtons button {
-            padding: 10px 20px;
-            margin: 5px;
+        .search-container input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        /* Lista de Pedidos */
+        #historyList { list-style: none; padding: 0; }
+        .list-item { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 15px; 
+            margin-bottom: 10px; 
+            border-radius: 6px; 
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-left: 5px solid #004c99; /* Indicador de Pedido Finalizado */
+            cursor: pointer; /* Indica que é clicável para edição */
+            transition: background-color 0.3s;
+        }
+        .list-item:hover { background-color: #f0f8ff; }
+
+        .list-item-details { flex-grow: 1; margin-right: 15px; }
+        .list-item-details strong { font-size: 1.1em; color: #004c99; display: block; margin-bottom: 5px; }
+        .list-item-details span { font-size: 0.9em; color: #555; display: block; }
+
+        .list-item-actions button {
+            padding: 8px 12px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            transition: background 0.3s;
+            margin-left: 10px;
+            font-weight: bold;
+            transition: background-color 0.3s;
         }
-        .alert-ok-btn { background-color: #007bff; color: white; }
-        .alert-ok-btn:hover { background-color: #0056b3; }
-        .alert-cancel-btn { background-color: #6c757d; color: white; }
-        .alert-cancel-btn:hover { background-color: #5a6268; }
-        .alert-confirm-btn { background-color: #dc3545; color: white; }
-        .alert-confirm-btn:hover { background-color: #c82333; }
+        .btn-edit { background-color: #f0ad4e; color: white; }
+        .btn-edit:hover { background-color: #ec971f; }
+        .delete-btn { background-color: #d9534f; color: white; }
+        .delete-btn:hover { background-color: #c9302c; }
+        .btn-print { background-color: #5bc0de; color: white; }
+        .btn-print:hover { background-color: #31b0d5; }
+        
+        /* Estilos do Modal (Alerta/Confirmação) */
+        .custom-modal-backdrop {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); z-index: 1000;
+            display: none; justify-content: center; align-items: center;
+        }
+        .custom-modal-content {
+            background-color: white; padding: 25px; border-radius: 8px;
+            width: 90%; max-width: 400px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            animation: fadeIn 0.3s;
+        }
+        .custom-modal-content h3 { color: #004c99; margin-top: 0; }
+        .custom-modal-actions { text-align: right; margin-top: 20px; }
+        .custom-modal-actions button {
+            padding: 10px 20px; margin: 5px; border: none; border-radius: 5px;
+            cursor: pointer; background-color: #004c99; color: white;
+            transition: background-color 0.3s;
+        }
+        .custom-modal-actions button:hover { background-color: #003366; }
+
     </style>
 </head>
 <body>
     <div class="container">
         <div class="top-bar">
-            <h1>Histórico de Pedidos de Compra</h1>
-            <div>
-                <span class="user-info" id="userInfo">Carregando...</span>
-                <button class="logout-btn" onclick="logout()">Sair</button>
-            </div>
+            <span class="user-info">Carregando usuário...</span>
+            <button class="logout-btn" onclick="logout()">Sair</button>
         </div>
 
-        <nav>
+        <div class="nav-menu">
             <a href="index.html">Novo Pedido</a>
+            <a href="historico.html" class="active">Histórico</a>
             <a href="rascunhos.html">Rascunhos</a>
-            <a href="produtos.html">Catálogo de Produtos</a>
+            <a href="produtos.html">Catálogo</a>
             <a href="fornecedores.html">Fornecedores</a>
-        </nav>
-
-        <div class="filter-container">
-            <label for="filterInput">Filtrar Pedidos (Nº, Fornecedor ou Data):</label>
-            <input type="text" id="filterInput" placeholder="Digite o termo de busca">
-            <button onclick="filterList()">Buscar</button>
         </div>
 
-        <div class="list-container" id="historyList">
-            <p>Carregando histórico...</p>
+        <h1>Histórico de Pedidos Finalizados</h1>
+        
+        <div class="search-container">
+            <input type="text" id="searchInput" oninput="filterList()" placeholder="Buscar por N° do Pedido, Fornecedor ou Data...">
         </div>
+
+        <ul id="historyList">
+            <p style="text-align: center;">Carregando histórico...</p>
+        </ul>
     </div>
 
-    <div id="printModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal('printModal')">&times;</span>
-            <div id="printContent">
-                </div>
-            <div style="text-align: right; margin-top: 20px;">
-                 <button class="print-btn" onclick="window.print()">Imprimir Pedido</button>
+    <div id="customModal" class="custom-modal-backdrop">
+        <div id="alertContent" class="custom-modal-content">
+            <h3 id="alertTitle">Título</h3>
+            <p id="alertMessage">Mensagem</p>
+            <div id="modalActions" class="custom-modal-actions">
+                <button class="alert-ok" onclick="closeModal()">OK</button>
             </div>
         </div>
     </div>
-    
-    <div id="customAlertModal">
-        <div id="customAlertContent">
-            <h3 id="customAlertTitle"></h3>
-            <p id="customAlertMessage"></p>
-            <div id="customAlertButtons">
-                <button class="alert-ok-btn" onclick="closeCustomAlert()">OK</button>
-            </div>
-        </div>
-    </div>
-
 
     <script>
-        // Variáveis de Configuração Firebase (Deve ser definido globalmente ou em um arquivo comum)
-        // ATENÇÃO: Substitua pelos seus dados de configuração
-        const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            authDomain: "SEU_AUTH_DOMAIN",
-            projectId: "SEU_PROJECT_ID",
-            storageBucket: "SEU_STORAGE_BUCKET",
-            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-            appId: "SEU_APP_ID"
-        };
-        
         let db;
         let auth;
+        let allOrders = []; // Armazena todos os pedidos para o filtro
+
+        // CONFIGURAÇÃO DO FIREBASE COM SUA CHAVE
+        const firebaseConfig = {
+            apiKey: "AIzaSyAXKlq9WOs_5_ilfhG13xQwNVwQa6MaBfg",
+            authDomain: "farmacia-a6682.firebaseapp.com",
+            projectId: "farmacia-a6682",
+            storageBucket: "farmacia-a6682.firebasestorage.app",
+            messagingSenderId: "144965717217",
+            appId: "1:144965717217:web:de43b2316e8b7a25293ba0"
+        };
+
+        /* --------------------------------------------------
+        * FUNÇÕES DE UTILIDADE E FIREBASE 
+        * -------------------------------------------------- */
 
         function setupFirebase() {
             if (!firebase.apps.length) {
                 firebase.initializeApp(firebaseConfig);
             }
+
             auth = firebase.auth();
             db = firebase.firestore();
-            
-            // Listener de autenticação para verificar o login
+
             auth.onAuthStateChanged(user => {
                 if (user) {
-                    document.getElementById('userInfo').textContent = `Usuário: ${user.email}`;
-                    window.loadData(); // Chama a função de carregamento após a autenticação
+                    document.querySelector('.user-info').textContent = 'Usuário: ' + (user.email || 'Admin');
+                    if (typeof window.loadData === 'function') {
+                        window.loadData();
+                    }
                 } else {
-                    // Se não estiver logado, redireciona para a página de login
-                    window.location.href = 'login.html'; 
+                    if (window.location.pathname.indexOf('login.html') === -1) {
+                        window.location.href = 'login.html';
+                    }
                 }
             });
         }
-        
+
         function logout() {
             auth.signOut().then(() => {
                 window.location.href = 'login.html';
+            }).catch(error => {
+                console.error("Erro ao fazer logout:", error);
             });
         }
 
-        // Função utilitária para obter a coleção do usuário atual
         function getUserCollectionRef(collectionName) {
             const user = auth.currentUser;
-            if (user) {
-                // Coleção específica para o CNPJ/UID do usuário atual
-                return db.collection('users').doc(user.uid).collection(collectionName);
+            if (!user) {
+                window.location.href = 'login.html';
+                throw new Error("Usuário não autenticado.");
             }
-            throw new Error("Usuário não autenticado.");
+            return db.collection('users').doc(user.uid).collection(collectionName);
         }
 
-        // --- Funções de UI/Modal/Alert ---
-        
+        // Funções de Modal (Alerta/Confirmação)
         function setupModal() {
-            const modal = document.getElementById('printModal');
-            window.onclick = function(event) {
-                if (event.target == modal) {
-                    closeModal('printModal');
+            const modal = document.getElementById('customModal');
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
                 }
-            }
+            });
         }
         
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        let currentAlertCallback = null;
-
         function showCustomAlert(title, message, callback) {
-            document.getElementById('customAlertTitle').textContent = title;
-            document.getElementById('customAlertMessage').textContent = message;
+            document.getElementById('alertTitle').textContent = title;
+            document.getElementById('alertMessage').innerHTML = message;
             
-            const buttonsDiv = document.getElementById('customAlertButtons');
-            buttonsDiv.innerHTML = `<button class="alert-ok-btn" onclick="closeCustomAlert(true)">OK</button>`;
-            
-            currentAlertCallback = callback;
-            document.getElementById('customAlertModal').style.display = 'block';
-        }
-
-        function showCustomConfirm(title, message, confirmCallback) {
-            document.getElementById('customAlertTitle').textContent = title;
-            document.getElementById('customAlertMessage').textContent = message;
-            
-            const buttonsDiv = document.getElementById('customAlertButtons');
-            buttonsDiv.innerHTML = `
-                <button class="alert-cancel-btn" onclick="closeCustomAlert(false)">Cancelar</button>
-                <button class="alert-confirm-btn" onclick="closeCustomAlert(true)">Confirmar</button>
-            `;
-            
-            currentAlertCallback = confirmCallback;
-            document.getElementById('customAlertModal').style.display = 'block';
-        }
-
-        function closeCustomAlert(confirmed = true) {
-            document.getElementById('customAlertModal').style.display = 'none';
-            if (confirmed && currentAlertCallback) {
-                currentAlertCallback();
+            const okButton = document.getElementById('modalActions').querySelector('.alert-ok');
+            if (callback) {
+                okButton.onclick = () => { closeModal(); callback(); };
+            } else {
+                okButton.onclick = closeModal;
             }
-            currentAlertCallback = null;
+
+            document.getElementById('customModal').style.display = 'flex';
         }
 
-
-        // --- Funções Firebase (CRUD/Load) ---
-
-        async function loadHistory(searchTerm = '') {
-            const list = document.getElementById('historyList');
-            list.innerHTML = '<p>Carregando histórico...</p>';
+        function showCustomConfirm(title, message, onYes) {
+            document.getElementById('alertTitle').textContent = title;
+            document.getElementById('alertMessage').innerHTML = message;
             
+            const actions = document.getElementById('modalActions');
+            actions.innerHTML = `
+                <button class="btn-primary" id="modalConfirmYes">Sim</button>
+                <button class="btn-secondary" onclick="closeModal()">Não</button>
+            `;
+
+            document.getElementById('modalConfirmYes').onclick = () => {
+                closeModal();
+                onYes();
+            };
+
+            document.getElementById('customModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('customModal').style.display = 'none';
+            // Restaura o botão OK padrão para o caso de ter sido um confirm
+            document.getElementById('modalActions').innerHTML = `<button class="alert-ok" onclick="closeModal()">OK</button>`;
+        }
+        
+        // Formatação de Data
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            // dateString deve ser AAAA-MM-DD, então passamos para o Date com T00:00:00 para evitar problemas de fuso
+            const date = new Date(dateString + 'T00:00:00'); 
+            return date.toLocaleDateString('pt-BR');
+        }
+        
+        /* --------------------------------------------------
+        * FUNÇÕES DE LISTAGEM E FILTRO (HISTÓRICO)
+        * -------------------------------------------------- */
+
+        async function loadHistory() {
+            const list = document.getElementById('historyList');
+            list.innerHTML = '<p style="text-align: center;">Carregando pedidos...</p>';
+
             try {
-                const ordersRef = getUserCollectionRef('orders').orderBy('poNumber', 'desc');
-                const snapshot = await ordersRef.get();
-                
-                const allOrders = snapshot.docs.map(doc => doc.data());
-                
-                // Filtro (case-insensitive)
-                const filteredOrders = allOrders.filter(order => {
-                    if (!searchTerm) return true; // Se não houver termo, retorna todos
-                    const term = searchTerm.toLowerCase();
-                    
-                    const poNumberMatch = order.poNumber && order.poNumber.toLowerCase().includes(term);
-                    const supplierMatch = order.supplier && order.supplier.companyName && order.supplier.companyName.toLowerCase().includes(term);
-                    const dateMatch = order.poDate && order.poDate.includes(term); // Comparação simples de string
+                // Busca no Firestore e ordena por data de criação (mais recente primeiro)
+                const snapshot = await getUserCollectionRef('orders').orderBy('createdAt', 'desc').get();
+                allOrders = []; // Limpa a lista de pedidos
 
-                    return poNumberMatch || supplierMatch || dateMatch;
-                });
-
-                list.innerHTML = '';
-                if (filteredOrders.length === 0) {
-                    list.innerHTML = `<p>Nenhum pedido finalizado encontrado${searchTerm ? ' para o termo de busca' : ''}.</p>`;
+                if (snapshot.empty) {
+                    list.innerHTML = '<p style="text-align: center;">Nenhum pedido finalizado encontrado.</p>';
                     return;
                 }
 
-                filteredOrders.forEach(order => {
-                    const item = document.createElement('div');
-                    item.className = 'list-item';
-                    
-                    const dateDisplay = order.poDate ? new Date(order.poDate).toLocaleDateString('pt-BR') : 'N/A';
-                    const total = order.total ? `R$ ${parseFloat(order.total).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : 'N/A';
-                    const supplierName = order.supplier && order.supplier.companyName ? order.supplier.companyName : 'Fornecedor Não Informado';
-
-                    item.innerHTML = `
-                        <div class="list-item-details">
-                            <h4>Pedido N° <strong>${order.poNumber}</strong></h4>
-                            <strong>Fornecedor:</strong> ${supplierName} <br>
-                            <strong>Data do Pedido:</strong> ${dateDisplay} <br>
-                            <strong>Total:</strong> ${total}
-                        </div>
-                        <div class="list-item-actions">
-                            <button class="print-btn" onclick="printPo('${order.poNumber}', event)">Imprimir</button>
-                            <button class="btn-edit" onclick="editPo('${order.poNumber}', event)">Ver/Editar</button>
-                            <button class="delete-btn" onclick="deletePo('${order.poNumber}', event)">Excluir</button>
-                        </div>
-                    `;
-                    list.appendChild(item);
+                snapshot.forEach(doc => {
+                    const order = doc.data();
+                    order.id = doc.id; // Adiciona o ID (que é o poNumber)
+                    allOrders.push(order);
                 });
+
+                // Renderiza a lista inicial
+                renderList(allOrders);
 
             } catch (error) {
                 console.error("Erro ao carregar histórico:", error);
-                list.innerHTML = '<p style="color: red;">Erro ao carregar histórico de pedidos.</p>';
+                list.innerHTML = '<p style="color: red; text-align: center;">Erro ao carregar o histórico de pedidos.</p>';
             }
         }
-        
-        function filterList() {
-            const searchTerm = document.getElementById('filterInput').value.trim();
-            loadHistory(searchTerm);
+
+        function renderList(ordersToRender) {
+            const list = document.getElementById('historyList');
+            list.innerHTML = ''; // Limpa a lista antes de renderizar
+
+            if (ordersToRender.length === 0) {
+                 list.innerHTML = '<p style="text-align: center;">Nenhum pedido encontrado com o filtro aplicado.</p>';
+                 return;
+            }
+
+            ordersToRender.forEach(order => {
+                const item = document.createElement('li');
+                item.className = 'list-item';
+                // Adiciona a função para editar/visualizar ao clicar no item (área principal)
+                item.onclick = () => editPo(order.id); 
+
+                const poDateFormatted = formatDate(order.poDate);
+                const totalFormatted = parseFloat(order.grandTotal).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+                item.innerHTML = `
+                    <div class="list-item-details">
+                        <strong>Pedido N°: ${order.id}</strong>
+                        <span>Fornecedor: ${order.supplierName || 'N/A'}</span>
+                        <span>Emissão: ${poDateFormatted} | Total: ${totalFormatted}</span>
+                    </div>
+                    <div class="list-item-actions">
+                        <button class="btn-print" onclick="printPo('${order.id}', event)">Imprimir</button>
+                        <button class="btn-edit" onclick="editPo('${order.id}', event)">Visualizar/Editar</button>
+                        <button class="delete-btn" onclick="deletePo('${order.id}', event)">Excluir</button>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
         }
+        
+        // **NOVA FUNÇÃO:** Filtra a lista com base no input
+        function filterList() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+            
+            if (searchTerm === '') {
+                renderList(allOrders);
+                return;
+            }
+
+            const filteredOrders = allOrders.filter(order => {
+                // Busca em: poNumber, supplierName, poDate (formatada)
+                const poDateFormatted = formatDate(order.poDate);
+                
+                return order.id.toLowerCase().includes(searchTerm) ||
+                       (order.supplierName && order.supplierName.toLowerCase().includes(searchTerm)) ||
+                       poDateFormatted.includes(searchTerm);
+            });
+
+            renderList(filteredOrders);
+        }
+
+
+        /* --------------------------------------------------
+        * FUNÇÕES DE AÇÃO (EDIÇÃO, EXCLUSÃO, IMPRESSÃO)
+        * -------------------------------------------------- */
 
         function editPo(poNumber, event) {
-            event.stopPropagation();
-            // Redireciona para a página principal (index.html) e passa o número do PO via localStorage
-            localStorage.setItem('loadPoNumber', poNumber);
-            localStorage.setItem('loadPoSource', 'orders'); // Indica que é um pedido finalizado
-            window.location.href = 'index.html';
+            if (event) event.stopPropagation();
+            // Redireciona para o index.html com o parâmetro 'po' para carregar a edição
+            window.location.href = `index.html?po=${poNumber}`;
         }
-
+        
+        // A função printPo no historico.html precisa carregar os dados para gerar a impressão.
         async function printPo(poNumber, event) {
             event.stopPropagation();
-            const printContentDiv = document.getElementById('printContent');
-            printContentDiv.innerHTML = '<p>Carregando...</p>';
-            document.getElementById('printModal').style.display = 'block';
-
+            
             try {
                 const doc = await getUserCollectionRef('orders').doc(poNumber).get();
                 if (!doc.exists) {
-                    printContentDiv.innerHTML = '<p style="color: red;">Pedido de Compra não encontrado.</p>';
+                    showCustomAlert('Erro', 'Pedido não encontrado para impressão.');
                     return;
                 }
-                const po = doc.data();
+                const poData = doc.data();
 
-                // Formatação
-                const poDate = po.poDate ? new Date(po.poDate).toLocaleDateString('pt-BR') : 'N/A';
-                const poDueDate = po.poDueDate ? new Date(po.poDueDate).toLocaleDateString('pt-BR') : 'N/A';
-                const total = po.total ? parseFloat(po.total).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0,00';
-                const supplier = po.supplier || {};
-                
-                // Função auxiliar para formatação de CNPJ (copiada de fornecedores.html ou index.html)
-                const formatCNPJ = (cnpjRaw) => {
-                    let value = (cnpjRaw || '').replace(/\D/g, "");
-                    if (value.length === 14) {
-                        return value.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5");
-                    }
-                    return cnpjRaw || 'N/A';
-                };
-                
-                // Função auxiliar para formatação de Telefone (copiada de fornecedores.html ou index.html)
-                const formatPhone = (phoneRaw) => {
-                    let value = (phoneRaw || '').replace(/\D/g, "");
-                    if (value.length === 11) {
-                        return value.replace(/^(\d{2})(\d{5})(\d{4})$/, "($1) $2-$3");
-                    } else if (value.length === 10) {
-                        return value.replace(/^(\d{2})(\d{4})(\d{4})$/, "($1) $2-$3");
-                    }
-                    return phoneRaw || 'N/A';
-                };
-                
-                const formattedPharmacyCNPJ = formatCNPJ(po.pharmacy.cnpj);
-                const formattedPharmacyPhone = formatPhone(po.pharmacy.phone);
-                const formattedSupplierCNPJ = formatCNPJ(supplier.cnpj);
-                const formattedSupplierPhone = formatPhone(supplier.phone);
+                // Usa o código de geração de impressão que já existe no index.html (reproduzido aqui)
+                let printWindow = window.open('', '_blank');
+                printWindow.document.write(generatePrintContent(poData));
+                printWindow.document.close();
+                printWindow.focus();
+                setTimeout(() => {
+                    printWindow.print();
+                }, 500);
 
+            } catch (error) {
+                 console.error("Erro ao carregar PO para impressão:", error);
+                 showCustomAlert('Erro', 'Não foi possível carregar o pedido para impressão.');
+            }
+        }
+        
+        // Função auxiliar para gerar o conteúdo HTML para impressão (Copiada do index.html para funcionar aqui)
+        function generatePrintContent(order) {
+            const itemsHtml = order.items.map((item, index) => `
+                <tr>
+                    <td class="item-index">${index + 1}</td>
+                    <td class="item-sku">${item.sku}</td>
+                    <td class="item-name">
+                        ${item.name}<br>
+                        <small>Descrição: ${item.desc || 'Sem descrição'}</small>
+                    </td>
+                    <td class="item-qty">${item.qty}</td>
+                    <td class="item-price">R$ ${parseFloat(item.price).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td class="item-total">R$ ${parseFloat(item.total).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                </tr>
+            `).join('');
 
-                let itemsHtml = po.items && po.items.length > 0 ? po.items.map((item, index) => `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${item.sku || 'N/A'}</td>
-                        <td>${item.desc || 'Produto sem descrição'}</td>
-                        <td style="text-align: right;">${item.qty || 0}</td>
-                        <td style="text-align: right;">R$ ${parseFloat(item.price || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                        <td style="text-align: right;">R$ ${parseFloat(item.total || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                    </tr>
-                `).join('') : '<tr><td colspan="6">Nenhum item no pedido.</td></tr>';
+            return `
+                <html>
+                <head>
+                    <title>Pedido de Compra N° ${order.poNumber}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; font-size: 10pt; }
+                        .po-container { max-width: 800px; margin: 0 auto; border: 1px solid #000; padding: 20px; }
+                        h1 { text-align: center; color: #004c99; margin-bottom: 20px; font-size: 16pt; border-bottom: 2px solid #004c99; padding-bottom: 5px; }
+                        h2 { font-size: 12pt; color: #333; margin-top: 15px; margin-bottom: 5px; border-bottom: 1px solid #ccc; padding-bottom: 2px; }
+                        .details { display: flex; flex-wrap: wrap; margin-bottom: 10px; }
+                        .detail-item { flex: 1 1 50%; min-width: 300px; margin-bottom: 5px; }
+                        .detail-item strong { font-weight: bold; }
 
-                printContentDiv.innerHTML = `
-                <div class="po-print-container">
-                    <div class="po-print-header" style="text-align: center; margin-bottom: 20px;">
-                        <h2>PEDIDO DE COMPRA N° ${po.poNumber}</h2>
-                        <p><strong>Status:</strong> FINALIZADO</p>
-                    </div>
+                        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        th { background-color: #f2f2f2; color: #333; font-weight: bold; }
+                        .item-qty, .item-price, .item-total { text-align: right; }
+                        .item-index { text-align: center; width: 30px; }
 
-                    <div class="po-print-details">
-                        <div>
-                            <strong>DADOS DA FARMÁCIA (Comprador)</strong>
-                            <p>
-                                ${po.pharmacy.name || 'N/A'} <br>
-                                CNPJ: ${formattedPharmacyCNPJ} <br>
-                                E-mail: ${po.pharmacy.email || 'N/A'} <br>
-                                Telefone: ${formattedPharmacyPhone} <br>
-                                Endereço: ${po.pharmacy.address || 'N/A'}
-                            </p>
+                        .po-total { text-align: right; margin-top: 20px; font-size: 14pt; font-weight: bold; color: #004c99; }
+                        
+                        @media print {
+                            body { margin: 0; }
+                            .po-container { border: none; padding: 0; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="po-container">
+                        <h1>PEDIDO DE COMPRA N° ${order.poNumber}</h1>
+                        
+                        <h2>Dados Gerais</h2>
+                        <div class="details">
+                            <div class="detail-item"><strong>Fornecedor:</strong> ${order.supplierName}</div>
+                            <div class="detail-item"><strong>Emissão:</strong> ${new Date(order.poDate + 'T00:00:00').toLocaleDateString('pt-BR')}</div>
+                            <div class="detail-item"><strong>Prazo Vencimento:</strong> ${new Date(order.poDueDate + 'T00:00:00').toLocaleDateString('pt-BR')}</div>
                         </div>
-                        <div>
-                            <strong>DADOS DO FORNECEDOR (Vendedor)</strong>
-                            <p>
-                                ${supplier.companyName || 'N/A'} <br>
-                                CNPJ: ${formattedSupplierCNPJ} <br>
-                                Contato: ${supplier.contactName || 'N/A'} <br>
-                                Telefone: ${formattedSupplierPhone}
-                            </p>
-                            <p>
-                                <strong>Data do Pedido:</strong> ${poDate} <br>
-                                <strong>Data de Vencimento:</strong> ${poDueDate}
-                            </p>
-                        </div>
-                    </div>
 
-                    <div class="po-print-items">
-                        <h3 style="margin-top: 0;">Itens do Pedido</h3>
+                        <h2>Dados da Farmácia (Entrega)</h2>
+                        <div class="details">
+                            <div class="detail-item"><strong>Farmácia:</strong> ${order.pharmacyName}</div>
+                            <div class="detail-item"><strong>Endereço:</strong> ${order.deliveryAddress}</div>
+                            <div class="detail-item"><strong>Data de Entrega Solicitada:</strong> ${new Date(order.deliveryDate + 'T00:00:00').toLocaleDateString('pt-BR')}</div>
+                            <div class="detail-item"><strong>Telefone:</strong> ${order.contactPhone}</div>
+                        </div>
+
+                        <h2>Itens do Pedido</h2>
                         <table>
                             <thead>
                                 <tr>
-                                    <th>#</th>
+                                    <th class="item-index">#</th>
                                     <th>SKU</th>
-                                    <th>Descrição</th>
-                                    <th style="text-align: right;">Qtd</th>
-                                    <th style="text-align: right;">Preço Unit.</th>
-                                    <th style="text-align: right;">Total Item</th>
+                                    <th>Produto / Descrição</th>
+                                    <th class="item-qty">Qtd</th>
+                                    <th class="item-price">Unitário</th>
+                                    <th class="item-total">Total</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 ${itemsHtml}
                             </tbody>
                         </table>
+                        
+                        <div class="po-total">
+                            Total Geral: R$ ${parseFloat(order.grandTotal).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </div>
+                        
+                        <div style="text-align: center; margin-top: 50px; padding-top: 20px; border-top: 1px dashed #ccc;">
+                            Assinatura do Responsável
+                        </div>
                     </div>
-                    
-                    <div class="po-print-total">
-                        TOTAL DO PEDIDO: R$ ${total}
-                    </div>
-
-                    <div class="po-print-footer">
-                        <p>
-                            Confira as informações. Em caso de dúvidas, entre em contato.
-                        </p>
-                    </div>
-                </div>
-                `;
-            } catch (error) {
-                console.error("Erro ao carregar PO para impressão:", error);
-                printContentDiv.innerHTML = '<p style="color: red;">Erro ao carregar o Pedido de Compra para visualização.</p>';
-            }
+                </body>
+                </html>
+            `;
         }
 
         function deletePo(poNumber, event) {
