@@ -17,343 +17,404 @@
         /* Barra Superior (User/Logout) */
         .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; margin-bottom: 10px; border-bottom: 1px solid #ddd; }
         .user-info { font-weight: bold; color: #004c99; font-size: 14px; }
-        .logout-btn { background-color: #d9534f; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; transition: background-color 0.3s; }
-        .logout-btn:hover { background-color: #c9302c; }
+        .logout-btn { background-color: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 14px; transition: background-color 0.3s; }
+        .logout-btn:hover { background-color: #c82333; }
 
-        /* Menu de Navegação */
-        .nav-menu { display: flex; justify-content: space-around; margin-bottom: 30px; padding: 10px 0; border-bottom: 2px solid #004c99; }
-        .nav-menu a { text-decoration: none; color: #004c99; font-weight: bold; padding: 8px 15px; border-radius: 5px; transition: background-color 0.3s; }
-        .nav-menu a.active, .nav-menu a:hover { background-color: #e6f0ff; }
-        
-        /* Cabeçalho */
-        h1 { color: #004c99; text-align: center; margin-bottom: 20px; }
-        
-        /* Campo de Busca (NOVO) */
-        .search-container {
+        h1 { color: #004c99; text-align: center; margin-bottom: 25px; }
+
+        /* Navegação */
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
             margin-bottom: 20px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            background-color: #f9f9f9;
+            border-bottom: 1px solid #eee;
         }
-        .search-container input {
+        .nav-menu a {
+            text-decoration: none;
+            color: #004c99;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            font-weight: bold;
+        }
+        .nav-menu a:hover, .nav-menu a.active {
+            background-color: #e6f0ff;
+        }
+        
+        /* Filtro */
+        .filter-search {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .filter-search input {
             width: 100%;
             padding: 10px;
+            box-sizing: border-box;
             border: 1px solid #ccc;
             border-radius: 5px;
-            box-sizing: border-box;
         }
 
         /* Lista de Pedidos */
-        #draftsList { list-style: none; padding: 0; }
-        .list-item { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 15px; 
-            margin-bottom: 10px; 
-            border-radius: 6px; 
-            background-color: #fff;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            border-left: 5px solid #f0ad4e; /* Indicador de Rascunho */
-            cursor: pointer; /* Indica que é clicável para edição */
-            transition: background-color 0.3s;
+        .draft-list {
+            list-style: none;
+            padding: 0;
         }
-        .list-item:hover { background-color: #fffbe6; }
+        .list-item {
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+        .list-item:hover {
+            background-color: #eef;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
 
-        .list-item-details { flex-grow: 1; margin-right: 15px; }
-        .list-item-details strong { font-size: 1.1em; color: #004c99; display: block; margin-bottom: 5px; }
-        .list-item-details span { font-size: 0.9em; color: #555; display: block; }
+        .list-item-body {
+            flex-grow: 1;
+        }
+        .list-item-body p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #555;
+        }
+        .po-number { 
+            font-weight: bold; 
+            color: #004c99; 
+            font-size: 16px;
+            margin-right: 15px;
+        }
+        .po-date {
+            font-size: 13px;
+            color: #777;
+        }
 
-        .list-item-actions button {
-            padding: 8px 12px;
+        .list-item-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-edit, .btn-primary, .delete-btn {
             border: none;
+            padding: 8px 12px;
             border-radius: 5px;
             cursor: pointer;
-            margin-left: 10px;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-edit {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-edit:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-primary {
+            background-color: #28a745; /* Usado para Finalizar */
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #1e7e34;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
             font-weight: bold;
-            transition: background-color 0.3s;
+            color: white;
+            margin-top: 5px;
         }
-        .btn-edit { background-color: #004c99; color: white; }
-        .btn-edit:hover { background-color: #003366; }
-        .btn-finalize { background-color: #5cb85c; color: white; }
-        .btn-finalize:hover { background-color: #4cae4c; }
-        .delete-btn { background-color: #d9534f; color: white; }
-        .delete-btn:hover { background-color: #c9302c; }
-        
-        /* Estilos do Modal (Alerta/Confirmação) */
-        .custom-modal-backdrop {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); z-index: 1000;
-            display: none; justify-content: center; align-items: center;
+        .status-rascunho { background-color: #ffc107; color: #333; }
+
+        /* Modal de Confirmação/Alerta */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
         }
-        .custom-modal-content {
-            background-color: white; padding: 25px; border-radius: 8px;
-            width: 90%; max-width: 400px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            animation: fadeIn 0.3s;
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
         }
-        .custom-modal-content h3 { color: #004c99; margin-top: 0; }
-        .custom-modal-actions { text-align: right; margin-top: 20px; }
-        .custom-modal-actions button {
-            padding: 10px 20px; margin: 5px; border: none; border-radius: 5px;
-            cursor: pointer; background-color: #004c99; color: white;
-            transition: background-color 0.3s;
+        .modal-content h3 { color: #004c99; }
+        .modal-buttons button { margin: 10px; padding: 10px 20px; }
+
+        /* Alerta */
+        .alert-box {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            z-index: 1001;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s;
         }
-        .custom-modal-actions button:hover { background-color: #003366; }
     </style>
 </head>
 <body>
+
     <div class="container">
+        
         <div class="top-bar">
-            <span class="user-info">Carregando usuário...</span>
+            <div class="user-info">Usuário: <span id="user-email">Carregando...</span></div>
             <button class="logout-btn" onclick="logout()">Sair</button>
         </div>
 
         <div class="nav-menu">
             <a href="index.html">Novo Pedido</a>
-            <a href="historico.html">Histórico</a>
             <a href="rascunhos.html" class="active">Rascunhos</a>
-            <a href="produtos.html">Catálogo</a>
+            <a href="historico.html">Histórico</a>
+            <a href="produtos.html">Produtos</a>
             <a href="fornecedores.html">Fornecedores</a>
         </div>
 
         <h1>Pedidos Memorizados (Rascunhos)</h1>
         
-        <div class="search-container">
-            <input type="text" id="searchInput" oninput="filterList()" placeholder="Buscar por N° do Pedido, Fornecedor ou Data...">
+        <div class="filter-search">
+            <input type="text" id="search-input" oninput="filterList(this.value)" placeholder="Filtrar por N° do Pedido, Fornecedor, etc.">
         </div>
 
-        <ul id="draftsList">
+        <ul class="draft-list" id="draft-list">
             <p style="text-align: center;">Carregando rascunhos...</p>
-        </ul>
+            </ul>
     </div>
 
-    <div id="customModal" class="custom-modal-backdrop">
-        <div id="alertContent" class="custom-modal-content">
-            <h3 id="alertTitle">Título</h3>
-            <p id="alertMessage">Mensagem</p>
-            <div id="modalActions" class="custom-modal-actions">
-                <button class="alert-ok" onclick="closeModal()">OK</button>
-            </div>
+    <div id="customModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Título</h3>
+            <p id="modalMessage">Mensagem</p>
+            <div id="modalButtons" class="modal-buttons">
+                </div>
         </div>
     </div>
+    <div id="alertBox" class="alert-box"></div>
+
 
     <script>
-        let db;
-        let auth;
-        let allDrafts = []; // Armazena todos os rascunhos para o filtro
-
-        // CONFIGURAÇÃO DO FIREBASE COM SUA CHAVE
+        // Configurações do Firebase
         const firebaseConfig = {
-            apiKey: "AIzaSyAXKlq9WOs_5_ilfhG13xQwNVwQa6MaBfg",
-            authDomain: "farmacia-a6682.firebaseapp.com",
-            projectId: "farmacia-a6682",
-            storageBucket: "farmacia-a6682.firebasestorage.app",
-            messagingSenderId: "144965717217",
-            appId: "1:144965717217:web:de43b2316e8b7a25293ba0"
+            // Suas configurações aqui
         };
 
-        /* --------------------------------------------------
-        * FUNÇÕES DE UTILIDADE E FIREBASE 
-        * -------------------------------------------------- */
+        let db;
+        let auth;
+        let currentUserId = null;
 
         function setupFirebase() {
-            if (!firebase.apps.length) {
+            if (typeof firebase.apps.length === 'undefined') {
                 firebase.initializeApp(firebaseConfig);
             }
-
             auth = firebase.auth();
             db = firebase.firestore();
 
             auth.onAuthStateChanged(user => {
                 if (user) {
-                    document.querySelector('.user-info').textContent = 'Usuário: ' + (user.email || 'Admin');
-                    if (typeof window.loadData === 'function') {
-                        window.loadData();
-                    }
+                    currentUserId = user.uid;
+                    document.getElementById('user-email').textContent = user.email;
+                    window.loadData();
                 } else {
-                    if (window.location.pathname.indexOf('login.html') === -1) {
-                        window.location.href = 'login.html';
-                    }
+                    window.location.href = 'login.html';
                 }
             });
+        }
+
+        function getUserCollectionRef(collectionName) {
+            if (!currentUserId) {
+                console.error("Usuário não autenticado.");
+                return null;
+            }
+            return db.collection('users').doc(currentUserId).collection(collectionName);
         }
 
         function logout() {
             auth.signOut().then(() => {
                 window.location.href = 'login.html';
-            }).catch(error => {
+            }).catch((error) => {
                 console.error("Erro ao fazer logout:", error);
             });
         }
 
-        function getUserCollectionRef(collectionName) {
-            const user = auth.currentUser;
-            if (!user) {
-                window.location.href = 'login.html';
-                throw new Error("Usuário não autenticado.");
-            }
-            return db.collection('users').doc(user.uid).collection(collectionName);
-        }
-
-        // Funções de Modal (Alerta/Confirmação)
-        function setupModal() {
-            const modal = document.getElementById('customModal');
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    closeModal();
-                }
-            });
-        }
-        
+        // Funções de Modal/Alerta (Mantidas do original)
+        let alertTimeout;
         function showCustomAlert(title, message, callback) {
-            document.getElementById('alertTitle').textContent = title;
-            document.getElementById('alertMessage').innerHTML = message;
-            
-            const okButton = document.getElementById('modalActions').querySelector('.alert-ok');
-            if (callback) {
-                okButton.onclick = () => { closeModal(); callback(); };
-            } else {
-                okButton.onclick = closeModal;
-            }
+            const alertBox = document.getElementById('alertBox');
+            alertBox.textContent = message;
+            alertBox.style.display = 'block';
+            alertBox.style.opacity = '1';
 
-            document.getElementById('customModal').style.display = 'flex';
+            if (alertTimeout) {
+                clearTimeout(alertTimeout);
+            }
+            alertTimeout = setTimeout(() => {
+                alertBox.style.opacity = '0';
+                setTimeout(() => {
+                    alertBox.style.display = 'none';
+                    if (callback) callback();
+                }, 500);
+            }, 3000);
         }
 
-        function showCustomConfirm(title, message, onYes) {
-            document.getElementById('alertTitle').textContent = title;
-            document.getElementById('alertMessage').innerHTML = message;
-            
-            const actions = document.getElementById('modalActions');
-            actions.innerHTML = `
-                <button class="btn-primary" id="modalConfirmYes">Sim</button>
-                <button class="btn-secondary" onclick="closeModal()">Não</button>
-            `;
+        function showCustomConfirm(title, message, onConfirm, onCancel = null) {
+            const modal = document.getElementById('customModal');
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = message;
+            const buttonsContainer = document.getElementById('modalButtons');
+            buttonsContainer.innerHTML = '';
 
-            document.getElementById('modalConfirmYes').onclick = () => {
-                closeModal();
-                onYes();
+            const confirmBtn = document.createElement('button');
+            confirmBtn.className = 'btn-primary';
+            confirmBtn.textContent = 'Confirmar';
+            confirmBtn.onclick = () => {
+                modal.style.display = 'none';
+                onConfirm();
             };
 
-            document.getElementById('customModal').style.display = 'flex';
+            const cancelBtn = document.createElement('button');
+            cancelBtn.className = 'btn-secondary';
+            cancelBtn.textContent = 'Cancelar';
+            cancelBtn.onclick = () => {
+                modal.style.display = 'none';
+                if (onCancel) onCancel();
+            };
+
+            buttonsContainer.appendChild(cancelBtn);
+            buttonsContainer.appendChild(confirmBtn);
+            modal.style.display = 'block';
         }
 
         function closeModal() {
             document.getElementById('customModal').style.display = 'none';
-            // Restaura o botão OK padrão para o caso de ter sido um confirm
-            document.getElementById('modalActions').innerHTML = `<button class="alert-ok" onclick="closeModal()">OK</button>`;
         }
-        
-        // Formatação de Data
-        function formatDate(dateString) {
-            if (!dateString) return 'N/A';
-            const date = new Date(dateString + 'T00:00:00'); 
-            return date.toLocaleDateString('pt-BR');
-        }
-        
-        /* --------------------------------------------------
-        * FUNÇÕES DE LISTAGEM E FILTRO (RASCUNHOS)
-        * -------------------------------------------------- */
+
+        // FUNÇÕES DE CARREGAMENTO E FILTRO
+        let currentDrafts = [];
 
         async function loadDrafts() {
-            const list = document.getElementById('draftsList');
-            list.innerHTML = '<p style="text-align: center;">Carregando rascunhos...</p>';
+            const list = document.getElementById('draft-list');
+            list.innerHTML = '<p style="text-align: center;">Carregando...</p>';
+            const draftsRef = getUserCollectionRef('drafts').orderBy('createdAt', 'desc');
 
             try {
-                // Busca no Firestore e ordena por data de atualização (mais recente primeiro)
-                const snapshot = await getUserCollectionRef('drafts').orderBy('updatedAt', 'desc').get();
-                allDrafts = []; // Limpa a lista de rascunhos
-
+                const snapshot = await draftsRef.get();
+                currentDrafts = [];
                 if (snapshot.empty) {
-                    list.innerHTML = '<p style="text-align: center;">Nenhum rascunho encontrado.</p>';
+                    list.innerHTML = '<p style="text-align: center; color: #777;">Nenhum pedido memorizado (rascunho) encontrado.</p>';
                     return;
                 }
 
                 snapshot.forEach(doc => {
-                    const draft = doc.data();
-                    draft.id = doc.id; // Adiciona o ID (que é o poNumber)
-                    allDrafts.push(draft);
+                    const po = doc.data();
+                    currentDrafts.push(po);
                 });
-
-                // Renderiza a lista inicial
-                renderList(allDrafts);
-
+                
+                filterList(document.getElementById('search-input').value); // Exibe todos inicialmente
+                
             } catch (error) {
                 console.error("Erro ao carregar rascunhos:", error);
-                list.innerHTML = '<p style="color: red; text-align: center;">Erro ao carregar rascunhos.</p>';
+                list.innerHTML = '<p style="text-align: center; color: red;">Erro ao carregar rascunhos.</p>';
             }
         }
 
-        function renderList(draftsToRender) {
-            const list = document.getElementById('draftsList');
-            list.innerHTML = ''; // Limpa a lista antes de renderizar
+        function filterList(searchTerm) {
+            const list = document.getElementById('draft-list');
+            list.innerHTML = '';
+            const term = searchTerm.toLowerCase();
 
-            if (draftsToRender.length === 0) {
-                 list.innerHTML = '<p style="text-align: center;">Nenhum rascunho encontrado com o filtro aplicado.</p>';
-                 return;
-            }
-
-            draftsToRender.forEach(draft => {
-                const item = document.createElement('li');
-                item.className = 'list-item';
-                // Adiciona a função para editar ao clicar no item (área principal)
-                item.onclick = () => editDraft(draft.id); 
-
-                const poDateFormatted = formatDate(draft.poDate);
-                const totalFormatted = parseFloat(draft.grandTotal).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
-                item.innerHTML = `
-                    <div class="list-item-details">
-                        <strong>Rascunho N°: ${draft.id}</strong>
-                        <span>Fornecedor: ${draft.supplierName || 'N/A'}</span>
-                        <span>Emissão: ${poDateFormatted} | Total: ${totalFormatted}</span>
-                    </div>
-                    <div class="list-item-actions">
-                        <button class="btn-edit" onclick="editDraft('${draft.id}', event)">Editar</button>
-                        <button class="btn-finalize" onclick="finalizeDraft('${draft.id}', event)">Finalizar</button>
-                        <button class="delete-btn" onclick="deleteDraft('${draft.id}', event)">Excluir</button>
-                    </div>
-                `;
-                list.appendChild(item);
+            const filteredDrafts = currentDrafts.filter(po => {
+                return po.poNumber.toLowerCase().includes(term) ||
+                       po.supplierName.toLowerCase().includes(term) ||
+                       po.poDate.includes(term);
             });
-        }
 
-        // **NOVA FUNÇÃO:** Filtra a lista com base no input
-        function filterList() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-            
-            if (searchTerm === '') {
-                renderList(allDrafts);
+            if (filteredDrafts.length === 0) {
+                list.innerHTML = '<p style="text-align: center; color: #777;">Nenhum resultado encontrado.</p>';
                 return;
             }
 
-            const filteredDrafts = allDrafts.filter(draft => {
-                // Busca em: poNumber, supplierName, poDate (formatada)
-                const poDateFormatted = formatDate(draft.poDate);
-                
-                return draft.id.toLowerCase().includes(searchTerm) ||
-                       (draft.supplierName && draft.supplierName.toLowerCase().includes(searchTerm)) ||
-                       poDateFormatted.includes(searchTerm);
+            filteredDrafts.forEach(po => {
+                displayDraft(po, list);
             });
-
-            renderList(filteredDrafts);
         }
 
-        /* --------------------------------------------------
-        * FUNÇÕES DE AÇÃO (EDIÇÃO, EXCLUSÃO, FINALIZAÇÃO)
-        * -------------------------------------------------- */
+        function displayDraft(po, list) {
+            const item = document.createElement('li');
+            item.className = 'list-item';
+            
+            // O clique na área ou no botão 'Editar' redireciona para a tela de edição
+            item.onclick = (event) => editDraft(po.poNumber, event); 
 
+            item.innerHTML = `
+                <div>
+                    <div class="list-item-header">
+                        <span class="po-number">Rascunho N° ${po.poNumber}</span>
+                        <span class="po-date">Data: ${po.poDate}</span>
+                    </div>
+                    <div class="list-item-body">
+                        <p><strong>Fornecedor:</strong> ${po.supplierName}</p>
+                        <p><strong>Total:</strong> R$ ${po.total.toFixed(2).replace('.', ',')}</p>
+                        <p class="status-badge status-rascunho">RASCUNHO</p>
+                    </div>
+                </div>
+                <div class="list-item-actions">
+                    <button class="btn-edit" onclick="editDraft('${po.poNumber}', event)">Editar</button>
+                    <button class="btn-primary" onclick="finalizeDraft('${po.poNumber}', event)">Finalizar Pedido</button>
+                    <button class="delete-btn" onclick="deleteDraft('${po.poNumber}', event)">Excluir</button>
+                </div>
+            `;
+            list.appendChild(item);
+        }
+
+        // FUNÇÕES DE AÇÃO
+        
         function editDraft(poNumber, event) {
-            if (event) event.stopPropagation();
-            // Redireciona para o index.html com o parâmetro 'draft' para carregar a edição
-            window.location.href = `index.html?draft=${poNumber}`;
+            event.stopPropagation();
+            // Redireciona para a página de criação/edição, passando o ID do rascunho
+            window.location.href = `index.html?editDraft=${poNumber}`;
         }
 
         function deleteDraft(poNumber, event) {
             event.stopPropagation();
             showCustomConfirm(
                 'Confirmação de Exclusão',
-                `Tem certeza que deseja EXCLUIR o Rascunho N° ${poNumber}?`,
+                `Tem certeza que deseja EXCLUIR o Rascunho N° ${poNumber}? Esta ação não pode ser desfeita.`,
                 async () => {
                     const docRef = getUserCollectionRef('drafts').doc(poNumber);
                     try {
@@ -369,35 +430,34 @@
 
         async function finalizeDraft(poNumber, event) {
             event.stopPropagation();
-            
             showCustomConfirm(
-                'Finalizar Rascunho',
-                `Tem certeza que deseja FINALIZAR o Rascunho N° ${poNumber} e salvá-lo no Histórico?`,
+                'Confirmação de Finalização',
+                `Você deseja FINALIZAR o Rascunho N° ${poNumber}? Ele será salvo no Histórico e removido desta lista.`,
                 async () => {
                     const draftRef = getUserCollectionRef('drafts').doc(poNumber);
                     const historyRef = getUserCollectionRef('orders').doc(poNumber);
 
                     try {
-                        const draftDoc = await draftRef.get();
-                        if (!draftDoc.exists) {
+                        const doc = await draftRef.get();
+                        if (!doc.exists) {
                             showCustomAlert('Erro', 'Rascunho não encontrado.');
                             return;
                         }
+                        let draft = doc.data();
 
-                        let draft = draftDoc.data();
-                        draft.status = 'Finalizado'; 
-
-                        // 1. Verifica se o número já existe no Histórico
-                        const historyDoc = await historyRef.get();
-                        if (historyDoc.exists) {
-                            let confirmed = await new Promise(resolve => {
-                                showCustomConfirm('Pedido Existente', 
-                                    `O número de pedido ${poNumber} já existe no Histórico. Deseja **SUBSTITUIR** o pedido existente?`, 
-                                    () => resolve(true), 
-                                    () => resolve(false)
-                                );
-                            });
-                            if (!confirmed) return;
+                        // 1. Opcional: Verifica se há dados incompletos ou se deve ser preenchido (pode ser ignorado se a validação estiver no index.html)
+                        if (draft.items.length === 0 || !draft.total) {
+                            showCustomConfirm('Atenção', 'Este rascunho parece estar incompleto. Deseja editá-lo antes de finalizar?',
+                                () => { editDraft(poNumber, event); },
+                                async () => { /* Se o usuário ignorar e continuar */
+                                    await historyRef.set(draft);
+                                    await draftRef.delete();
+                                    showCustomAlert('Finalizado', `Rascunho N° ${poNumber} salvo com sucesso no Histórico!`, () => {
+                                        window.location.href = 'historico.html';
+                                    });
+                                }
+                            );
+                            return;
                         }
 
                         // 2. Salvar no Histórico (o rascunho atualizado)
